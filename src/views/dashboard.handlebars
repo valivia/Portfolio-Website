@@ -1,0 +1,42 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Xayania</title>
+
+  <meta name="description" content="Discord bot yes">
+  <meta name="author" content="Olivia">
+
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/jquery.js"></script>
+  <script src="/script.js"></script>
+
+</head>
+
+
+<body class="gridContainer dashboard">
+  {{> header }}
+
+  {{> topnav }}
+
+  <div class="subHeader">
+    <span>{{ Guild.NAME }}</span>
+  </div>
+
+  <div class="content">
+    <div class="contentHeader">
+      <div class="serverIcon"></div>
+    </div>
+    <div class="innerContent">
+      {{ User.USERNAME }}#{{ User.TAG }}
+      <br><br><br><br><br><br><br><br>
+      <br><br><br><br><br><br><br><br>
+      <br><br><br><br><br><br><br><br>
+    </div>
+  </div>
+
+  {{> footer }}
+</body>
+
+</html>
