@@ -10,59 +10,45 @@ $text1: rgb(181, 166, 145);
     font-family: "tbhc";
     src: url("./tbhc.ttf");
 }
+@font-face {
+    font-family: "abel";
+    src: url("./abel.ttf");
+}
+
+// MAIN
 
 body,
 html {
     margin: 0;
     height: 100%;
     background-color: black;
+    text-rendering: optimizeLegibility;
 }
 
 body > * {
-    color: $text;
-    font-family: "tbhc";
+    color: $text1;
     text-transform: uppercase;
     /* font-size: 2.125rem; */
     letter-spacing: 3px;
     font-weight: normal;
 }
 
-.centered {
+.snap {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+section {
+    height: 100vh;
+    scroll-snap-align: start;
     text-align: center;
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
 }
 
-.notfound {
-    font-size: 150%;
-}
-
-.noselect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.subHeader {
-    top: 0;
-    text-align: center;
-    padding: 11% 0;
-    font-size: 300%;
-    background-image: url("/file/foundation.png");
-    //background-image: url("/file/board.png");
-    //background-image: url("/file/tbh+c2.png");
-    //background-image: url("/file/william2.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
+// HEADER
 .topnav {
     z-index: 5;
     position: fixed;
@@ -75,13 +61,14 @@ body > * {
     overflow: hidden;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, 0) 100%);
     align-items: center;
-    border-top: 1px solid $text;
+    //border-top: 1px solid $text;
 
     & > * {
         display: flex;
         justify-content: center;
         grid-row: 2 / 3;
         //font-size: 1.2rem;
+        font-family: "abel";
         font-size: 140%;
         color: $text1;
         cursor: pointer;
@@ -89,18 +76,19 @@ body > * {
     }
 }
 
-@media only screen and (orientation: portrait) {
-    .topnav {
-        grid-template-columns: 3% 16% 3% 16% 7% 10% 7% 16% 3% 16% 3%;
-        grid-template-rows: 10% auto 10%;
-        height: 7%;
+.icon {
+    grid-column: 6 / 7;
+    grid-row: 1 / 4;
+    background-image: url("/file/icon.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 53%;
+    height: 100%;
 
-        & > * {
-            font-size: 200%;
-        }
-    }
-    .subHeader {
-        padding: 20% 0;
+    &:hover {
+        opacity: 0.7;
+        text-decoration: none;
+        cursor: pointer;
     }
 }
 
@@ -136,31 +124,50 @@ body > * {
     }
 }
 
-.icon {
-    grid-column: 6 / 7;
-    grid-row: 1 / 4;
-    background-image: url("/file/icon.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 53%;
-    height: 100%;
+// SUBHEADER
 
-    &:hover {
-        opacity: 0.7;
-        text-decoration: none;
-        cursor: pointer;
-    }
+.subHeader {
+    height: 80%;
+    top: 0;
+    text-align: center;
+    padding: 11% 0;
+    font-size: 300%;
+    background-image: url("/file/foundation.png");
+    //background-image: url("/file/board.png");
+    //background-image: url("/file/tbh+c2.png");
+    //background-image: url("/file/william2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
 }
 
-.contentHeader {
-    background: rgb(39, 13, 152);
-    background: linear-gradient(
-        210deg,
-        rgba(39, 13, 152, 1) 0%,
-        rgba(97, 0, 164, 1) 25%,
-        rgba(175, 1, 1, 1) 89%,
-        rgba(129, 6, 6, 1) 100%
-    );
+.artSubheader {
+    background: black url("/tbh+c.png") no-repeat center;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+}
+
+// CONTENT
+
+.topic {
+    background: black url("/tbh+c2.png") no-repeat center;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 15% auto 15%;
+    grid-template-rows: 14% 10% auto 15%;
+
+    & > h1 {
+        font-weight: lighter;
+        font-family: "tbhc";
+        font-size: 8vh;
+        text-align: center;
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+    }
 }
 
 .content {
@@ -168,12 +175,40 @@ body > * {
     -webkit-box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
     background-color: rgb(14, 14, 14);
+    min-height: 100%;
     width: 100%;
-    height: 70%;
+    padding-top: 3vh;
 }
 
+// IMAGE GALLERY
+ul {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    list-style-type: none;
+}
+
+li {
+    cursor: pointer;
+    height: 30vh;
+    flex-grow: 1;
+}
+
+li:last-child {
+    flex-grow: 10;
+}
+
+img {
+    max-height: 100%;
+    min-width: 100%;
+    object-fit: cover;
+    vertical-align: bottom;
+}
+
+// FOOTER
+
 .footer {
-    bottom: 0;
     background: black;
     border-top: 1px solid $text;
     padding: 3%;
@@ -181,8 +216,63 @@ body > * {
     color: $text;
 }
 
+// MISC
 .video {
     width: 60%;
     display: block;
     margin: 0 auto;
+}
+
+.centered {
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.notfound {
+    font-family: "tbhc";
+    font-size: 150%;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:active {
+    text-decoration: none;
+}
+
+@media only screen and (orientation: portrait) {
+    .topnav {
+        grid-template-columns: 3% 16% 3% 16% 7% 10% 7% 16% 3% 16% 3%;
+        grid-template-rows: 10% auto 10%;
+        height: 7%;
+
+        & > * {
+            font-size: 200%;
+        }
+    }
+    .subHeader {
+        padding: 20% 0;
+    }
 }

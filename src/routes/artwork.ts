@@ -1,15 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import { Database } from "sqlite";
+import fs from "fs";
 
-export default function index(_db: Database) {
+export default function artwork() {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            // console.log(`ip: ${req.ip}`)
-            res.render("artwork", {});
+            console.log(`ip: ${req.ip}`)
+            await fs.readdir('./assets/artwork', (err, files) => {
+                res.render("artwork", {
+                    pictures: files
+                });
+            });
             return;
         } catch (e) {
             console.log(e);
             next(e);
         }
-    };
-}
+    }
+};

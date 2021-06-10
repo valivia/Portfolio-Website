@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { Database } from "sqlite";
 
-export default function index(_db: Database) {
+export default function index() {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            // console.log(`ip: ${req.ip}`)
+            console.log(`ip: ${req.ip}`)
             res.render("index", {});
             return;
         } catch (e) {

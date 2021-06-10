@@ -1,7 +1,8 @@
-import { open } from "sqlite";
-import sqlite3 from "sqlite3";
 import web from "./src/webServer";
+import { PrismaClient } from '@prisma/client'
 
+
+const db = new PrismaClient()
 /*
 for (let i = 1; i < 100; i++) {
   let output: string | number = "";
@@ -12,10 +13,5 @@ for (let i = 1; i < 100; i++) {
 }
 */
 
-open({
-  driver: sqlite3.Database,
-  filename: "./database.db"
 
-}).then(async (db) => {
-  web(db);
-});
+web(db);

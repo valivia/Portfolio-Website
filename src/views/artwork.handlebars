@@ -1,0 +1,50 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Xayania</title>
+
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/jquery.js"></script>
+  <script src="/script.js"></script>
+
+</head>
+
+
+<body>
+  <div class="snap">
+    {{> topnav }}
+    <section>
+      <div class="artSubheader"></div>
+    </section>
+
+    <section>
+      <div class="topic">
+        <h1>Visual Arts</h1>
+      </div>
+    </section>
+
+    <section>
+      <div class="topic">
+        <h1><strong></strong>Video</strong></h1>
+      </div>
+    </section>
+
+    <div class="content">
+      <ul>
+        {{#each pictures }}
+        <li>
+          <!--<img decoding="async" loading="lazy" src="/{{ this }}">-->
+        </li>
+        {{/each}}
+        <li></li>
+      </ul>
+    </div>
+
+    {{> footer }}
+  </div>
+</body>
+
+</html>

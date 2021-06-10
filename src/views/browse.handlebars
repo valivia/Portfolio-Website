@@ -2,6 +2,7 @@
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Xayania</title>
 
@@ -14,13 +15,15 @@
 
 <body>
   {{> topnav }}
-  <div class="subheader"></div>
-
+  <div class="artSubheader">
+  </div>
 
   <div class="content">
-    <!-- <video class="video" id="videoPlayer" width="1920" controls muted="muted" autoplay>
-      <source src="/file/monke.mp4" type="video/mp4" />
-    </video>-->
+    {{#each posts}}
+      post name: {{this.Name}}<br>
+      Tag: {{this.Tags.TagName}}<br>
+      Category: {{this.Categories.CategoryName}}<br><br>
+    {{/each}}
   </div>
 
   {{> footer }}

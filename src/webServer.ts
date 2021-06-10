@@ -4,27 +4,23 @@ colors.enable();
 import cookieParser from "cookie-parser";
 import express, { Errback, NextFunction, Request, Response } from "express";
 import handlebars from "express-handlebars";
-import fs from "fs";
 import helmet from "helmet";
-import http from "https";
 import logger from "morgan";
 import sass from "node-sass-middleware";
 import path from "path";
 import favicon from "serve-favicon";
-import { Database } from "sqlite";
+import env from "dotenv";
+env.config();
 
-import settings from "../settings.json";
-
-import fileServer from "./routes/fileServer";
+import fileServer from "./routes/fileserver";
 import index from "./routes/index";
+import artwork from "./routes/artwork";
+import browse from "./routes/browse"
+import { PrismaClient } from ".prisma/client";
 
-export default function webServer(db: Database) {
+export default function webServer(db: PrismaClient) {
 
     const app = express();
-    const https = http.createServer({
-        cert: fs.readFileSync(path.join(__dirname, "../public.cert"), "utf8"),
-        key: fs.readFileSync(path.join(__dirname, "../private.key"), "utf8")
-    }, app);
 
     // helmet.
     app.use(helmet({
@@ -51,7 +47,7 @@ export default function webServer(db: Database) {
             },
         },*/
         hidePoweredBy: true,
-        referrerPolicy: true,
+        referrerPolicy: false,
         // reportOnly: (req) => req.app.get("env") === "development"
     }));
 
@@ -69,7 +65,7 @@ export default function webServer(db: Database) {
             "application/csp-report"
         ]
     }));
-    app.use(cookieParser(settings.Web.CookieToken));
+    app.use(cookieParser(process.env.COOKIETOKEN));
     app.set("trust proxy", true);
     app.set("env", "production");
     app.use(sass({
@@ -88,6 +84,7 @@ export default function webServer(db: Database) {
 
     // static files.
     app.use(express.static(path.join(__dirname, "public")));
+    app.use(express.static("./assets/artwork"));
 
     // CSP
     app.post("/report-violation", (_req, res) => {
@@ -97,7 +94,10 @@ export default function webServer(db: Database) {
 
     // GET ROUTES
     app.get("/file/:fileName", fileServer());
-    app.get("/", index(db));
+    app.get("/artwork", artwork());
+    app.get("/browse", browse(db));
+    app.get("/", index());
+
 
     // catch 404 and forward to error handler
     app.use((_req, _res, next) => {
@@ -143,8 +143,6 @@ export default function webServer(db: Database) {
         });
     });
 
-    https.listen({
-        host: "0.0.0.0",
-        port: 443
-    }, () => console.log(` > Web server ready at port 443 - ${app.get("env")}`.magenta));
+    const port = process.env.PORT;
+    app.listen({ port }, () => console.log(` > Web server ready at port ${port} - ${app.get("env")}`.magenta));
 }
