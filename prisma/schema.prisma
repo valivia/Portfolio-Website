@@ -9,11 +9,11 @@ datasource db {
 
 model Content {
   Name        String         @db.VarChar(32)
+  PostID      Int            @id @default(autoincrement())
   CategoryID  Int?
   Created     DateTime       @default(now()) @db.Timestamp(0)
-  FileName    String         @unique @db.VarChar(32)
-  PostID      Int            @id @default(autoincrement())
-  Description String         @db.VarChar(256)
+  FileName    String         @unique @db.VarChar(36)
+  Description String?        @db.VarChar(256)
   Status      Content_Status @default(Unknown)
   LastUpdated DateTime       @default(now()) @db.Timestamp(0)
   TagID       Int?
@@ -39,12 +39,17 @@ model Categories {
   CategoryName String    @unique @db.VarChar(16)
   CategoryID   Int       @id @default(autoincrement())
   Content      Content[]
+  Tags         Tags[]
 }
 
 model Tags {
-  TagName String    @unique @db.VarChar(16)
-  TagID   Int       @id @default(autoincrement())
-  Content Content[]
+  TagName    String      @unique @db.VarChar(16)
+  TagID      Int         @id @default(autoincrement())
+  CategoryID Int?
+  Categories Categories? @relation(fields: [CategoryID], references: [CategoryID])
+  Content    Content[]
+
+  @@index([CategoryID], name: "Tags_FK")
 }
 
 enum Content_Status {

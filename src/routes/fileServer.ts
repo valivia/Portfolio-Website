@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import path from "path"
-const dir = path.join(process.cwd(), "assets", "server");
+const dir = path.join(process.cwd(), "assets");
 
 type MimeTypeMap = {
     [x: string]: string
@@ -24,12 +24,20 @@ let mime: MimeTypeMap = {
 export default function fileServer() {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
+            let folder;
+            switch (req.params.folder) {
+                case "s": folder = "server"; break;
+                case "a": folder = "content"; break;
+                default: return next();
+            }
+
             // Get file dir.
-            let file = path.join(dir, req.params.fileName)
-            // Check if zhin
+            let file = path.join(dir, folder, req.params.fileName)
+
+            // Check if big bad.
             if (file.indexOf(dir + path.sep) !== 0) {
                 const err = new Error("Forbidden");
-                err.status = 403;
+                res.status(403);
                 return next(err);
             }
             // Get mime type.
@@ -60,9 +68,7 @@ export default function fileServer() {
             });
             // If fails.
             s.on('error', function () {
-                const err = new Error("not found");
-                err.status = 404;
-                next(err);
+                next();
             });
             return;
         } catch (e) {

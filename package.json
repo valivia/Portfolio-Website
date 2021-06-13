@@ -1,32 +1,31 @@
 {
   "dependencies": {
     "@prisma/client": "^2.24.1",
-    "@types/cookie-parser": "^1.4.2",
-    "@types/express": "^4.17.6",
-    "@types/express-handlebars": "^3.1.0",
-    "@types/helmet": "0.0.45",
-    "@types/mime-types": "^2.1.0",
-    "@types/morgan": "^1.9.0",
-    "@types/node": "^13.11.1",
-    "@types/node-fetch": "^2.5.5",
-    "@types/node-sass-middleware": "0.0.31",
-    "@types/serve-favicon": "^2.5.0",
     "colors": "^1.4.0",
-    "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-handlebars": "^4.0.3",
     "fs": "0.0.1-security",
     "helmet": "^3.22.0",
     "https": "^1.0.0",
-    "mime-types": "^2.1.26",
     "moment": "^2.27.0",
     "morgan": "^1.10.0",
+    "multer": "^1.4.2",
     "node-sass-middleware": "^0.11.0",
     "path": "^0.12.7",
-    "serve-favicon": "^2.5.0"
+    "serve-favicon": "^2.5.0",
+    "sharp": "^0.28.3",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/express-handlebars": "^5.3.0",
+    "@types/helmet": "^4.0.0",
+    "@types/morgan": "^1.9.2",
+    "@types/multer": "^1.4.5",
+    "@types/node-sass-middleware": "0.0.31",
+    "@types/serve-favicon": "^2.5.2",
+    "@types/sharp": "^0.28.3",
+    "@types/uuid": "^8.3.0",
     "prisma": "^2.24.1"
   }
 }

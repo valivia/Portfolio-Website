@@ -1,0 +1,49 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Xayania</title>
+
+  <script src="/jquery.js"></script>
+  <!--script src="/script.js"></script>-->
+
+</head>
+
+<body>
+  <form id="form" action="/upload" method="POST" enctype="multipart/form-data">
+    <label>Name:</label>
+    <br>
+    <input type="text" id="name" name="name">
+    <br>
+    <label>Description:</label>
+    <br>
+    <input type="text" name="description">
+    <br>
+    <label>Category:</label>
+    <br>
+    <select name="category">
+      {{#each category}}
+      <option value="{{ this.CategoryID }}">{{ this.CategoryName }}</option>
+      {{/each}}
+    </select>
+    <br>
+    <label>tag:</label>
+    <br>
+    <select name="tag">
+      {{#each tags}}
+      <option value={{ this.TagID }}>{{ this.TagName }}</option>
+      {{/each}}rs
+    </select>
+    <br>
+    <label>Image</label>
+    <br>
+    <input type="file" name="banner">
+    <br>
+    <button type="submit">submit!</button>
+  </form>
+
+  <button id="button">clicc</button>
+</body>
+
+</html>
