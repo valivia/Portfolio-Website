@@ -23,6 +23,12 @@ html {
     height: 100%;
     background-color: black;
     text-rendering: optimizeLegibility;
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: scroll;
+}
+html::-webkit-scrollbar {
+    display: none;
 }
 
 body > * {
@@ -144,6 +150,13 @@ section {
 
 .artSubheader {
     background: black url("/file/s/tbh+c.jpg") no-repeat center;
+    /*background-image: image-set(
+        url("/file/s/tbhc_Default.jpg") 1x,
+        url("/file/s/tbhc_High.jpg") .90x,
+        url("/file/s/tbhc_MediumHigh.jpg") .75x,
+        url("/file/s/tbhc_Medium.jpg") .5x,
+        url("/file/s/tbhc_Low.jpg") .25x
+    );*/
     background-size: cover;
     height: 100%;
     width: 100%;
@@ -157,8 +170,8 @@ section {
     height: 100%;
     width: 100%;
     display: grid;
-    grid-template-columns: 15% auto 15%;
-    grid-template-rows: 14% 10% auto 15%;
+    grid-template-columns: 15% 70% 15%;
+    grid-template-rows: 14% 10% 61% 15%;
 
     & > h1 {
         font-weight: lighter;
@@ -168,6 +181,24 @@ section {
         grid-column: 2 / 3;
         grid-row: 2 / 3;
     }
+
+    & > .gallery {
+        grid-column: 2 / 3;
+        grid-row: 2 / 4;
+        padding: 10vw;
+    }
+}
+
+.photography {
+    background: black no-repeat center;
+    background-image: image-set(
+        url("/file/s/photography_Default.jpg") 5x,
+        url("/file/s/photography_High.jpg") 4x,
+        url("/file/s/photography_MediumHigh.jpg") 3x,
+        url("/file/s/photography_Medium.jpg") 2x,
+        url("/file/s/photography_Low.jpg") 1x
+    );
+    background-size: cover;
 }
 
 .content {
@@ -177,50 +208,57 @@ section {
     background-color: rgb(14, 14, 14);
     min-height: 100%;
     width: 100%;
-    padding-top: 3vh;
 }
 
-// IMAGE GALLERY
-ul {
-    width: 100%;
+// GALLERY
+
+.square-container {
     display: flex;
     flex-wrap: wrap;
-    align-content: flex-start;
-    list-style-type: none;
 }
 
-li {
-    cursor: pointer;
-    height: 30vh;
-    flex-grow: 1;
+.square {
+    position: relative;
+    flex-basis: calc(25% - 2px);
+    border: 1px solid;
+    margin: 1px;
+    border-color: black;
+    box-sizing: border-box;
 }
 
-li:last-child {
-    flex-grow: 10;
+.square::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
 }
 
-img {
-    max-height: 100%;
-    min-width: 100%;
-    object-fit: cover;
-    vertical-align: bottom;
-}
+.square .galleryContent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 
+    display: flex; /* added for centered text */
+    justify-content: center; /* added for centered text */
+    align-items: center; /* added for centered text */
+
+    & > img {
+        height: 100%;
+        object-fit: cover;
+        vertical-align: center;
+    }
+}
 // FOOTER
 
 .footer {
+    font-family: "abel";
     background: black;
     border-top: 1px solid $text;
     padding: 3%;
     text-align: center;
     color: $text;
-}
-
-// MISC
-.video {
-    width: 60%;
-    display: block;
-    margin: 0 auto;
 }
 
 .centered {
@@ -269,10 +307,25 @@ a:active {
         height: 7%;
 
         & > * {
-            font-size: 200%;
+            font-size: 3.5vw;
         }
+    }
+
+    .icon {
+        background-size: 80%;
     }
     .subHeader {
         padding: 20% 0;
+    }
+
+    .square {
+        position: relative;
+        flex-basis: calc(50% - 10px);
+        margin: 1px;
+    }
+
+    .artSubheader {
+        height: 30%;
+        width: 100%;
     }
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
 
-  <title>Xayania</title>
+  <title>Upload</title>
 
   <script src="/jquery.js"></script>
   <!--script src="/script.js"></script>-->
@@ -20,20 +20,12 @@
     <br>
     <input type="text" name="description">
     <br>
-    <label>Category:</label>
-    <br>
-    <select name="category">
-      {{#each category}}
-      <option value="{{ this.CategoryID }}">{{ this.CategoryName }}</option>
-      {{/each}}
-    </select>
-    <br>
     <label>tag:</label>
     <br>
-    <select name="tag">
+    <select name="tag" multiple>
       {{#each tags}}
-      <option value={{ this.TagID }}>{{ this.TagName }}</option>
-      {{/each}}rs
+      <option value={{ this.TagID }}>{{ this.Name }}</option>
+      {{/each}}
     </select>
     <br>
     <label>Image</label>

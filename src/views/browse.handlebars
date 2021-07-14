@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Xayania</title>
+  <title>Gallery</title>
 
   <link rel="stylesheet" href="/styles.css">
   <script src="/jquery.js"></script>
@@ -18,15 +18,30 @@
   <div class="artSubheader">
   </div>
 
-  <div class="content">
-    {{#each posts}}
-      post name: {{this.Name}}<br>
-      Tag: {{this.Tags.TagName}}<br>
-      Category: {{this.Categories.CategoryName}}<br><br>
+  <div class="content square-container">
+    {{#each content }}
+    <div class="square">
+      <div class="galleryContent">
+        <img decoding="async" loading="lazy" id="{{this.ID}}" srcset="
+        /file/a/{{ this.FileName }}_Default.jpg 2x,
+        /file/a/{{ this.FileName }}_High.jpg 1.90x,
+        /file/a/{{ this.FileName }}_MediumHigh.jpg 1.75x,
+        /file/a/{{ this.FileName }}_Medium.jpg 1x,
+        /file/a/{{ this.FileName }}_Low.jpg .25x
+        " src="/file/a/{{ this.FileName }}_Low.jpg">
+      </div>
+    </div>
     {{/each}}
   </div>
 
   {{> footer }}
 </body>
+<script>
+  $(document).ready(() => {
+    $(".square").click(function (event) {
+      window.location.href = `/project/${event.target.id}`;
+    });
+  });
+</script>
 
 </html>

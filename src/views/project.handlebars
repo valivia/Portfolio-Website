@@ -1,0 +1,35 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{{ content.Name }}</title>
+
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/jquery.js"></script>
+  <script src="/script.js"></script>
+
+</head>
+
+
+<body>
+  {{> topnav }}
+  <div class="artSubheader topic" style="background-image: url('/file/a/{{content.FileName}}_MediumHigh.jpg');">
+    <h1>{{content.Name}}</h1>
+  </div>
+  <div class="content">
+    description:
+    <br>
+    {{ content.Description}}
+    <br>
+    tags:
+    <br>
+    {{#each tags }}
+    {{ this.TagName }}
+    {{/each}}
+  </div>
+  {{> footer }}
+</body>
+
+</html>

@@ -18,6 +18,7 @@ import index from "./routes/index";
 import artwork from "./routes/artwork";
 import browse from "./routes/browse";
 import upload from "./routes/upload";
+import project from "./routes/project"
 
 import newProject from "./posts/newProject";
 import { PrismaClient } from ".prisma/client";
@@ -27,7 +28,6 @@ export default function webServer(db: PrismaClient) {
     const app = express();
     const mult = multer();
 
-    // helmet.
     app.use(helmet({
         /*contentSecurityPolicy: {
             directives: {
@@ -56,7 +56,6 @@ export default function webServer(db: PrismaClient) {
         reportOnly: (_req: Request) => env.ENV === "development"
     }));
 
-    // view engine setup
     app.engine("handlebars", handlebars({ layout: false, defaultLayout: undefined }));
     app.set("view engine", "handlebars");
     app.set("views", path.join(__dirname, "views"));
@@ -89,14 +88,27 @@ export default function webServer(db: PrismaClient) {
         res.sendStatus(200);
     });
 
-    // GET ROUTES
+    // get
     app.get("/file/:folder/:fileName", fileServer());
-    app.get("/artwork", artwork());
+    app.get("/project/:project", project(db));
+    app.get("/artwork", artwork(db));
     app.get("/browse", browse(db));
     app.get("/upload", upload(db));
     app.get("/", index());
 
+
+    // post
     app.post("/upload", mult.single('banner'), newProject(db));
+
+    // post
+    app.post("project", () => { })
+
+    // put
+    app.put("project", () => { })
+
+    // delete
+    app.delete("project", () => { });
+
 
 
     // catch 404 and forward to error handler
@@ -106,10 +118,11 @@ export default function webServer(db: PrismaClient) {
         next(err);
     });
 
+    // Error handler.
     app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
         res.render("error", {
             message: res.statusCode === 404 ? err.message : "a server error occurred ",
-            status: res.statusCode
+            status: res.statusCode === undefined ? 500 : res.statusCode
         })
     });
 

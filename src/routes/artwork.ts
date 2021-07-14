@@ -1,15 +1,17 @@
+import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
-import fs from "fs";
 
-export default function artwork() {
-    return async (req: Request, res: Response, next: NextFunction) => {
+export default function artwork(db: PrismaClient) {
+    return async (_req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log(`ip: ${req.ip}`)
-            await fs.readdir('./assets/artwork', (err, files) => {
-                res.render("artwork", {
-                    pictures: files
-                });
+            const photography = await db.tags.findUnique({
+                where: {
+                    TagID: 2
+                },
+                include: { TagLink: { include: { Project: true } } }
             });
+
+            res.render("artwork", { photography: photography?.TagLink.map(r => r.Project) });
             return;
         } catch (e) {
             console.log(e);
