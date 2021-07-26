@@ -2,28 +2,56 @@
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Xayania</title>
+  <meta name="description" content="description!" />
+  <meta name="google-site-verification" content="haESfl9n2k-TL_02Le4baHKelO3VvW2zV2OS_fm4aHo" />
 
   <link rel="stylesheet" href="/styles.css">
-  <script src="/jquery.js"></script>
+  <script async src="/jquery.js"></script>
   <script src="/script.js"></script>
 
 </head>
 
 
 <body>
-  {{> topnav }}
-  <div class="subheader"></div>
+  <div class="snap">
+    {{> topnav }}
+    <div class="subheader">
+      <h1 id="type"></h1>
+    </div>
+
+    <section class="photography">
+      <h1>Photography</h1>
+      <div class="square-container gallery">
+        {{#each photography }}
+        <div class="square">
+          <div class="galleryContent">
+            <img decoding="async" loading="lazy" id="{{this.PostID}}" srcset="
+        /file/a/{{ this.FileName }}_Default.jpg 2x,
+        /file/a/{{ this.FileName }}_High.jpg 1.90x,
+        /file/a/{{ this.FileName }}_MediumHigh.jpg 1.75x,
+        /file/a/{{ this.FileName }}_Medium.jpg 1x,
+        /file/a/{{ this.FileName }}_Low.jpg .25x
+        " src="/file/a/{{ this.FileName }}_Low.jpg">
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+
+    <section>
+      <h1>3D Art</h1>
+    </section>
+
+    <section>
+      <h1>Music</h1>
+    </section>
 
 
-  <div class="content">
-    <!-- <video class="video" id="videoPlayer" width="1920" controls muted="muted" autoplay>
-      <source src="/file/monke.mp4" type="video/mp4" />
-    </video>-->
+    {{> footer }}
   </div>
-
-  {{> footer }}
 </body>
 
 </html>

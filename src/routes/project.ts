@@ -21,6 +21,8 @@ export default function (db: PrismaClient) {
                 }
             });
 
+            console.log(content?.TagLink.map(r => r.Tags));
+
             res.render("project", {
                 content: content,
                 subcontent: content?.SubContent,

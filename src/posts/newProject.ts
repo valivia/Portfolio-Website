@@ -1,9 +1,10 @@
-import { Project_Status, PrismaClient } from "@prisma/client";
+import { Project_Status, PrismaClient, Project } from "@prisma/client";
 import { NextFunction, Response, Request } from "express";
 import { v4 as uuidv4 } from "uuid";
 import sharp from "sharp";
 import fs from "fs";
 import dotenv from "dotenv";
+import axios from "axios";
 dotenv.config();
 const env = process.env
 
@@ -16,7 +17,7 @@ export default function (db: PrismaClient) {
 
             const fileName = uuidv4();
 
-            await db.project.create({
+            const project = await db.project.create({
                 data: {
                     Name: name,
                     FileName: fileName,
@@ -30,6 +31,9 @@ export default function (db: PrismaClient) {
                 },
                 include: { TagLink: true }
             });
+
+
+            webhook(project);
 
             if (!await makeAssets(req.file.buffer, fileName)) {
                 res.status(500);
@@ -91,15 +95,15 @@ function validate(req: Request, res: Response) {
         res.status(500);
         throw {
             err,
-            message: `Failed to save the resized assets.`,
-            type: `WRITE_ERROR`
+            message: `Failed to validate the request.`,
+            type: `VALIDATE_ERROR`
         }
     }
 }
 
 async function makeAssets(buffer: Buffer, fileName: string): Promise<boolean> {
     try {
-        fs.createWriteStream(`./assets/content/${fileName}_Default.jpg`).write(buffer);
+        fs.createWriteStream(`./assets/content/${fileName}_Default.jpg`).write(await resizeImage(buffer, 1));
         fs.createWriteStream(`./assets/content/${fileName}_High.jpg`).write(await resizeImage(buffer, 0.90));
         fs.createWriteStream(`./assets/content/${fileName}_MediumHigh.jpg`).write(await resizeImage(buffer, 0.75));
         fs.createWriteStream(`./assets/content/${fileName}_Medium.jpg`).write(await resizeImage(buffer, 0.50));
@@ -147,6 +151,40 @@ async function resizeImage(input: Buffer, scale: number): Promise<Buffer> {
     }
 }
 
+async function webhook(project: Project) {
+    const data = {
+        username: "Xayania",
+        avatar_url: "https://art.xayania.com/file/s/tbhc_MediumHigh.jpg",
+        embeds: [
+            {
+                "title": "New Post!",
+                "thumbnail": {
+                    "url": `https://art.xayania.com/file/a/${project.FileName}_MediumHigh.jpg`,
+                },
+                "fields": [
+                    {
+                        "name": project.Name,
+                        "value": project.Description || "no description provided",
+                        "inline": true
+                    }
+                ]
+            }
+        ]
+    };
+
+    console.log(data);
+    console.log(data.embeds[0].thumbnail)
+    console.log(data.embeds[0].fields)
+
+    await axios
+        .post(env.WEBHOOK!, data)
+        .then(res => {
+            console.log(`statusCode: ${res.status}`)
+        })
+        .catch(error => {
+            console.error(error)
+        })
+}
 interface ITags {
     TagID: number;
 }

@@ -15,7 +15,7 @@
 
 <body>
   {{> topnav }}
-  <div class="artSubheader">
+  <div class="subheader">
   </div>
 
   <div class="content square-container">
@@ -36,12 +36,5 @@
 
   {{> footer }}
 </body>
-<script>
-  $(document).ready(() => {
-    $(".square").click(function (event) {
-      window.location.href = `/project/${event.target.id}`;
-    });
-  });
-</script>
 
 </html>

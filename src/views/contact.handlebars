@@ -1,0 +1,66 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Xayania</title>
+  <meta name="description" content="description!" />
+  <meta name="google-site-verification" content="haESfl9n2k-TL_02Le4baHKelO3VvW2zV2OS_fm4aHo" />
+
+  <link rel="stylesheet" href="/styles.css">
+  <script async src="/jquery.js"></script>
+  <script src="/script.js"></script>
+
+</head>
+
+
+<body>
+  <div class="snap">
+    {{> topnav }}
+    <section>
+    </section>
+    <section>
+      <form class="form-example" action="/contact" method="post">
+        <div class="form-example">
+          <label for="email">Email: </label>
+          <input type="email" name="email" id="email" required>
+        </div>
+        <div class="form-example">
+          <label for="name">Subject: </label>
+          <input type="text" name="name" id="name" required>
+        </div>
+        <div class="form-example">
+          <label for="email">Message: </label>
+          <input type="text" name="content" id="content" required>
+        </div>
+        <div class="form-example">
+          <input type="submit" value="Send">
+        </div>
+      </form>
+    </section>
+    {{> footer }}
+  </div>
+</body>
+<style>
+  form.form-example {
+    display: table;
+    margin: 10%;
+  }
+
+  div.form-example {
+    display: table-row;
+  }
+
+  label,
+  input {
+    display: table-cell;
+    margin-bottom: 10px;
+  }
+
+  label {
+    padding-right: 10px;
+  }
+</style>
+
+</html>

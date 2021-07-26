@@ -15,7 +15,7 @@
 
 <body>
   {{> topnav }}
-  <div class="artSubheader topic" style="background-image: url('/file/a/{{content.FileName}}_MediumHigh.jpg');">
+  <div class="subheader" style="background-image: url('/file/a/{{content.FileName}}_MediumHigh.jpg');">
     <h1>{{content.Name}}</h1>
   </div>
   <div class="content">
@@ -26,7 +26,7 @@
     tags:
     <br>
     {{#each tags }}
-    {{ this.TagName }}
+    {{ this.Name }}
     {{/each}}
   </div>
   {{> footer }}

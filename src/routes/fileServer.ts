@@ -46,25 +46,33 @@ export default function fileServer() {
             let s = fs.createReadStream(file);
             // If opens.
             s.on('open', function () {
-                if (type == "video/mp4" || type == "audio/mpeg") {
-                    const range = req.headers.range !== undefined ? req.headers.range : "0";
-                    const videoSize = fs.statSync(file).size;
-                    const CHUNK_SIZE = 10 ** 6; // 1MB
-                    const start = Number(range.replace(/\D/g, ""));
-                    const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
-                    const headers = {
-                        "Content-Range": `bytes ${start}-${end}/${videoSize}`,
-                        "Accept-Ranges": "bytes",
-                        "Content-Length": end - start + 1,
-                        "Content-Type": type,
-                    };
-                    res.writeHead(206, headers);
-                    let stream = fs.createReadStream(file, { start, end });
-                    return stream.pipe(res);
+                try {
+                    if (type == "video/mp4" || type == "audio/mpeg") {
+                        const range = req.headers.range !== undefined ? req.headers.range : "0";
+                        const videoSize = fs.statSync(file).size;
+                        const CHUNK_SIZE = 10 ** 6; // 1MB
+                        const start = Number(range.replace(/\D/g, ""));
+                        const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
+                        const headers = {
+                            "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+                            "Accept-Ranges": "bytes",
+                            "Content-Length": end - start + 1,
+                            "Content-Type": type,
+                        };
+                        res.writeHead(206, headers);
+                        s
+                        let stream = fs.createReadStream(file, { start, end });
+                        return stream.pipe(res);
+                    }
+                    res.set('Content-Type', type);
+                    // Stream file.
+                    return s.pipe(res);
+                } catch (e) {
+                    console.log(e);
+                    next(e);
+
+                    return;
                 }
-                res.set('Content-Type', type);
-                // Stream file.
-                return s.pipe(res);
             });
             // If fails.
             s.on('error', function () {

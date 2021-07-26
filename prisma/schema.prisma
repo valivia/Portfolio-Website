@@ -7,54 +7,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Content {
-  Name        String         @db.VarChar(32)
-  PostID      Int            @id @default(autoincrement())
-  CategoryID  Int?
-  Created     DateTime       @default(now()) @db.Timestamp(0)
-  FileName    String         @unique @db.VarChar(36)
-  Description String?        @db.VarChar(256)
-  Status      Content_Status @default(Unknown)
-  LastUpdated DateTime       @default(now()) @db.Timestamp(0)
-  TagID       Int?
-  Categories  Categories?    @relation(fields: [CategoryID], references: [CategoryID])
-  Tags        Tags?          @relation(fields: [TagID], references: [TagID])
-  SubContent  SubContent[]
-
-  @@index([CategoryID], name: "Content_FK")
-  @@index([TagID], name: "Content_FK_1")
+model Categories {
+  Name       String @unique @db.VarChar(16)
+  CategoryID Int    @id @default(autoincrement())
+  Tags       Tags[]
 }
 
 model SubContent {
   PostID      Int
-  FileName    String  @unique @db.VarChar(32)
+  FileName    String? @db.VarChar(36)
   Description String? @db.VarChar(256)
-  SubID       Int     @id @default(autoincrement())
-  Content     Content @relation(fields: [PostID], references: [PostID])
+  ID          Int     @id @default(autoincrement())
+  Project     Project @relation(fields: [PostID], references: [ID])
 
   @@index([PostID], name: "SubContent_FK")
 }
 
-model Categories {
-  CategoryName String    @unique @db.VarChar(16)
-  CategoryID   Int       @id @default(autoincrement())
-  Content      Content[]
-  Tags         Tags[]
+model TagLink {
+  ProjectID Int
+  TagID     Int
+  TagLinkID Int     @id @default(autoincrement())
+  Project   Project @relation(fields: [ProjectID], references: [ID])
+  Tags      Tags    @relation(fields: [TagID], references: [TagID])
+
+  @@index([ProjectID], name: "TagLink_FK")
+  @@index([TagID], name: "TagLink_FK_1")
 }
 
 model Tags {
-  TagName    String      @unique @db.VarChar(16)
+  Name       String      @db.VarChar(16)
   TagID      Int         @id @default(autoincrement())
   CategoryID Int?
   Categories Categories? @relation(fields: [CategoryID], references: [CategoryID])
-  Content    Content[]
+  TagLink    TagLink[]
 
   @@index([CategoryID], name: "Tags_FK")
 }
 
-enum Content_Status {
-  Unknown
+model Project {
+  ID          Int            @id @default(autoincrement())
+  Created     DateTime       @default(now()) @db.Timestamp(0)
+  Updated     DateTime       @default(now()) @db.Timestamp(0)
+  Name        String         @unique @db.VarChar(32)
+  FileName    String         @db.VarChar(36)
+  Description String?        @db.VarChar(256)
+  Status      Project_Status @default(unknown)
+  SubContent  SubContent[]
+  TagLink     TagLink[]
+}
+
+enum Project_Status {
   Finished
   In_Progress @map("In Progress")
-  Abandoned
+  abandoned
+  unknown
 }

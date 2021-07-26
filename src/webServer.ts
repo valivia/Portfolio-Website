@@ -15,15 +15,20 @@ const env = process.env
 
 import fileServer from "./routes/fileserver";
 import index from "./routes/index";
-import artwork from "./routes/artwork";
 import browse from "./routes/browse";
+import contact from "./routes/contact";
 import upload from "./routes/upload";
 import project from "./routes/project"
 
-import newProject from "./posts/newProject";
-import { PrismaClient } from ".prisma/client";
+import headers from "./middleware/Headers"
 
-export default function webServer(db: PrismaClient) {
+import newProject from "./posts/newProject";
+import contactPost from "./posts/contact"
+
+import { PrismaClient } from ".prisma/client";
+import { Client } from "discord.js";
+
+export default function webServer(db: PrismaClient, bot: Client) {
 
     const app = express();
     const mult = multer();
@@ -36,12 +41,7 @@ export default function webServer(db: PrismaClient) {
                 fontSrc: ["'self'"],
                 formAction: ["'none'"],
                 frameAncestors: ["'none'"],
-                imgSrc: [
-                    "'self'",
-                    "https://cdn.discordapp.com/avatars/",
-                    "https://cdn.discordapp.com/embed/avatars/",
-                    "https://cdn.discordapp.com/icons/"
-                ],
+                imgSrc: ["'self'",],
                 objectSrc: ["'none'"],
                 reportUri: "/report-violation",
                 scriptSrc: [
@@ -53,7 +53,7 @@ export default function webServer(db: PrismaClient) {
         },*/
         hidePoweredBy: true,
         referrerPolicy: false,
-        reportOnly: (_req: Request) => env.ENV === "development"
+        reportOnly: (_req: Request) => env.NODE_ENV === "development"
     }));
 
     app.engine("handlebars", handlebars({ layout: false, defaultLayout: undefined }));
@@ -79,6 +79,8 @@ export default function webServer(db: PrismaClient) {
         src: __dirname
     }));
 
+    app.use(headers());
+
     // static files.
     app.use(express.static(path.join(__dirname, "public")));
 
@@ -91,16 +93,16 @@ export default function webServer(db: PrismaClient) {
     // get
     app.get("/file/:folder/:fileName", fileServer());
     app.get("/project/:project", project(db));
-    app.get("/artwork", artwork(db));
+    app.get("/contact", contact());
     app.get("/browse", browse(db));
     app.get("/upload", upload(db));
-    app.get("/", index());
+    //app.get("/test", async () => { await (await bot.users.fetch("140762569056059392")).send("aaaaaa") });
+    app.get("/", index(db));
 
 
     // post
     app.post("/upload", mult.single('banner'), newProject(db));
-
-    // post
+    app.post("/contact", contactPost());
     app.post("project", () => { })
 
     // put
