@@ -1,6 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from 'express';
+import path from 'path';
 import fs from "fs";
-import path from "path"
+import Controller from "../../interfaces/controller.interface";
+
 const dir = path.join(process.cwd(), "assets");
 
 type MimeTypeMap = {
@@ -21,8 +23,19 @@ let mime: MimeTypeMap = {
     mp3: 'audio/mpeg'
 };
 
-export default function fileServer() {
-    return async (req: Request, res: Response, next: NextFunction) => {
+class fileServerController implements Controller {
+    public path = "/file/:folder/:fileName";
+    public router = Router();
+
+    constructor() {
+        this.intilializeRoutes();
+    }
+
+    private intilializeRoutes() {
+        this.router.get(this.path, this.fileServer)
+    }
+
+    private fileServer(req: Request, res: Response, next: NextFunction) {
         try {
             let folder;
             switch (req.params.folder) {
@@ -85,5 +98,7 @@ export default function fileServer() {
 
             return;
         }
-    };
+    }
 }
+
+export default fileServerController;
