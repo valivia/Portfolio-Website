@@ -11,6 +11,7 @@ colors.enable();
 
 import dotenv from "dotenv";
 import path from "path";
+import NotFoundException from "./exceptions/notFound";
 dotenv.config();
 const env = process.env
 
@@ -36,25 +37,26 @@ class App {
     public getServer() {
         return this.app;
     }
-
+    
     private initializeMiddlewares() {
-        this.app.use(logger("dev"));
-        this.app.engine("handlebars", handlebars({ layout: false, defaultLayout: undefined }));
-        this.app.set("view engine", "handlebars");
-        this.app.set("views", path.join(__dirname, "views"));
+        this.app.engine("handlebars", handlebars({ defaultLayout: undefined }));
         this.app.use(express.static(path.join(__dirname, "public")));
+        this.app.set("views", path.join(__dirname, "views"));
+        this.app.set("view engine", "handlebars");
         this.app.set("trust proxy", true);
-    }
-
-    private initializeErrorHandling() {
-        this.app.use(errorMiddleware);
+        this.app.use(logger("dev"));
     }
 
     private initializeControllers(controllers: Controller[]) {
         controllers.forEach((controller) => {
-            console.log(` > Loaded controller: ${controller.path}`.yellow)
+            console.log(` - Loaded controller: ${controller.path}`.yellow)
             this.app.use('/', controller.router);
         });
+    }
+
+    private initializeErrorHandling() {
+        this.app.use((_req, _res, next) => { next(new NotFoundException); });
+        this.app.use(errorMiddleware);
     }
 
     private initializeDB() {

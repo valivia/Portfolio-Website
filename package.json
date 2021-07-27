@@ -37,6 +37,7 @@
     "prisma": "^2.24.1"
   },
   "scripts": {
-    "start": "node ./src/server.js"
+    "start": "node ./src/server.js",
+    "startdev": "nodemon ./src/server.js"
   }
 }
