@@ -23,7 +23,7 @@ let mime: MimeTypeMap = {
     mp3: 'audio/mpeg'
 };
 
-class fileServerController implements Controller {
+class FileServerController implements Controller {
     public path = "/file/:folder/:fileName";
     public router = Router();
 
@@ -101,4 +101,4 @@ class fileServerController implements Controller {
     }
 }
 
-export default fileServerController;
+export default FileServerController;
