@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import Controller from "../../interfaces/controller.interface";
 
-class indexController implements Controller {
+class IndexController implements Controller {
     public path = '/';
     public router = Router();
 
@@ -18,4 +18,4 @@ class indexController implements Controller {
     }
 }
 
-export default indexController;
+export default IndexController;
