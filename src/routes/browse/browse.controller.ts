@@ -1,15 +1,17 @@
-import { PrismaClient } from '@prisma/client';
 import { Router, Request, Response, NextFunction } from 'express';
-import { Inject, Service } from 'typedi';
+import { Service } from 'typedi';
 import Controller from "../../interfaces/controller.interface";
+import PrismaRepository from '../../repositories/prisma.repository';
 
 @Service()
 class BrowseController implements Controller {
     public path = '/browse';
     public router = Router();
+    public db;
 
-    constructor(@Inject('prisma.client') private db: PrismaClient) {
-        this.db = db;
+    constructor(private prismaRepo: PrismaRepository) {
+        this.renderBrowse = this.renderBrowse.bind(this);
+        this.db = this.prismaRepo.db;
         this.initializeRoutes();
     }
 
@@ -18,12 +20,12 @@ class BrowseController implements Controller {
         this.router.post(this.path, this.searchProjects)
     }
 
-    private renderBrowse(_req: Request, res: Response, _next: NextFunction) {
-        const content = this.db.project.findMany({
+    private async renderBrowse(_req: Request, res: Response, _next: NextFunction) {
+        const content = await this.db.project.findMany({
             include: { TagLink: { include: { Tags: { include: { Categories: true } } } } }
         });
 
-        res.render("browse", content);
+        res.render("browse", { content });
     }
 
     private searchProjects(_req: Request, _res: Response, _next: NextFunction) {

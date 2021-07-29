@@ -9,9 +9,7 @@ class FileServerController implements Controller {
     public path = "/file/:folder/:fileName";
     public router = Router();
 
-    constructor(
-        private fileServerService: FileServerService
-    ) {
+    constructor(private fileServerService: FileServerService) {
         this.fileServer = this.fileServer.bind(this); // because of bad js binding
         this.initializeRoutes();
     }
@@ -20,7 +18,7 @@ class FileServerController implements Controller {
         this.router.get(this.path, this.fileServer)
     }
 
-    async fileServer (req: Request, res: Response, next: NextFunction) {
+    async fileServer(req: Request, res: Response, next: NextFunction) {
         try {
             this.fileServerService.fileServer(req.params.folder, req.params.fileName, req, res, next);
         } catch (e) {

@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import logger from "morgan";
 import handlebars from "express-handlebars";
 
+
 import Controller from "./interfaces/controller.interface";
 import errorMiddleware from "./middleware/error.middleware";
 
@@ -10,6 +11,7 @@ import NotFoundException from "./exceptions/notFound";
 import { Container } from "typedi";
 import { PrismaClient } from "@prisma/client";
 
+require("colors").enable()
 const env = process.env;
 
 class App {
@@ -21,10 +23,8 @@ class App {
     ) {
         this.app = express();
         this.db = this.initializeDB();
-        
-        Container.set([
-            { id: 'prisma.client', value: this.db },
-        ]);
+
+        Container.set([{ id: 'prisma.client', value: this.db }]);
 
         this.initializeMiddlewares();
         this.initializeControllers(controllers);
@@ -33,7 +33,6 @@ class App {
 
     private initializeDB() {
         return new PrismaClient();
-
     }
 
     private initializeMiddlewares() {
@@ -47,8 +46,8 @@ class App {
 
     private initializeControllers(controllers: Controller[]) {
         controllers.forEach((controller) => {
-            console.log(` - Loaded controller: ${controller.path}`.yellow)
             this.app.use('/', controller.router);
+            console.log(` - Loaded controller: ${controller.path}`.yellow)
         });
     }
 
