@@ -1,43 +1,41 @@
 import express, { Application } from "express";
-import { PrismaClient } from "@prisma/client";
 import logger from "morgan";
 import handlebars from "express-handlebars";
 
 import Controller from "./interfaces/controller.interface";
 import errorMiddleware from "./middleware/error.middleware";
 
-import colors from "colors";
-colors.enable();
-
-import dotenv from "dotenv";
 import path from "path";
 import NotFoundException from "./exceptions/notFound";
-dotenv.config();
-const env = process.env
+import { Container } from "typedi";
+import { PrismaClient } from "@prisma/client";
+
+const env = process.env;
 
 class App {
-    public app: Application;
-    public db: PrismaClient;
+    private db: PrismaClient;
+    private app: Application;
 
-    constructor(controllers: Controller[]) {
+    constructor(
+        controllers: Controller[]
+    ) {
         this.app = express();
         this.db = this.initializeDB();
+        
+        Container.set([
+            { id: 'prisma.client', value: this.db },
+        ]);
 
         this.initializeMiddlewares();
         this.initializeControllers(controllers);
         this.initializeErrorHandling();
     }
 
-    public listen() {
-        this.app.listen(env.PORT, () => {
-            console.log(` > Web server ready at port ${env.PORT} - ${env.NODE_ENV}`.magenta);
-        });
+    private initializeDB() {
+        return new PrismaClient();
+
     }
 
-    public getServer() {
-        return this.app;
-    }
-    
     private initializeMiddlewares() {
         this.app.engine("handlebars", handlebars({ defaultLayout: undefined }));
         this.app.use(express.static(path.join(__dirname, "public")));
@@ -59,10 +57,15 @@ class App {
         this.app.use(errorMiddleware);
     }
 
-    private initializeDB() {
-        return new PrismaClient();
+    public getServer() {
+        return this.app;
     }
 
+    public listen() {
+        this.app.listen(env.PORT, () => {
+            console.log(` > Web server ready at port ${env.PORT} - ${env.NODE_ENV}`.magenta);
+        });
+    }
 }
 
 export default App;

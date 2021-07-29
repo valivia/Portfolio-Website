@@ -1,30 +1,34 @@
+import { PrismaClient } from '@prisma/client';
 import { Router, Request, Response, NextFunction } from 'express';
+import { Inject, Service } from 'typedi';
 import Controller from "../../interfaces/controller.interface";
 
-class browseController implements Controller {
+@Service()
+class BrowseController implements Controller {
     public path = '/browse';
     public router = Router();
 
-    constructor() {
-        this.intilializeRoutes();
+    constructor(@Inject('prisma.client') private db: PrismaClient) {
+        this.db = db;
+        this.initializeRoutes();
     }
 
-    private intilializeRoutes() {
+    private initializeRoutes() {
         this.router.get(this.path, this.renderBrowse)
         this.router.post(this.path, this.searchProjects)
     }
 
     private renderBrowse(_req: Request, res: Response, _next: NextFunction) {
-        const content = db.project.findMany({
+        const content = this.db.project.findMany({
             include: { TagLink: { include: { Tags: { include: { Categories: true } } } } }
         });
 
         res.render("browse", content);
     }
 
-    private searchProjects(req: Request, res: Response, _next: NextFunction) {
-        let query = req.params.query;
+    private searchProjects(_req: Request, _res: Response, _next: NextFunction) {
+        // let query = req.params.query;
     }
 }
 
-export default browseController;
+export default BrowseController;

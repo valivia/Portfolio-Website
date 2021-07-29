@@ -1,3 +1,15 @@
 
 # npm
 node_modules
+
+# tsc output dir
+dist
+
+# env
+.env
+
+# assets
+assets
+
+# public
+src/public
