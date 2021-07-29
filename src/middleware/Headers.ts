@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import { NextFunction, Request, Response } from "express";
 dotenv.config();
-const env = process.env
 
 export default function () {
     return async (req: Request, res: Response, next: NextFunction) => {
