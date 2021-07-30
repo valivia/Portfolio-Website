@@ -45,19 +45,27 @@ class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.set("view engine", "handlebars");
         this.app.set("trust proxy", true);
-        this.app.use(logger("dev"));
+        this.app.use(logger("short"));
+
+        console.log(" ✓ Middleware initialized:".green.bold)
     }
 
     private initializeControllers(controllers: Controller[]) {
+        console.log(" > Loading controllers:".green.bold)
+
         controllers.forEach((controller) => {
             this.app.use('/', controller.router);
-            console.log(` - Loaded controller: ${controller.path}`.yellow)
+            console.log(` - Loaded controller: ${controller.path}`.cyan.italic)
         });
+
+        console.log(" ✓ all controllers loaded:".green.bold)
     }
 
     private initializeErrorHandling() {
         this.app.use((_req, _res, next) => { next(new NotFoundException); });
         this.app.use(errorMiddleware);
+
+        console.log(" ✓ Error handler initialized:".green.bold)
     }
 
     public getServer() {
@@ -66,7 +74,7 @@ class App {
 
     public listen() {
         this.app.listen(env.PORT, () => {
-            console.log(` > Web server ready at port ${env.PORT} - ${env.NODE_ENV}`.magenta);
+            console.log(` > Web server ready at port ${env.PORT} - ${env.NODE_ENV}`.green.bold);
         });
     }
 }
