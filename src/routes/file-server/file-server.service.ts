@@ -5,6 +5,7 @@ import fs from "fs";
 import { Service } from 'typedi';
 import HttpException from '../../exceptions/httpExceptions';
 import NotFoundException from '../../exceptions/notFound';
+import ForbiddenException from '../../exceptions/forbidden';
 
 const dir = path.join(process.cwd(), "assets");
 
@@ -42,12 +43,12 @@ class FileServerService {
 
       // Check if big bad. (user doesnt access files outside of [dir])
       if (file.indexOf(dir + path.sep) !== 0) {
-        throw new HttpException(403, "Forbidden");
+        throw new ForbiddenException;
       }
       
       // check if file exists
       if (!fs.existsSync(file)) {
-        throw new NotFoundException(`File Not Found: ${file}`);
+        throw new NotFoundException(`File Not Found: ${fileName}`);
       }
 
       // all good mang
@@ -83,7 +84,8 @@ class FileServerService {
 
       // If fails.
       stream.on('error', function (e) {
-        next(e);
+        console.error(e);
+        next(undefined);
       });
     }
 }

@@ -22,7 +22,6 @@ class FileServerController implements Controller {
         try {
             this.fileServerService.fileServer(req.params.folder, req.params.fileName, req, res, next);
         } catch (e) {
-            console.error(e);
             next(e);
         }
     }

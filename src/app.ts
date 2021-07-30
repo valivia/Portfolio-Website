@@ -11,7 +11,9 @@ import NotFoundException from "./exceptions/notFound";
 import { Container } from "typedi";
 import { PrismaClient } from "@prisma/client";
 
-require("colors").enable()
+require("colors").enable();
+import colors from "colors"
+colors.enable()
 const env = process.env;
 
 class App {
@@ -36,9 +38,11 @@ class App {
     }
 
     private initializeMiddlewares() {
+        this.app.use(express.json({ type: ["application/json", "application/csp-report"] }));
         this.app.engine("handlebars", handlebars({ defaultLayout: undefined }));
         this.app.use(express.static(path.join(__dirname, "public")));
         this.app.set("views", path.join(__dirname, "views"));
+        this.app.use(express.urlencoded({ extended: true }));
         this.app.set("view engine", "handlebars");
         this.app.set("trust proxy", true);
         this.app.use(logger("dev"));
