@@ -11,18 +11,18 @@
 </head>
 
 <body>
-  <form id="form" action="/upload" method="POST" enctype="multipart/form-data">
+  <form id="form" action="/project" method="POST" enctype="multipart/form-data">
     <label>Name:</label>
     <br>
-    <input type="text" id="name" name="name">
+    <input type="text" id="name" name="Name">
     <br>
     <label>Description:</label>
     <br>
-    <input type="text" name="description">
+    <input type="text" name="Description">
     <br>
     <label>tag:</label>
     <br>
-    <select name="tag" multiple>
+    <select name="Tags" multiple>
       {{#each tags}}
       <option value={{ this.TagID }}>{{ this.Name }}</option>
       {{/each}}
@@ -30,7 +30,7 @@
     <br>
     <label>Image</label>
     <br>
-    <input type="file" name="banner">
+    <input type="file" name="Banner">
     <br>
     <button type="submit">submit!</button>
   </form>

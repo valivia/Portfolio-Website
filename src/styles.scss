@@ -114,8 +114,15 @@ body > * {
         url("/file/s/tbhc_Default.jpg") 2x,
         url("/file/s/tbhc_High.jpg") 1.5x,
         url("/file/s/tbhc_MediumHigh.jpg") 1x,
-        url("/file/s/tbhc_Medium.jpg") .75x,
-        url("/file/s/tbhc_Low.jpg") .25x
+        url("/file/s/tbhc_Medium.jpg") 0.75x,
+        url("/file/s/tbhc_Low.jpg") 0.25x
+    );
+    background-image: -webkit-image-set(
+        url("/file/s/tbhc_Default.jpg") 2x,
+        url("/file/s/tbhc_High.jpg") 1.5x,
+        url("/file/s/tbhc_MediumHigh.jpg") 1x,
+        url("/file/s/tbhc_Medium.jpg") 0.75x,
+        url("/file/s/tbhc_Low.jpg") 0.25x
     );
     background-size: cover;
     height: 100vh;
@@ -124,7 +131,7 @@ body > * {
 
     justify-content: center;
     align-items: center;
-    
+
     font-weight: lighter;
     font-family: "abel";
     font-size: 5vh;
@@ -140,13 +147,20 @@ section {
     background: black url("/file/s/tbhc2_Low.jpg") no-repeat center;
     background-image: image-set(
         url("/file/s/tbhc2_Default.jpg") 2x,
-        url("/file/s/tbhc2_High.jpg") 1.90x,
+        url("/file/s/tbhc2_High.jpg") 1.9x,
         url("/file/s/tbhc2_MediumHigh.jpg") 1.75x,
         url("/file/s/tbhc2_Medium.jpg") 1x,
-        url("/file/s/tbhc2_Low.jpg") .25x
+        url("/file/s/tbhc2_Low.jpg") 0.25x
+    );
+    background-image: -webkit-image-set(
+        url("/file/s/tbhc2_Default.jpg") 2x,
+        url("/file/s/tbhc2_High.jpg") 1.9x,
+        url("/file/s/tbhc2_MediumHigh.jpg") 1.75x,
+        url("/file/s/tbhc2_Medium.jpg") 1x,
+        url("/file/s/tbhc2_Low.jpg") 0.25x
     );
     background-size: cover;
-    
+
     display: grid;
     grid-template-columns: 15% 70% 15%;
     grid-template-rows: 14% 10% 61% 15%;
@@ -174,7 +188,14 @@ section {
         url("/file/s/photography_High.jpg") 1.9x,
         url("/file/s/photography_MediumHigh.jpg") 1.75x,
         url("/file/s/photography_Medium.jpg") 1x,
-        url("/file/s/photography_Low.jpg") .75x
+        url("/file/s/photography_Low.jpg") 0.75x
+    );
+    background-image: -webkit-image-set(
+        url("/file/s/photography_Default.jpg") 2x,
+        url("/file/s/photography_High.jpg") 1.9x,
+        url("/file/s/photography_MediumHigh.jpg") 1.75x,
+        url("/file/s/photography_Medium.jpg") 1x,
+        url("/file/s/photography_Low.jpg") 0.75x
     );
     background-size: cover;
 }
