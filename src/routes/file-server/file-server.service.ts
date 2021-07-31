@@ -60,6 +60,8 @@ class FileServerService {
         // Get mime type.
         const type: string = mime[path.extname(file).slice(1)] || "text/plain";
 
+        res.set("Cache-control", `public, max-age=${60 * 60 * 24 * 7}`);
+
         let stream: fs.ReadStream;
         if (type == "video/mp4" || type == "audio/mpeg") { // is partial content 206
             const range = req.headers.range !== undefined ? req.headers.range : "0";

@@ -1,18 +1,15 @@
+import NotFoundException from "./exceptions/notFound";
 import express, { Application } from "express";
-import logger from "morgan";
+import { PrismaClient } from "@prisma/client";
 import handlebars from "express-handlebars";
-
+import { Container } from "typedi";
+import logger from "morgan";
+import colors from "colors";
+import path from "path";
 
 import Controller from "./interfaces/controller.interface";
 import errorMiddleware from "./middleware/error.middleware";
 
-import path from "path";
-import NotFoundException from "./exceptions/notFound";
-import { Container } from "typedi";
-import { PrismaClient } from "@prisma/client";
-
-require("colors").enable();
-import colors from "colors";
 colors.enable();
 const env = process.env;
 
