@@ -1,21 +1,22 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { Service } from 'typedi';
+import { Router, Request, Response, NextFunction } from "express";
+import { Service } from "typedi";
 import Controller from "../../interfaces/controller.interface";
-import validationMiddleware from '../../middleware/validation.middleware';
-import PrismaRepository from '../../repositories/prisma.repository';
-import ProjectPostDto from './project.post.dto';
-import PostProjectService from './project.post.service';
-const mult = require("multer")();
+import validationMiddleware from "../../middleware/validation.middleware";
+import PrismaRepository from "../../repositories/prisma.repository";
+import ProjectPostDto from "./project.post.dto";
+import multer from "multer";
+import PostProjectService from "./project.post.service";
+const mult = multer();
 
 @Service()
 class ProjectController implements Controller {
-    public path = '/project';
+    public path = "/project";
     public router = Router();
     public db;
 
     constructor(
         private prismaRepo: PrismaRepository,
-        private PostProjectService: PostProjectService
+        private PostService: PostProjectService,
     ) {
         // Local functions.
         this.getUpload = this.getUpload.bind(this);
@@ -28,20 +29,20 @@ class ProjectController implements Controller {
     }
 
     private initializeRoutes() {
-        this.router.get(`${this.path}/new`, this.getUpload)
-        this.router.get(`${this.path}/:id`, this.getProject)
-        this.router.post(this.path, mult.single("Banner"), validationMiddleware(ProjectPostDto), this.postProject)
-        this.router.delete(this.path, this.deleteProject)
+        this.router.get(`${this.path}/new`, this.getUpload);
+        this.router.get(`${this.path}/:id`, this.getProject);
+        this.router.post(this.path, mult.single("Banner"), validationMiddleware(ProjectPostDto), this.postProject);
+        this.router.delete(this.path, this.deleteProject);
     }
 
     private async getProject(req: Request, res: Response, _next: NextFunction) {
         const id = parseInt(req.params.id);
-        let content = await this.db.project.findFirst({
-            where: { ID: id, },
+        const content = await this.db.project.findFirst({
+            where: { ID: id },
             include: {
                 SubContent: true,
-                TagLink: { include: { Tags: { include: { Categories: true } } } }
-            }
+                TagLink: { include: { Tags: { include: { Categories: true } } } },
+            },
         });
 
         res.render("project", {
@@ -52,12 +53,12 @@ class ProjectController implements Controller {
     }
 
     private postProject(req: Request, res: Response, next: NextFunction) {
-        this.PostProjectService.postProject(req, res, this.db)
-            .catch((e) => { next(e) });
+        this.PostService.postProject(req, res, this.db)
+            .catch((e: Error) => { next(e); });
     }
 
-    private deleteProject(req: Request, res: Response, _next: NextFunction) {
-
+    private deleteProject(_req: Request, _res: Response, _next: NextFunction) {
+        return;
     }
 
     private async getUpload(_req: Request, res: Response, _next: NextFunction) {

@@ -1,34 +1,34 @@
-import ServerErrorException from '../../exceptions/serverError';
-import { PrismaClient, Project_Status } from '@prisma/client';
-import { Request, Response } from 'express';
+import ServerErrorException from "../../exceptions/serverError";
+import { PrismaClient, Project_Status } from "@prisma/client";
+import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { Service } from "typedi";
 import sharp from "sharp";
 import fs from "fs";
-import HttpException from '../../exceptions/httpExceptions';
-
-require('dotenv').config();
+import HttpException from "../../exceptions/httpExceptions";
+import env from "dotenv";
+env.config();
 
 @Service()
 class PostProjectService {
-    public async postProject(req: Request, res: Response, db: PrismaClient) {
-        let { Name, Description, Tags } = req.body
+    public async postProject(req: Request, res: Response, db: PrismaClient): Promise<void> {
+        let { Name, Description, Tags } = req.body;
 
-        console.log(`${Name} ${Description} ${Tags}`)
+        console.log(`${Name} ${Description} ${Tags}`);
 
         if (!req?.file?.buffer) throw new HttpException(400, "No image attached.");
 
 
-        if (typeof Tags == "string") { Tags = [Tags] }
+        if (typeof Tags == "string") { Tags = [Tags]; }
 
-        let tagArray: ITags[] = [];
+        const tagArray: ITags[] = [];
         Tags.forEach((tag: number | string) => {
             tag = parseInt(tag as string);
             if (!Number.isFinite(tag)) {
                 res.send("Invalid tags.").status(400);
                 return;
             }
-            tagArray.push({ TagID: tag })
+            tagArray.push({ TagID: tag });
         });
 
         const fileName = uuidv4();
@@ -41,18 +41,18 @@ class PostProjectService {
                 Status: Project_Status.unknown,
                 TagLink: {
                     createMany: {
-                        data: tagArray
-                    }
-                }
+                        data: tagArray,
+                    },
+                },
             },
-            include: { TagLink: true }
+            include: { TagLink: true },
         });
 
         if (!await this.makeAssets(req.file.buffer, fileName)) {
-            throw new ServerErrorException()
+            throw new ServerErrorException();
         }
 
-        res.status(200).redirect(`/project/${project.ID}`)
+        res.status(200).redirect(`/project/${project.ID}`);
     }
 
     public async makeAssets(buffer: Buffer, fileName: string): Promise<boolean> {
@@ -68,41 +68,41 @@ class PostProjectService {
             throw {
                 err,
                 message: `Failed to save the resized assets.`,
-                type: `WRITE_ERROR`
-            }
+                type: `WRITE_ERROR`,
+            };
         }
     }
 
     public async resizeImage(input: Buffer, scale: number): Promise<Buffer> {
-        if (scale < .1 || scale > 1) throw { message: `Wrong scale size ${scale}`, type: `RESIZE_ERROR` }
+        if (scale < 0.1 || scale > 1) throw { message: `Wrong scale size ${scale}`, type: `RESIZE_ERROR` };
         try {
 
             const baseImage = sharp(input);
             const metadata = await baseImage.metadata();
 
-            let width = Math.round(metadata.width as number * scale);
-            let height = Math.round(metadata.height as number * scale)
+            const width = Math.round(metadata.width as number * scale);
+            const height = Math.round(metadata.height as number * scale);
 
             console.log(`${width} x ${height}`);
 
-            let output = await sharp(input)
-                .withMetadata({ exif: { IFD0: { Copyright: process.env.AUTHOR, } } })
+            const output = await sharp(input)
+                .withMetadata({ exif: { IFD0: { Copyright: process.env.AUTHOR } } })
                 .resize(width, height)
                 .toFormat("jpg")
-                .toBuffer()
+                .toBuffer();
 
             return output;
         } catch (err) {
             throw {
                 err,
                 message: "Failed to resize the assets",
-                type: "RESIZE_ERROR"
-            }
+                type: "RESIZE_ERROR",
+            };
         }
     }
 }
 
-export default PostProjectService
+export default PostProjectService;
 
 interface ITags {
     TagID: number;

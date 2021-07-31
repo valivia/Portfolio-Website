@@ -2,7 +2,7 @@ import HttpException from "./httpExceptions";
 
 
 class ForbiddenException extends HttpException {
-    constructor(message: string = "Forbidden") {
+    constructor(message = "Forbidden") {
         super(403, message);
     }
 }

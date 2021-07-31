@@ -8,7 +8,7 @@ class ProjectPostDto {
     public Description: string;
 
     @Length(1, 1, { each: true })
-    public Tags: Number[];
+    public Tags: number[];
 }
 
 export default ProjectPostDto;

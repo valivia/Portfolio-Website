@@ -1,15 +1,15 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { Service } from 'typedi';
-import ServerErrorException from '../../exceptions/serverError';
+import { Router, Request, Response, NextFunction } from "express";
+import { Service } from "typedi";
+import ServerErrorException from "../../exceptions/serverError";
 import Controller from "../../interfaces/controller.interface";
-import validationMiddleware from '../../middleware/validation.middleware';
-import PrismaRepository from '../../repositories/prisma.repository';
-import EmailService from '../../util/email.service';
-import ContactDto from './contact.dto';
+import validationMiddleware from "../../middleware/validation.middleware";
+import PrismaRepository from "../../repositories/prisma.repository";
+import EmailService from "../../util/email.service";
+import ContactDto from "./contact.dto";
 
 @Service()
 class ContactController implements Controller {
-    public path = '/contact';
+    public path = "/contact";
     public router = Router();
     public db;
 
@@ -20,8 +20,8 @@ class ContactController implements Controller {
     }
 
     private initializeRoutes() {
-        this.router.get(this.path, this.getContact)
-        this.router.post(this.path, validationMiddleware(ContactDto), this.postContact)
+        this.router.get(this.path, this.getContact);
+        this.router.post(this.path, validationMiddleware(ContactDto), this.postContact);
     }
 
     private async getContact(_req: Request, res: Response, _next: NextFunction) {
@@ -36,7 +36,7 @@ class ContactController implements Controller {
 
             res.status(200).send("Email sent");
         } catch {
-            next(new ServerErrorException())
+            next(new ServerErrorException());
         }
     }
 }

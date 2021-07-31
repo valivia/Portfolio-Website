@@ -1,5 +1,5 @@
-import { Transporter } from 'nodemailer';
-import { Service } from 'typedi';
+import { Transporter } from "nodemailer";
+import { Service } from "typedi";
 import nodemailer from "nodemailer";
 require("dotenv").config();
 const env = process.env;
@@ -25,13 +25,13 @@ class EmailService {
         });
     }
 
-    public async sendEmail(subject: string, content: string) {
-        await this.transporter.sendMail({
+    public async sendEmail(subject: string, content: string): Promise<string> {
+        return await this.transporter.sendMail({
             from: env.EMAIL_FROM,
             to: env.EMAIL_TARGET,
             subject: subject,
-            text: content
-        })
+            text: content,
+        });
     }
 
 

@@ -12,8 +12,8 @@ import { Container } from "typedi";
 import { PrismaClient } from "@prisma/client";
 
 require("colors").enable();
-import colors from "colors"
-colors.enable()
+import colors from "colors";
+colors.enable();
 const env = process.env;
 
 class App {
@@ -21,12 +21,12 @@ class App {
     private app: Application;
 
     constructor(
-        controllers: Controller[]
+        controllers: Controller[],
     ) {
         this.app = express();
         this.db = this.initializeDB();
 
-        Container.set([{ id: 'prisma.client', value: this.db }]);
+        Container.set([{ id: "prisma.client", value: this.db }]);
 
         this.initializeMiddlewares();
         this.initializeControllers(controllers);
@@ -47,32 +47,32 @@ class App {
         this.app.set("trust proxy", true);
         this.app.use(logger("short"));
 
-        console.log(" ✓ Middleware initialized:".green.bold)
+        console.log(" ✓ Middleware initialized:".green.bold);
     }
 
     private initializeControllers(controllers: Controller[]) {
-        console.log(" > Loading controllers:".green.bold)
+        console.log(" > Loading controllers:".green.bold);
 
         controllers.forEach((controller) => {
-            this.app.use('/', controller.router);
-            console.log(` - Loaded controller: ${controller.path}`.cyan.italic)
+            this.app.use("/", controller.router);
+            console.log(` - Loaded controller: ${controller.path}`.cyan.italic);
         });
 
-        console.log(" ✓ all controllers loaded:".green.bold)
+        console.log(" ✓ all controllers loaded:".green.bold);
     }
 
     private initializeErrorHandling() {
         this.app.use((_req, _res, next) => { next(new NotFoundException); });
         this.app.use(errorMiddleware);
 
-        console.log(" ✓ Error handler initialized:".green.bold)
+        console.log(" ✓ Error handler initialized:".green.bold);
     }
 
-    public getServer() {
+    public getServer(): Application {
         return this.app;
     }
 
-    public listen() {
+    public listen(): void {
         this.app.listen(env.PORT, () => {
             console.log(` > Web server ready at port ${env.PORT} - ${env.NODE_ENV}`.green.bold);
         });
