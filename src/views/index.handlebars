@@ -28,13 +28,14 @@
         {{#each photography }}
         <div class="square">
           <div class="galleryContent">
-            <img decoding="async" loading="lazy" id="{{this.PostID}}" srcset="
-        /file/a/{{ this.FileName }}_Default.jpg 2x,
-        /file/a/{{ this.FileName }}_High.jpg 1.90x,
-        /file/a/{{ this.FileName }}_MediumHigh.jpg 1.75x,
-        /file/a/{{ this.FileName }}_Medium.jpg 1x,
-        /file/a/{{ this.FileName }}_Low.jpg .25x
-        " src="/file/a/{{ this.FileName }}_Low.jpg">
+            <picture>
+              <source srcset="/file/a/{{ this.FileName }}_Default.jpg 3840w,
+                  /file/a/{{ this.FileName }}_High.jpg 2880w,
+                  /file/a/{{ this.FileName }}_MediumHigh.jpg 1440w,
+                  /file/a/{{ this.FileName }}_Medium.jpg 1920w,
+                  /file/a/{{ this.FileName }}_Low.jpg 1080w">
+              <img decoding="async" loading="lazy" id="{{this.PostID}}" src="/file/a/{{ this.FileName }}_Low.jpg">
+            </picture>
           </div>
         </div>
         {{/each}}
