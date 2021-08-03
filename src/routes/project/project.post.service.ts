@@ -88,7 +88,9 @@ class PostProjectService {
             const output = await sharp(input)
                 .withMetadata({ exif: { IFD0: { Copyright: process.env.AUTHOR } } })
                 .resize(width, height)
-                .toFormat("jpg")
+                .jpeg({
+                    mozjpeg: true,
+                })
                 .toBuffer();
 
             return output;

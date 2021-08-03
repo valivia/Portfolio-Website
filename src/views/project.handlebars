@@ -1,12 +1,17 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#B5A691" />
 
-  <title>{{ content.Name }}</title>
+  <meta name="description" content="{{ project.Description }}">
+
+  <title>{{ project.Name }}</title>
 
   <link rel="stylesheet" href="/styles.css">
+  <link rel="font" href="/abel.tff">
   <script src="/jquery.js"></script>
   <script src="/script.js"></script>
 
@@ -15,21 +20,59 @@
 
 <body>
   {{> topnav }}
-  <div class="subheader" style="background-image: url('/file/a/{{content.FileName}}_MediumHigh.jpg');">
-    <h1>{{content.Name}}</h1>
+  <div class="subheader" style="background-image: url('/file/a/{{project.FileName}}_MediumHigh.jpg');">
+    <h1 class="projectH1 noselect">{{project.Name}}</h1>
   </div>
-  <div class="content">
-    description:
-    <br>
-    {{ content.Description}}
-    <br>
-    tags:
-    <br>
-    {{#each tags }}
-    {{ this.Name }}
-    {{/each}}
-  </div>
+  <main class="content project">
+    <h1>{{ project.Name }}</h1>
+    {{#if project.Description }}
+    {{ project.Description }}
+    {{^}}
+    No description provided.
+    {{/if}}
+    <div class="tags">
+      {{#each tags }}
+      <a class="tag noselect" href="/browse?tag={{this.TagID}}">{{ this.Name }}</a>
+      {{/each}}
+    </div>
+  </main>
   {{> footer }}
 </body>
+<style>
+  .projectH1 {
+    border-style: solid;
+    border-color: #B5A691;
+    padding-right: 3vw;
+    padding-left: 3vw;
+    font-size: 6vw;
+    font-weight: 100;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1vw;
+  }
+
+  .tag,
+  .tag:link,
+  .tag:visited {
+    text-decoration: none;
+    color: #B5A691;
+    padding: .5vw;
+    margin: .1vw;
+    background-color: #080808;
+    text-transform: uppercase;
+  }
+
+  .tag:hover {
+    color: #887d6d;
+  }
+
+  .project {
+    font-family: "abel";
+    padding: 3vw;
+  }
+</style>
 
 </html>

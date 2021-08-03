@@ -6,6 +6,7 @@ import PrismaRepository from "../../repositories/prisma.repository";
 import ProjectPostDto from "./project.post.dto";
 import multer from "multer";
 import PostProjectService from "./project.post.service";
+import GetProjectService from "./project.get.service";
 const mult = multer();
 
 @Service()
@@ -16,6 +17,7 @@ class ProjectController implements Controller {
 
     constructor(
         private prismaRepo: PrismaRepository,
+        private getService: GetProjectService,
         private PostService: PostProjectService,
     ) {
         // Local functions.
@@ -35,21 +37,12 @@ class ProjectController implements Controller {
         this.router.delete(this.path, this.deleteProject);
     }
 
-    private async getProject(req: Request, res: Response, _next: NextFunction) {
-        const id = parseInt(req.params.id);
-        const content = await this.db.project.findFirst({
-            where: { ID: id },
-            include: {
-                SubContent: true,
-                TagLink: { include: { Tags: { include: { Categories: true } } } },
-            },
-        });
-
-        res.render("project", {
-            content: content,
-            subcontent: content?.SubContent,
-            tags: content?.TagLink.map(r => r.Tags),
-        });
+    private async getProject(req: Request, res: Response, next: NextFunction) {
+        try {
+            this.getService.getproject(req, res, this.db).catch((e: Error) => { next(e); });
+        } catch (e) {
+            next(e);
+        }
     }
 
     private postProject(req: Request, res: Response, next: NextFunction) {

@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#B5A691" />
 
   <title>Gallery</title>
 
@@ -16,20 +18,21 @@
 <body>
   {{> topnav }}
   <div class="subheader">
+    Gallery<br>ᐯ
   </div>
 
   <div class="content square-container">
     {{#each content }}
     <div class="square">
-      <div class="galleryContent">
-        <img decoding="async" loading="lazy" id="{{this.ID}}" srcset="
-        /file/a/{{ this.FileName }}_Default.jpg 2x,
-        /file/a/{{ this.FileName }}_High.jpg 1.90x,
-        /file/a/{{ this.FileName }}_MediumHigh.jpg 1.75x,
-        /file/a/{{ this.FileName }}_Medium.jpg 1x,
-        /file/a/{{ this.FileName }}_Low.jpg .25x
-        " src="/file/a/{{ this.FileName }}_Low.jpg">
-      </div>
+      <picture class="galleryContent">
+        <source srcset="/file/a/{{ this.FileName }}_Default.jpg 3840w,
+                  /file/a/{{ this.FileName }}_High.jpg 2880w,
+                  /file/a/{{ this.FileName }}_MediumHigh.jpg 1440w,
+                  /file/a/{{ this.FileName }}_Medium.jpg 1920w,
+                  /file/a/{{ this.FileName }}_Low.jpg 1080w">
+        <img decoding="async" loading="lazy" id="{{this.ID}}" id="{{this.PostID}}"
+          src="/file/a/{{ this.FileName }}_Low.jpg" alt="{{ this.Name }}">
+      </picture>
     </div>
     {{/each}}
   </div>
