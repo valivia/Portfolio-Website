@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { Service } from "typedi";
 import Controller from "../../interfaces/controller.interface";
 import PrismaRepository from "../../repositories/prisma.repository";
+import BrowseGetService from "./browse.get.service";
 
 @Service()
 class BrowseController implements Controller {
@@ -9,7 +10,7 @@ class BrowseController implements Controller {
     public router = Router();
     public db;
 
-    constructor(private prismaRepo: PrismaRepository) {
+    constructor(private prismaRepo: PrismaRepository, private browseGetService: BrowseGetService) {
         this.renderBrowse = this.renderBrowse.bind(this);
         this.db = this.prismaRepo.db;
         this.initializeRoutes();
@@ -20,12 +21,12 @@ class BrowseController implements Controller {
         this.router.post(this.path, this.searchProjects);
     }
 
-    private async renderBrowse(_req: Request, res: Response, _next: NextFunction) {
-        const content = await this.db.project.findMany({
-            include: { TagLink: { include: { Tags: { include: { Categories: true } } } } },
-        });
-
-        res.render("browse", { content });
+    private async renderBrowse(req: Request, res: Response, next: NextFunction) {
+        try {
+            this.browseGetService.browseGet(req, res, this.db);
+        } catch (e) {
+            next(e);
+        }
     }
 
     private searchProjects(_req: Request, _res: Response, _next: NextFunction) {
