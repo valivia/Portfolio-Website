@@ -11,7 +11,7 @@ class ContactDto {
     @IsEmail()
     public email: string;
 
-    @Length(3, 24)
+    @Length(3, 32)
     public subject: string;
 
     @Length(16, 512)
