@@ -12,6 +12,7 @@ import { Container } from "typedi";
 import BrowseController from "./routes/browse/browse.controller";
 import ProjectController from "./routes/project/project.controller";
 import ContactController from "./routes/contact/contact.controller";
+import aboutController from "./routes/about/about.controller";
 
 const controllers = [
     Container.get(IndexController),
@@ -19,6 +20,7 @@ const controllers = [
     Container.get(BrowseController),
     Container.get(ProjectController),
     Container.get(ContactController),
+    Container.get(aboutController),
 ];
 
 const app = new App(controllers);

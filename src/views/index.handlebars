@@ -10,7 +10,6 @@
   <meta name="google-site-verification" content="haESfl9n2k-TL_02Le4baHKelO3VvW2zV2OS_fm4aHo" />
 
   <link rel="stylesheet" href="/styles.css">
-  <script async src="/jquery.js"></script>
   <script src="/script.js"></script>
 
 </head>
@@ -35,7 +34,8 @@
                   /file/a/{{ this.FileName }}_MediumHigh.jpg 1440w,
                   /file/a/{{ this.FileName }}_Medium.jpg 1920w,
                   /file/a/{{ this.FileName }}_Low.jpg 1080w">
-              <img decoding="async" loading="lazy" id="{{this.PostID}}" src="/file/a/{{ this.FileName }}_Low.jpg">
+              <img decoding="async" width="3840" height="2160" loading="lazy" id="{{this.PostID}}"
+                src="/file/a/{{ this.FileName }}_Low.jpg" alt="{{ this.Name }}">
             </picture>
           </div>
         </div>

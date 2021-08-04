@@ -30,9 +30,9 @@ class ContactController implements Controller {
 
     private postContact(req: Request, res: Response, next: NextFunction) {
         try {
-            const { email, subject, message }: ContactDto = req.body;
+            const { firstName, lastName, email, subject, message }: ContactDto = req.body;
             const mailService = new EmailService();
-            mailService.sendEmail(subject, `message:\n${message}\nsent by: \n${email}`);
+            mailService.sendEmail(subject, `message:\n${message}\nsent by:\n${firstName} ${lastName}\n${email}`);
 
             res.status(200).send("Email sent");
         } catch {

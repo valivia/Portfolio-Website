@@ -9,7 +9,6 @@
   <title>Gallery</title>
 
   <link rel="stylesheet" href="/styles.css">
-  <script src="/jquery.js"></script>
   <script src="/script.js"></script>
 
 </head>
@@ -23,7 +22,7 @@
 
   <div class="content square-container">
     {{#each content }}
-    <div class="square">
+    <a href="/project/{{ this.ID }}" class="square">
       <picture class="galleryContent">
         <source srcset="/file/a/{{ this.FileName }}_Default.jpg 3840w,
                   /file/a/{{ this.FileName }}_High.jpg 2880w,
@@ -33,7 +32,7 @@
         <img decoding="async" loading="lazy" id="{{this.ID}}" id="{{this.PostID}}"
           src="/file/a/{{ this.FileName }}_Low.jpg" alt="{{ this.Name }}">
       </picture>
-    </div>
+    </a>
     {{/each}}
   </div>
 
