@@ -2,9 +2,7 @@
     box-sizing: border-box;
 }
 
-$text: rgb(207, 207, 181);
-$text: rgb(187, 187, 114);
-$text1: rgb(181, 166, 145);
+$text: rgb(181, 166, 145);
 
 @font-face {
     font-family: "tbhc";
@@ -34,7 +32,7 @@ html::-webkit-scrollbar {
 }
 
 body > * {
-    color: $text1;
+    color: $text;
     text-transform: uppercase;
     /* font-size: 2.125rem; */
     letter-spacing: 3px;
@@ -63,7 +61,7 @@ body > * {
         //font-size: 1.2rem;
         font-family: "abel";
         font-size: 140%;
-        color: $text1;
+        color: $text;
         cursor: pointer;
         //font-weight: bold;
     }
@@ -223,6 +221,7 @@ section {
     margin: 1px;
     border-color: black;
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .square::before {
@@ -249,6 +248,132 @@ section {
         vertical-align: center;
     }
 }
+
+// PROJECT
+
+.projectH1 {
+    border-style: solid;
+    border-color: $text;
+    padding-right: 3vw;
+    padding-left: 3vw;
+    font-size: 6vw;
+    font-weight: 100;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1vw;
+}
+
+.tag,
+.tag:link,
+.tag:visited {
+    text-decoration: none;
+    color: $text;
+    padding: 0.5vw;
+    margin: 0.1vw;
+    background-color: #080808;
+    text-transform: uppercase;
+}
+
+.tag:hover {
+    color: #887d6d;
+}
+
+.project {
+    font-family: "abel";
+    padding: 3vw;
+}
+
+// CONTACT
+
+.contactContainer {
+    font-family: "abel";
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background: black url("/file/s/tbhc_Low.jpg") no-repeat center;
+    background-image: image-set(
+        url("/file/s/tbhc_Default.jpg") 2x,
+        url("/file/s/tbhc_High.jpg") 1.5x,
+        url("/file/s/tbhc_MediumHigh.jpg") 1x,
+        url("/file/s/tbhc_Medium.jpg") 0.75x,
+        url("/file/s/tbhc_Low.jpg") 0.25x
+    );
+    background-image: -webkit-image-set(
+        url("/file/s/tbhc_Default.jpg") 2x,
+        url("/file/s/tbhc_High.jpg") 1.5x,
+        url("/file/s/tbhc_MediumHigh.jpg") 1x,
+        url("/file/s/tbhc_Medium.jpg") 0.75x,
+        url("/file/s/tbhc_Low.jpg") 0.25x
+    );
+}
+
+.contactH1 {
+    font-size: 5vw;
+    font-weight: 100;
+}
+
+.contactForm {
+    width: 50%;
+    height: 50%;
+
+    & > * {
+        padding: 0.2vw;
+    }
+}
+
+fieldset {
+    border-style: none;
+    width: 100%;
+    display: flex;
+    gap: 2em;
+    padding: 0;
+    margin: 0;
+}
+
+textarea,
+input[type="text"],
+input[type="email"] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 3px solid #ccc;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+    outline: none;
+    resize: none;
+
+    font-family: "abel";
+    font-weight: 100;
+    font-size: 100%;
+
+    &:focus {
+        border: 3px solid #805315;
+    }
+}
+
+input[type="submit"] {
+    background-color: transparent;
+    border-style: solid;
+    border-color: $text;
+    color: $text;
+    padding: 0.5vw 1.2vw;
+    font-family: "abel";
+    font-weight: 100;
+    font-size: 100%;
+
+    &:hover {
+        color: black;
+        background-color: $text;
+    }
+}
+
 // FOOTER
 
 .footer {
@@ -327,5 +452,12 @@ a:active {
     .subheader {
         height: 30%;
         width: 100%;
+    }
+
+    // CONTACT
+    
+    fieldset {
+        flex-direction: column;
+        gap: 0;
     }
 }
