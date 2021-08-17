@@ -1,0 +1,82 @@
+$text: rgb(181, 166, 145);
+
+// CONTACT
+
+.contactContainer {
+  font-family: "abel";
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background: black url("http://localhost:3001/file/s/tbhc_Default.jpg") no-repeat center;
+  background-size: cover;
+}
+
+.contactH1 {
+  font-size: 5vw;
+  font-weight: 100;
+}
+
+.contactForm {
+  width: 50%;
+  height: 50%;
+
+  & > * {
+      padding: 0.2vw;
+  }
+}
+
+.fieldset {
+  border-style: none;
+  width: 100%;
+  display: flex;
+  gap: 2em;
+  padding: 0;
+  margin: 0;
+}
+
+.textInput {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 3px solid #ccc;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  outline: none;
+  resize: none;
+
+  font-family: "abel";
+  font-weight: 100;
+  font-size: 100%;
+
+  &:focus {
+      border: 3px solid #805315;
+  }
+}
+
+.submit {
+  background-color: transparent;
+  border-style: solid;
+  border-color: $text;
+  color: $text;
+  padding: 0.5vw 1.2vw;
+  font-family: "abel";
+  font-weight: 100;
+  font-size: 100%;
+
+  &:hover {
+      color: black;
+      background-color: $text;
+  }
+}
+
+@media only screen and (orientation: portrait) {
+  .fieldset {
+    flex-direction: column;
+    gap: 0;
+  }
+}

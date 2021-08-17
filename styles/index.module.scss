@@ -1,0 +1,25 @@
+// SUBHEADER
+
+.subheader {
+  background: black url("/tbhc.jpg") no-repeat center;
+  background-size: cover;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  font-weight: lighter;
+  font-family: "abel";
+  font-size: 5vh;
+  text-align: center;
+}
+
+@media only screen and (orientation: portrait) {
+  .subheader {
+    padding: 20% 0;
+    height: 30%;
+    width: 100%;
+  }
+}
