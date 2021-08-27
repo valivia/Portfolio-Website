@@ -345,6 +345,7 @@ section {
     align-items: center;
 
     background: black url("/file/s/tbhc_Low.jpg") no-repeat center;
+    background-size: cover;
     background-image: image-set(
         url("/file/s/tbhc_Default.jpg") 2x,
         url("/file/s/tbhc_High.jpg") 1.5x,
