@@ -13,16 +13,19 @@ class GetProjectService {
         const project = await db.project.findFirst({
             where: { ID: id },
             include: {
-                SubContent: true,
+                Assets: true,
                 TagLink: { include: { Tags: { include: { Categories: true } } } },
             },
         });
 
         if (project === null) throw new NotFoundException();
 
+
+        console.log(project);
         res.render("project", {
             project,
-            subcontent: project?.SubContent,
+            content: project?.Assets,
+            banner: project.Assets.find(asset => asset.Thumbnail === true),
             tags: project?.TagLink.map(r => r.Tags),
         });
     }

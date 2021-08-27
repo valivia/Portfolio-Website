@@ -6,39 +6,83 @@
 
   <title>Upload</title>
 
+  <link rel="preload" href="/styles.css" as="style">
+  <link rel="preload" href="/abel.ttf" as="font" type="font/ttf" crossorigin>
+
+  <link rel="stylesheet" href="/styles.css">
+
 </head>
 
 <body>
-  <form id="form" action="/project" method="POST" enctype="multipart/form-data">
-    <label>Name:</label>
-    <br>
-    <input type="text" id="name" name="Name">
-    <br>
-    <label>Description:</label>
-    <br>
-    <input type="text" name="Description">
-    <br>
-    <label>tag:</label>
-    <br>
-    <select name="Tags" multiple>
-      {{#each tags}}
-      <option value={{ this.TagID }}>{{ this.Name }}</option>
-      {{/each}}
-    </select>
-    <br>
-    <label>Image</label>
-    <br>
-    <input type="file" name="Banner">
-    <br>
-    <input type="file" name="Gallery">
-    <br>
-    <input type="file" name="Gallery">
-    <br>
+  <main class="uploadLayout">
+    <form class="contactForm" action="/project" method="POST" enctype="multipart/form-data">
+      <h2>New project</h2>
+      <div>
+        <label>Name:</label>
+        <input type="text" id="name" name="Name">
+      </div>
 
-    <button type="submit">submit!</button>
-  </form>
+      <div>
+        <label>Image</label>
+        <input type="file" name="Banner">
+      </div>
 
-  <button id="button">clicc</button>
+      <div>
+        <label>Description:</label>
+        <textarea name="Description"></textarea>
+      </div>
+
+      <div>
+        <label>tag:</label>
+        <select name="Tags" multiple>
+          {{#each tags}}
+          <option value={{ this.TagID }}>{{ this.Name }}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div>
+        <input type="submit" value="Submit!">
+      </div>
+    </form>
+
+    <form class="contactForm" action="/content" method="POST" enctype="multipart/form-data">
+      <h2>Add content</h2>
+      <div>
+        <label>Project</label>
+        <select name="ID">
+          {{#each projects}}
+          <option value={{ this.ID }}>{{this.ID}} - {{ this.Name }}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div>
+        <label for="Image">Image</label>
+        <input type="file" name="Image">
+      </div>
+
+      <div>
+        <label>Description:</label>
+        <textarea name="Description"></textarea>
+      </div>
+
+      <div>
+        <label>Display in gallery?</label>
+        <input type="checkbox" name="Display">
+      </div>
+
+      <div>
+        <input type="submit" value="Submit!">
+      </div>
+    </form>
+  </main>
 </body>
+<style>
+  body,
+  html {
+    background-color: rgb(68, 68, 68);
+  }
+</style>
 
 </html>

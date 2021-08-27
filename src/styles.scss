@@ -37,6 +37,7 @@ body > * {
     /* font-size: 2.125rem; */
     letter-spacing: 3px;
     font-weight: normal;
+    font-family: "abel";
 }
 
 // HEADER
@@ -217,17 +218,20 @@ section {
 .square {
     position: relative;
     flex-basis: calc(25% - 2px);
-    border: 1px solid;
+    border: 1px solid black;
     margin: 1px;
-    border-color: black;
     box-sizing: border-box;
     cursor: pointer;
-}
 
-.square::before {
-    content: "";
-    display: block;
-    padding-top: 100%;
+    &::before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+    }
+
+    &:hover {
+        border: 1px solid $text;
+    }
 }
 
 .square .galleryContent {
@@ -260,6 +264,23 @@ section {
     font-weight: 100;
 }
 
+.projectHeader {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: unset;
+    align-items: unset;
+}
+
+.projectBannerText {
+    font-weight: 100;
+    font-size: 4vh;
+
+    &:hover {
+        color: rgb(150, 133, 109);
+        cursor: pointer;
+    }
+}
+
 .tags {
     display: flex;
     flex-wrap: wrap;
@@ -283,7 +304,34 @@ section {
 
 .project {
     font-family: "abel";
+    padding: 0;
+}
+
+.projectInfo {
     padding: 3vw;
+}
+
+.extraProjectContent {
+    padding: 1vw 7vw;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.extraProjectContent > picture {
+    width: 100%;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1vh 0vh;
+
+    & > img {
+        width: 100%;
+        object-fit: cover;
+        vertical-align: center;
+    }
 }
 
 // CONTACT
@@ -338,7 +386,9 @@ fieldset {
 
 textarea,
 input[type="text"],
-input[type="email"] {
+input[type="email"],
+input[type="file"],
+select {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -425,6 +475,25 @@ a:active {
     text-decoration: none;
 }
 
+//  UPLOAD
+
+.uploadLayout {
+    width: 100vw;
+    min-height: 100vh;
+    padding: 1vw;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5vw;
+}
+
+.uploadLayout > form {
+    flex-basis: calc(50% - 20px);
+    box-sizing: border-box;
+    margin: 2px;
+    background-color: #080808;
+    padding: 1vw;
+}
+
 @media only screen and (orientation: portrait) {
     .topnav {
         grid-template-columns: 3% 16% 3% 16% 7% 10% 7% 16% 3% 16% 3%;
@@ -453,11 +522,22 @@ a:active {
         height: 30%;
         width: 100%;
     }
+    // PROJECT
+
+    .project {
+        padding: 3vw 0vw;
+    }
 
     // CONTACT
-    
+
     fieldset {
         flex-direction: column;
         gap: 0;
+    }
+
+    // UPLOAD
+
+    .uploadLayout > form {
+        flex-basis: calc(100%);
     }
 }

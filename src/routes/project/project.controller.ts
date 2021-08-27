@@ -7,6 +7,9 @@ import ProjectPostDto from "./project.post.dto";
 import multer from "multer";
 import PostProjectService from "./project.post.service";
 import GetProjectService from "./project.get.service";
+import authMiddleware from "../../middleware/auth.middleware";
+import PostProjectContentService from "./project.content.post.service";
+import ProjectContentPostDto from "./project.content.post.dto";
 const mult = multer();
 
 @Service()
@@ -18,46 +21,53 @@ class ProjectController implements Controller {
     constructor(
         private prismaRepo: PrismaRepository,
         private getService: GetProjectService,
-        private PostService: PostProjectService,
+        private postService: PostProjectService,
+        private ContentService: PostProjectContentService,
     ) {
         // Local functions.
-        this.getUpload = this.getUpload.bind(this);
-        this.getProject = this.getProject.bind(this);
-        this.postProject = this.postProject.bind(this);
-        this.deleteProject = this.deleteProject.bind(this);
+        this.get_upload = this.get_upload.bind(this);
+        this.get_project = this.get_project.bind(this);
+        this.post_project = this.post_project.bind(this);
+        this.delete_project = this.delete_project.bind(this);
+        this.post_content = this.post_content.bind(this);
 
         this.db = this.prismaRepo.db;
         this.initializeRoutes();
     }
 
     private initializeRoutes() {
-        this.router.get(`${this.path}/new`, this.getUpload);
-        this.router.get(`${this.path}/:id`, this.getProject);
-        this.router.post(this.path, mult.single("Banner"), validationMiddleware(ProjectPostDto), this.postProject);
-        this.router.delete(this.path, this.deleteProject);
+        this.router.delete(this.path, authMiddleware, this.delete_project);
+        this.router.get(`${this.path}/new`, authMiddleware, this.get_upload);
+        this.router.post(this.path, mult.single("Banner"), authMiddleware, validationMiddleware(ProjectPostDto), this.post_project);
+        this.router.post("/content", mult.single("Image"), validationMiddleware(ProjectContentPostDto), this.post_content);
+
+
+        this.router.get(`${this.path}/:id`, this.get_project);
     }
 
-    private async getProject(req: Request, res: Response, next: NextFunction) {
-        try {
-            this.getService.getproject(req, res, this.db).catch((e: Error) => { next(e); });
-        } catch (e) {
-            next(e);
-        }
+    private async get_project(req: Request, res: Response, next: NextFunction) {
+        this.getService.getproject(req, res, this.db).catch((e: Error) => { next(e); });
     }
 
-    private postProject(req: Request, res: Response, next: NextFunction) {
-        this.PostService.postProject(req, res, this.db)
-            .catch((e: Error) => { next(e); });
+    private post_project(req: Request, res: Response, next: NextFunction) {
+        this.postService.postProject(req, res, this.db).catch((e: Error) => { next(e); });
     }
 
-    private deleteProject(_req: Request, _res: Response, _next: NextFunction) {
-        return;
+    private post_content(req: Request, res: Response, next: NextFunction) {
+        this.ContentService.postContent(req, res, this.db).catch((e: Error) => { next(e); });
     }
 
-    private async getUpload(_req: Request, res: Response, _next: NextFunction) {
+    private async delete_project(req: Request, res: Response, next: NextFunction) {
+        await this.db.project.delete({ where: { ID: req.body } })
+            .then(() => res.status(200).send("Project deleted"))
+            .catch((e) => next(e));
+    }
+
+    private async get_upload(_req: Request, res: Response, _next: NextFunction) {
         const category = await this.db.categories.findMany();
+        const projects = await this.db.project.findMany();
         const tags = await this.db.tags.findMany();
-        res.render("upload", { category, tags });
+        res.render("upload", { category, projects, tags });
     }
 
 }

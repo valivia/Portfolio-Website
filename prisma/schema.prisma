@@ -7,20 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Assets {
+  FileName    String?     @unique @db.VarChar(36)
+  Description String?     @db.VarChar(256)
+  ID          Int         @id @default(autoincrement())
+  Display     Boolean     @default(false)
+  Type        Assets_Type
+  ProjectID   Int
+  Thumbnail   Boolean     @default(false)
+  Project     Project     @relation(fields: [ProjectID], references: [ID])
+
+  @@index([ProjectID], name: "Assets_FK")
+}
+
 model Categories {
   Name       String @unique @db.VarChar(16)
   CategoryID Int    @id @default(autoincrement())
   Tags       Tags[]
 }
 
-model SubContent {
-  PostID      Int
-  FileName    String? @db.VarChar(36)
-  Description String? @db.VarChar(256)
-  ID          Int     @id @default(autoincrement())
-  Project     Project @relation(fields: [PostID], references: [ID])
-
-  @@index([PostID], name: "SubContent_FK")
+model Project {
+  ID          Int            @id @default(autoincrement())
+  Created     DateTime       @default(now()) @db.Timestamp(0)
+  Updated     DateTime       @default(now()) @db.Timestamp(0)
+  Name        String         @db.VarChar(32)
+  Description String?        @db.VarChar(256)
+  Status      Project_Status @default(unknown)
+  Assets      Assets[]
+  TagLink     TagLink[]
 }
 
 model TagLink {
@@ -44,16 +58,9 @@ model Tags {
   @@index([CategoryID], name: "Tags_FK")
 }
 
-model Project {
-  ID          Int            @id @default(autoincrement())
-  Created     DateTime       @default(now()) @db.Timestamp(0)
-  Updated     DateTime       @default(now()) @db.Timestamp(0)
-  Name        String         @unique @db.VarChar(32)
-  FileName    String         @db.VarChar(36)
-  Description String?        @db.VarChar(256)
-  Status      Project_Status @default(unknown)
-  SubContent  SubContent[]
-  TagLink     TagLink[]
+enum Assets_Type {
+  Image
+  Audio
 }
 
 enum Project_Status {

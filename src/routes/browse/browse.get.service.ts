@@ -4,22 +4,12 @@ import { Service } from "typedi";
 
 @Service()
 class BrowseGetService {
-    public async browseGet(req: Request, res: Response, db: PrismaClient): Promise<void> {
+    public async browseGet(_req: Request, res: Response, db: PrismaClient): Promise<void> {
 
-        const tag = Number(req.query.tag);
-        // const cat = Number(req.query.cat);
-        let query: Prisma.ProjectFindManyArgs = { include: { TagLink: { include: { Tags: { include: { Categories: true } } } } } };
+        const query: Prisma.AssetsFindManyArgs = { where: { Display: true }, include: { Project: true } };
 
-        if (tag && !isNaN(tag)) {
-            query = { include: { TagLink: { include: { Tags: { include: { Categories: true } } } } }, where: { TagLink: { every: { TagID: tag } } } };
-        }
-        /*
-        if (cat && !isNaN(cat)) {
-            query = { include: { TagLink: { include: { Tags: { include: { Categories: true } } } } }, where: { TagLink: { } } } };
-        }
-        */
 
-        const content = await db.project.findMany(query);
+        const content = await db.assets.findMany(query);
 
         res.render("browse", { content });
 
