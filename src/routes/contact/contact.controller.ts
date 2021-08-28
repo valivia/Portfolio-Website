@@ -6,6 +6,14 @@ import validationMiddleware from "../../middleware/validation.middleware";
 import PrismaRepository from "../../repositories/prisma.repository";
 import EmailService from "../../util/email.service";
 import ContactDto from "./contact.dto";
+import ratelimit from "express-rate-limit";
+
+const limit = ratelimit({
+    windowMs: 12 * 60 * 60 * 1000, // 12 hours
+    max: 2,
+    message:
+        "Too many emails sent, try again tomorrow",
+});
 
 @Service()
 class ContactController implements Controller {
@@ -21,7 +29,7 @@ class ContactController implements Controller {
 
     private initializeRoutes() {
         this.router.get(this.path, this.getContact);
-        this.router.post(this.path, validationMiddleware(ContactDto), this.postContact);
+        this.router.post(this.path, validationMiddleware(ContactDto), limit, this.postContact);
     }
 
     private async getContact(_req: Request, res: Response, _next: NextFunction) {
