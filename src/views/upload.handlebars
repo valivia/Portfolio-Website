@@ -33,6 +33,16 @@
       </div>
 
       <div>
+        <label>Status:</label>
+        <select name="Status">
+          <option value="unknown">Unknown</option>
+          <option value="Abandoned">Abandoned</option>
+          <option value="In_Progress">In progress</option>
+          <option value="Finished">Finished</option>
+        </select>
+      </div>
+
+      <div>
         <label>tag:</label>
         <select name="Tags" multiple>
           {{#each tags}}
