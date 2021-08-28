@@ -1,4 +1,4 @@
-import { Length } from "class-validator";
+import { Length, IsString } from "class-validator";
 
 class ProjectPostDto {
     @Length(2, 32)
@@ -9,6 +9,9 @@ class ProjectPostDto {
 
     @Length(1, 1, { each: true })
     public Tags: number[];
+
+    @IsString()
+    public Status: string;
 }
 
 export default ProjectPostDto;

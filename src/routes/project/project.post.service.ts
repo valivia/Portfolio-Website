@@ -1,5 +1,5 @@
 import ServerErrorException from "../../exceptions/serverError";
-import { Assets_Type, PrismaClient, Project_Status } from "@prisma/client";
+import { Assets_Type, PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { Service } from "typedi";
@@ -11,7 +11,8 @@ env.config();
 @Service()
 class PostProjectService {
     public async postProject(req: Request, res: Response, db: PrismaClient): Promise<void> {
-        let { Name, Description, Tags } = req.body;
+        const { Name, Description, Status } = req.body;
+        let { Tags } = req.body;
 
         console.log(`${Name} ${Description} ${Tags}`);
 
@@ -36,7 +37,7 @@ class PostProjectService {
             data: {
                 Name,
                 Description,
-                Status: Project_Status.unknown,
+                Status: Status,
                 TagLink: {
                     createMany: {
                         data: tagArray,
@@ -55,8 +56,6 @@ class PostProjectService {
             },
             include: { TagLink: true },
         });
-
-        console.log(project);
 
         const imageProcessing = new ImageService(req.file.buffer);
         if (!await imageProcessing.makeAssets(fileName)) {

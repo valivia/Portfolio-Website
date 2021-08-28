@@ -36,7 +36,7 @@ class PostProjectContentService {
             throw new ServerErrorException();
         }
 
-        res.send("ok");
+        res.redirect(`/project/new`);
     }
 }
 

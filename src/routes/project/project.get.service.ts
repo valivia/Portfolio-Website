@@ -20,8 +20,6 @@ class GetProjectService {
 
         if (project === null) throw new NotFoundException();
 
-
-        console.log(project);
         res.render("project", {
             project,
             content: project?.Assets,
