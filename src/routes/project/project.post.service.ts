@@ -33,7 +33,7 @@ class PostProjectService {
 
         const fileName = uuidv4();
 
-        const project = await db.project.create({
+        await db.project.create({
             data: {
                 Name,
                 Description,
@@ -62,7 +62,7 @@ class PostProjectService {
             throw new ServerErrorException();
         }
 
-        res.status(200).redirect(`/project/${project.ID}`);
+        res.status(200).redirect(`/project/new`);
     }
 }
 

@@ -10,6 +10,8 @@ import GetProjectService from "./project.get.service";
 import authMiddleware from "../../middleware/auth.middleware";
 import PostProjectContentService from "./project.content.post.service";
 import ProjectContentPostDto from "./project.content.post.dto";
+import ProjectDeleteDto from "./project.delete.dto";
+import DeleteProjectService from "./project.delete";
 const mult = multer();
 
 @Service()
@@ -22,6 +24,7 @@ class ProjectController implements Controller {
         private prismaRepo: PrismaRepository,
         private getService: GetProjectService,
         private postService: PostProjectService,
+        private deleteService: DeleteProjectService,
         private ContentService: PostProjectContentService,
     ) {
         // Local functions.
@@ -36,11 +39,10 @@ class ProjectController implements Controller {
     }
 
     private initializeRoutes() {
-        this.router.delete(this.path, authMiddleware, this.delete_project);
         this.router.get(`${this.path}/new`, authMiddleware, this.get_upload);
+        this.router.post("/delete", validationMiddleware(ProjectDeleteDto), authMiddleware, this.delete_project);
         this.router.post(this.path, mult.single("Banner"), authMiddleware, validationMiddleware(ProjectPostDto), this.post_project);
         this.router.post("/content", mult.single("Image"), validationMiddleware(ProjectContentPostDto), this.post_content);
-
 
         this.router.get(`${this.path}/:id`, this.get_project);
     }
@@ -58,9 +60,7 @@ class ProjectController implements Controller {
     }
 
     private async delete_project(req: Request, res: Response, next: NextFunction) {
-        await this.db.project.delete({ where: { ID: req.body } })
-            .then(() => res.status(200).send("Project deleted"))
-            .catch((e) => next(e));
+        this.deleteService.deleteproject(req, res, this.db).catch((e: Error) => { next(e); });
     }
 
     private async get_upload(_req: Request, res: Response, _next: NextFunction) {

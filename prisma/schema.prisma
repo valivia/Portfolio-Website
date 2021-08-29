@@ -32,7 +32,7 @@ model Project {
   Updated     DateTime       @default(now()) @db.Timestamp(0)
   Name        String         @db.VarChar(32)
   Description String?        @db.VarChar(256)
-  Status      Project_Status @default(unknown)
+  Status      Project_Status @default(Unknown)
   Assets      Assets[]
   TagLink     TagLink[]
 }
@@ -66,6 +66,6 @@ enum Assets_Type {
 enum Project_Status {
   Finished
   In_Progress @map("In Progress")
-  abandoned
-  unknown
+  Abandoned
+  Unknown
 }
