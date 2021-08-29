@@ -1,6 +1,7 @@
 import fs from "fs";
 import sharp from "sharp";
 import theme from "node-vibrant";
+import ServerErrorException from "../exceptions/serverError";
 
 export default class ImageService {
     private buffer;
@@ -8,12 +9,21 @@ export default class ImageService {
     constructor(buffer: Buffer) {
         this.buffer = buffer;
     }
-    public async resizeImage(scale: number): Promise<Buffer> {
+    public async resizeImage(scale: number, square = false): Promise<Buffer> {
         if (scale < 0.1 || scale > 1) throw { message: `Wrong scale size ${scale}`, type: `RESIZE_ERROR` };
         try {
 
             const baseImage = sharp(this.buffer);
             const metadata = await baseImage.metadata();
+
+            if (!metadata.width || !metadata.height) throw new ServerErrorException();
+            if (square) {
+                if (metadata.height > metadata.width) {
+                    metadata.height = metadata.width;
+                } else {
+                    metadata.width = metadata.height;
+                }
+            }
 
             const width = Math.round(metadata.width as number * scale);
             const height = Math.round(metadata.height as number * scale);
@@ -45,6 +55,13 @@ export default class ImageService {
             fs.createWriteStream(`./assets/content/${fileName}_MediumHigh.jpg`).write(await this.resizeImage(0.6667));
             fs.createWriteStream(`./assets/content/${fileName}_Medium.jpg`).write(await this.resizeImage(0.5));
             fs.createWriteStream(`./assets/content/${fileName}_Low.jpg`).write(await this.resizeImage(0.28125));
+
+            // Square.
+            fs.createWriteStream(`./assets/content/${fileName}_SDefault.jpg`).write(await this.resizeImage(1, true));
+            fs.createWriteStream(`./assets/content/${fileName}_SHigh.jpg`).write(await this.resizeImage(0.75, true));
+            fs.createWriteStream(`./assets/content/${fileName}_SMediumHigh.jpg`).write(await this.resizeImage(0.6667, true));
+            fs.createWriteStream(`./assets/content/${fileName}_SMedium.jpg`).write(await this.resizeImage(0.5, true));
+            fs.createWriteStream(`./assets/content/${fileName}_SLow.jpg`).write(await this.resizeImage(0.28125, true));
 
             return true;
         } catch (err) {

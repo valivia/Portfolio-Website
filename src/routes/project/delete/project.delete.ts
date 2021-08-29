@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { Service } from "typedi";
 import fs from "fs";
 import path from "path";
-import NotFoundException from "../../exceptions/notFound";
+import NotFoundException from "../../../exceptions/notFound";
 
 const dir = path.join(process.cwd(), "assets", "content");
 
@@ -23,8 +23,8 @@ class DeleteProjectService {
         await db.$transaction([deleteAssets, deleteTags, deleteProject]);
 
         assets.forEach((asset) => {
-
-            Promise.all(["Default", "High", "MediumHigh", "Medium", "Low"]
+            const list = ["Default", "High", "MediumHigh", "Medium", "Low", "SDefault", "SHigh", "SMediumHigh", "SMedium", "SLow"];
+            Promise.all(list
                 .map(size => fs.promises.unlink(path.join(dir, `${asset.FileName}_${size}.jpg`))));
         });
 

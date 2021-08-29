@@ -157,11 +157,17 @@ body > * {
 
 .square {
     position: relative;
-    flex-basis: calc(20% - 2px);
+    flex-basis: calc(20% - 0px);
     border: 1px solid black;
-    margin: 1px;
+    margin: 0px;
     box-sizing: border-box;
     cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: transparent;
 
     &::before {
         content: "";
@@ -170,7 +176,31 @@ body > * {
     }
 
     &:hover {
-        border: 1px solid $text;
+        color: $text;
+        border: 1px solid rgb(34, 34, 34);
+
+        & > .galleryContent {
+            opacity: 0.2;
+        }
+    }
+}
+.galleryInfo {
+    padding: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+
+    z-index: 1;
+
+    & > h3 {
+        font-size: 130%;
+    }
+
+    & > p {
+        font-size: 100%;
+        text-align: center;
     }
 }
 
@@ -182,9 +212,9 @@ body > * {
     width: 100%;
     overflow: hidden;
 
-    display: flex; /* added for centered text */
-    justify-content: center; /* added for centered text */
-    align-items: center; /* added for centered text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     & > img {
         height: 100%;
@@ -451,6 +481,22 @@ a:active {
     }
     .subHeader {
         padding: 20% 0;
+        height: 30%;
+        width: 100%;
+    }
+
+    // GALLERY
+
+    .galleryInfo {
+        padding: 3%;
+
+        & > h3 {
+            font-size: 110%;
+        }
+
+        & > p {
+            display: none;
+        }
     }
 
     .square {
@@ -459,10 +505,6 @@ a:active {
         margin: 1px;
     }
 
-    .subheader {
-        height: 30%;
-        width: 100%;
-    }
     // PROJECT
 
     .project {

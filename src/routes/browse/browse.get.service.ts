@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { Service } from "typedi";
 
@@ -6,10 +6,20 @@ import { Service } from "typedi";
 class BrowseGetService {
     public async browseGet(_req: Request, res: Response, db: PrismaClient): Promise<void> {
 
-        const query: Prisma.AssetsFindManyArgs = { where: { Display: true }, include: { Project: true } };
+        let content = await db.assets.findMany({ where: { Display: true }, include: { Project: true } });
 
+        content = content.map((asset) => {
+            const description = asset.Project.Description;
+            if (description && description?.length > 127) {
+                asset.Project.Description = `${description?.substring(0, 127)}...`;
+            }
 
-        const content = await db.assets.findMany(query);
+            if (asset.Description && asset.Description?.length > 128) {
+                asset.Description = `${asset.Description?.substring(0, 127)}...`;
+            }
+
+            return asset;
+        });
 
         res.render("browse", { content });
 

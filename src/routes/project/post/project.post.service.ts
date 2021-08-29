@@ -1,11 +1,11 @@
-import ServerErrorException from "../../exceptions/serverError";
 import { Assets_Type, PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { Service } from "typedi";
-import HttpException from "../../exceptions/httpExceptions";
 import env from "dotenv";
-import ImageService from "../../util/Image.service";
+import HttpException from "../../../exceptions/httpExceptions";
+import ServerErrorException from "../../../exceptions/serverError";
+import ImageService from "../../../util/image.service";
 env.config();
 
 @Service()

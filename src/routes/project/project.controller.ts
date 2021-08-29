@@ -3,15 +3,15 @@ import { Service } from "typedi";
 import Controller from "../../interfaces/controller.interface";
 import validationMiddleware from "../../middleware/validation.middleware";
 import PrismaRepository from "../../repositories/prisma.repository";
-import ProjectPostDto from "./project.post.dto";
+import ProjectPostDto from "./post/project.post.dto";
 import multer from "multer";
-import PostProjectService from "./project.post.service";
+import PostProjectService from "./post/project.post.service";
 import GetProjectService from "./project.get.service";
 import authMiddleware from "../../middleware/auth.middleware";
-import PostProjectContentService from "./project.content.post.service";
-import ProjectContentPostDto from "./project.content.post.dto";
-import ProjectDeleteDto from "./project.delete.dto";
-import DeleteProjectService from "./project.delete";
+import PostProjectContentService from "./postcontent/project.content.post.service";
+import ProjectContentPostDto from "./postcontent/project.content.post.dto";
+import ProjectDeleteDto from "./delete/project.delete.dto";
+import DeleteProjectService from "./delete/project.delete";
 const mult = multer();
 
 @Service()
