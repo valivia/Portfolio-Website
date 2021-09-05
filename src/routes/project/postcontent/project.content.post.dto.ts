@@ -7,8 +7,11 @@ class ProjectContentPostDto {
     @IsNumberString({ no_symbols: true })
     public ID: string
 
-    @Length(0, 256)
+    @Length(0, 1024)
     public Description: string;
+
+    @Length(0, 128)
+    public Alt: string;
 }
 
 export default ProjectContentPostDto;

@@ -17,12 +17,9 @@ export default class ImageService {
             const metadata = await baseImage.metadata();
 
             if (!metadata.width || !metadata.height) throw new ServerErrorException();
+
             if (square) {
-                if (metadata.height > metadata.width) {
-                    metadata.height = metadata.width;
-                } else {
-                    metadata.width = metadata.height;
-                }
+                metadata.height = metadata.width = Math.min(metadata.height, metadata.width);
             }
 
             const width = Math.round(metadata.width as number * scale);
@@ -50,6 +47,10 @@ export default class ImageService {
 
     public async makeAssets(fileName: string): Promise<boolean> {
         try {
+            // Source.
+            fs.createWriteStream(`./assets/archive/${fileName}.png`).write(this.buffer);
+
+            // Scaled.
             fs.createWriteStream(`./assets/content/${fileName}_Default.jpg`).write(await this.resizeImage(1));
             fs.createWriteStream(`./assets/content/${fileName}_High.jpg`).write(await this.resizeImage(0.75));
             fs.createWriteStream(`./assets/content/${fileName}_MediumHigh.jpg`).write(await this.resizeImage(0.6667));

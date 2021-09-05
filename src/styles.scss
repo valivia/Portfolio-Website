@@ -76,6 +76,7 @@ body > * {
     background-position: center;
     background-size: 53%;
     height: 100%;
+    font-size: 0;
 
     &:hover {
         opacity: 0.7;
@@ -137,18 +138,15 @@ body > * {
     text-align: center;
 }
 
-// CONTENT
+// GALLERY
 
 .content {
     box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
     -webkit-box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
     background-color: rgb(14, 14, 14);
-    min-height: 100%;
     width: 100%;
 }
-
-// GALLERY
 
 .square-container {
     display: flex;
@@ -180,6 +178,7 @@ body > * {
         border: 1px solid rgb(34, 34, 34);
 
         & > .galleryContent {
+            filter: blur(0.2rem);
             opacity: 0.2;
         }
     }
@@ -205,6 +204,9 @@ body > * {
 }
 
 .square .galleryContent {
+    transition: opacity 0.1s;
+    transition: filter 0.2s;
+
     position: absolute;
     top: 0;
     left: 0;
@@ -224,15 +226,6 @@ body > * {
 }
 
 // PROJECT
-
-.projectH1 {
-    border-style: solid;
-    border-color: $text;
-    padding-right: 3vw;
-    padding-left: 3vw;
-    font-size: 6vw;
-    font-weight: 100;
-}
 
 .projectHeader {
     display: flex;
@@ -286,21 +279,29 @@ body > * {
     display: flex;
     justify-content: center;
     flex-direction: column;
-}
 
-.extraProjectContent > picture {
-    width: 100%;
-    overflow: hidden;
+    &:hover {
+        cursor: pointer;
+    }
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 1vh 0vh;
+    & > picture {
+        width: 100%;
+        overflow: hidden;
 
-    & > img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 1vh 0vh;
+    }
+
+    & > picture > img {
         width: 100%;
         object-fit: cover;
         vertical-align: center;
+    }
+
+    & > p {
+        padding: 5vw 0 2vw 0;
     }
 }
 

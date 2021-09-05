@@ -15,6 +15,7 @@ model Assets {
   Type        Assets_Type
   ProjectID   Int
   Thumbnail   Boolean     @default(false)
+  Alt         String      @db.VarChar(128)
   Project     Project     @relation(fields: [ProjectID], references: [ID])
 
   @@index([ProjectID], name: "Assets_FK")
@@ -31,7 +32,7 @@ model Project {
   Created     DateTime       @default(now()) @db.Timestamp(0)
   Updated     DateTime       @default(now()) @db.Timestamp(0)
   Name        String         @db.VarChar(32)
-  Description String?        @db.VarChar(256)
+  Description String?        @db.VarChar(1024)
   Status      Project_Status @default(Unknown)
   Assets      Assets[]
   TagLink     TagLink[]

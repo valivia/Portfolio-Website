@@ -13,7 +13,7 @@ env.config();
 class PostProjectContentService {
     public async postContent(req: Request, res: Response, db: PrismaClient): Promise<void> {
 
-        const { Description, ID, Display } = req.body as ProjectContentPostDto;
+        const { Description, ID, Display, Alt } = req.body as ProjectContentPostDto;
         console.log(req.body);
 
         if (!req?.file?.buffer) throw new HttpException(400, "No image attached.");
@@ -24,6 +24,7 @@ class PostProjectContentService {
             data: {
                 FileName,
                 Description: Description,
+                Alt,
                 Display: Display ? true : false,
                 ProjectID: Number(ID),
                 Type: Assets_Type.Image,

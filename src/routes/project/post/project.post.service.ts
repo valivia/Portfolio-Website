@@ -11,7 +11,7 @@ env.config();
 @Service()
 class PostProjectService {
     public async postProject(req: Request, res: Response, db: PrismaClient): Promise<void> {
-        const { Name, Description, Status } = req.body;
+        const { Name, Description, Status, Alt } = req.body;
         let { Tags } = req.body;
 
         console.log(`${Name} ${Description} ${Tags}`);
@@ -50,6 +50,7 @@ class PostProjectService {
                         Display: true,
                         Thumbnail: true,
                         Description: null,
+                        Alt,
 
                     },
                 },
