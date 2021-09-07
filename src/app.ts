@@ -6,6 +6,7 @@ import { Container } from "typedi";
 import logger from "morgan";
 import colors from "colors";
 import path from "path";
+import helmet from "helmet";
 
 import Controller from "./interfaces/controller.interface";
 import errorMiddleware from "./middleware/error.middleware";
@@ -43,6 +44,7 @@ class App {
         this.app.set("view engine", "handlebars");
         this.app.set("trust proxy", true);
         this.app.use(logger("short"));
+        this.app.use(helmet());
 
         console.log(" ✓ Middleware initialized:".green.bold);
     }
