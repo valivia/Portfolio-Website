@@ -2,36 +2,73 @@ $text: rgb(181, 166, 145);
 
 // GALLERY
 
-.squareContainer {
-    display: flex;
-    flex-wrap: wrap;
+.content {
     box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
     -webkit-box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
     background-color: rgb(14, 14, 14);
-    min-height: 100%;
+    width: 100%;
+}
+
+.squareContainer {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .square {
     position: relative;
-    flex-basis: calc(25% - 2px);
-    border: 1px solid;
-    margin: 1px;
-    border-color: black;
+    flex-basis: calc(20% - 0px);
+    border: 1px solid black;
+    margin: 0px;
     box-sizing: border-box;
     cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: transparent;
+
+    &::before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+    }
+
     &:hover {
-        border: 1px solid $text;
+        color: $text;
+        border: 1px solid rgb(34, 34, 34);
+
+        & > div > .galleryContent {
+            filter: blur(0.2rem);
+            opacity: 0.2;
+        }
+    }
+}
+.galleryInfo {
+    padding: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+
+    z-index: 1;
+
+    & > h3 {
+        font-size: 130%;
+    }
+
+    & > p {
+        font-size: 100%;
+        text-align: center;
     }
 }
 
-.square::before {
-    content: "";
-    display: block;
-    padding-top: 100%;
-}
-
 .square .galleryContent {
+    transition: opacity 0.1s;
+    transition: filter 0.2s;
+
     position: absolute;
     top: 0;
     left: 0;
@@ -41,16 +78,27 @@ $text: rgb(181, 166, 145);
 
     display: flex;
     justify-content: center;
-    align-items: center; 
-}
+    align-items: center;
 
-.img {
-    height: 100%;
-    object-fit: cover;
-    vertical-align: center;
+    & > img {
+        height: 100%;
+        object-fit: cover;
+        vertical-align: center;
+    }
 }
-
 @media only screen and (orientation: portrait) {
+    .galleryInfo {
+        padding: 3%;
+
+        & > h3 {
+            font-size: 110%;
+        }
+
+        & > p {
+            display: none;
+        }
+    }
+
     .square {
         position: relative;
         flex-basis: calc(50% - 10px);

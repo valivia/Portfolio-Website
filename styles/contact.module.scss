@@ -1,4 +1,5 @@
 $text: rgb(181, 166, 145);
+$cdn: "https://cdn.xayania.com";
 
 // CONTACT
 
@@ -11,7 +12,7 @@ $text: rgb(181, 166, 145);
   justify-content: center;
   align-items: center;
 
-  background: black url("http://localhost:3001/file/s/tbhc_Default.jpg") no-repeat center;
+  background: black url($cdn + "/file/s/tbhc_Default.jpg") no-repeat center;
   background-size: cover;
 }
 

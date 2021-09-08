@@ -1,0 +1,15 @@
+.projectContent {
+    width: 100%;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1vh 0vh;
+
+    & > img {
+        width: 100%;
+        object-fit: cover;
+        vertical-align: center;
+    }
+}

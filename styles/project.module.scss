@@ -1,0 +1,74 @@
+$text: rgb(181, 166, 145);
+
+// PROJECT
+
+.content {
+    box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
+    background-color: rgb(14, 14, 14);
+    width: 100%;
+}
+
+.projectHeader {
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    width: 100%;
+  
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: unset;
+    align-items: unset;
+
+    font-weight: lighter;
+    font-family: "abel";
+    font-size: 5vh;
+    text-align: center;
+}
+
+.projectBannerText {
+    font-weight: 100;
+    font-size: 4vh;
+
+    &:hover {
+        color: rgb(150, 133, 109);
+        cursor: pointer;
+    }
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1vw;
+}
+
+.project {
+    font-family: "abel";
+    padding: 0;
+}
+
+.projectInfo {
+    padding: 3vw;
+}
+
+.projectContentContainer {
+    padding: 1vw 7vw;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    & > p {
+        padding: 5vw 0 2vw 0;
+    }
+}
+
+@media only screen and (orientation: portrait) {
+    .project {
+        padding: 3vw 0vw;
+    }
+}

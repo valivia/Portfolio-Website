@@ -1,37 +1,32 @@
-import type { GetServerSideProps, NextPage } from 'next'
+import type { GetServerSideProps, GetStaticProps, NextPage } from 'next'
 import NavBar from '../components/navbar'
 import index from '../styles/index.module.scss'
 import styles from "../styles/browse.module.scss"
-import prisma from '../lib/db'
-import { Prisma, Project } from '@prisma/client'
+import { Project, Assets } from '@prisma/client'
 import Link from 'next/link'
 import Image from "next/image"
 import Head from "next/head"
+import GalleryAsset from '../components/galleryAsset'
 
-const Browse = ({ projects }: { projects: Project[] }) => {
+const cdn = process.env.NEXT_PUBLIC_CDN_SERVER
+
+const Browse = ({ projects }: { projects: (Assets & { Project: Project; })[] }) => {
     return (
         <>
             <Head>
                 <title>Gallery</title>
+                <meta name="theme-color" content="#B5A691" />
+                <meta name="description" content="Gallery with all artworks" />
             </Head>
+
+            <NavBar />
+
             <div className={index.subheader}>
-                Gallery<br />ᐯ
+                <div>Gallery</div>
+                <div>ᐯ</div>
             </div>
             <main className={styles.squareContainer}>
-                {
-                    projects.map((project, i) => (
-                        <Link key={project.ID} href={`/project/${project.ID}`}>
-                            <a className={styles.square}>
-                                <Image
-                                    className={styles.img}
-                                    src={`http://localhost:3001/file/a/${project.FileName}_Default.jpg`}
-                                    layout="fill"
-                                    alt={project.Description ?? ""}>
-                                </Image>
-                            </a>
-                        </Link>
-                    ))
-                }
+                {projects.map((data) => <GalleryAsset {...data} />)}
             </main>
         </>
     )
@@ -40,10 +35,17 @@ const Browse = ({ projects }: { projects: Project[] }) => {
 export default Browse
 
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    let query: Prisma.ProjectFindManyArgs = { include: { TagLink: { include: { Tags: { include: { Categories: true } } } } } };
-    let data = await prisma.project.findMany(query);
-    data = JSON.parse(JSON.stringify(data))
-    return { props: { projects: data, }, revalidate: 3600 };
-}
+export const getStaticProps: GetStaticProps = async (context) => {
+    const res = await fetch(`${cdn}/gallery`)
+    const data = await res.json() as (Assets & { Project: Project; })[]
 
+    if (!data) {
+        return {
+            notFound: true,
+        }
+    }
+
+    return {
+        props: { projects: data }
+    }
+}

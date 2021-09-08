@@ -13,16 +13,6 @@ model Categories {
   Tags       Tags[]
 }
 
-model SubContent {
-  PostID      Int
-  FileName    String? @db.VarChar(36)
-  Description String? @db.VarChar(256)
-  ID          Int     @id @default(autoincrement())
-  Project     Project @relation(fields: [PostID], references: [ID])
-
-  @@index([PostID], name: "SubContent_FK")
-}
-
 model TagLink {
   ProjectID Int
   TagID     Int
@@ -48,17 +38,35 @@ model Project {
   ID          Int            @id @default(autoincrement())
   Created     DateTime       @default(now()) @db.Timestamp(0)
   Updated     DateTime       @default(now()) @db.Timestamp(0)
-  Name        String         @unique @db.VarChar(32)
-  FileName    String         @db.VarChar(36)
-  Description String?        @db.VarChar(256)
-  Status      Project_Status @default(unknown)
-  SubContent  SubContent[]
+  Name        String         @db.VarChar(32)
+  Description String?        @db.VarChar(1024)
+  Status      Project_Status @default(Unknown)
+  Assets      Assets[]
   TagLink     TagLink[]
+}
+
+model Assets {
+  FileName    String?     @unique @db.VarChar(36)
+  Description String?     @db.VarChar(256)
+  ID          Int         @id @default(autoincrement())
+  Display     Boolean     @default(false)
+  Type        Assets_Type
+  ProjectID   Int
+  Thumbnail   Boolean     @default(false)
+  Alt         String      @db.VarChar(128)
+  Project     Project     @relation(fields: [ProjectID], references: [ID])
+
+  @@index([ProjectID], name: "Assets_FK")
 }
 
 enum Project_Status {
   Finished
   In_Progress @map("In Progress")
-  abandoned
-  unknown
+  Abandoned
+  Unknown
+}
+
+enum Assets_Type {
+  Image
+  Audio
 }

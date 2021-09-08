@@ -1,0 +1,16 @@
+$text: rgb(181, 166, 145);
+
+.tag,
+.tag:link,
+.tag:visited {
+    text-decoration: none;
+    color: $text;
+    padding: 0.5vw;
+    margin: 0.1vw;
+    background-color: #080808;
+    text-transform: uppercase;
+}
+
+.tag:hover {
+    color: #887d6d;
+}

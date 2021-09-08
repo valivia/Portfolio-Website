@@ -1,0 +1,35 @@
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.centered {
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.notfound {
+    width: 100vw;
+    height: 100vh;
+    font-family: "tbhc";
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
+    & > h1 {
+        font-weight: 100;
+        font-size: 8vh;
+    }
+    & > p {
+        font-size: 4vh;
+    }
+}
