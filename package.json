@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@prisma/client": "^2.30.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "colors": "^1.4.0",
