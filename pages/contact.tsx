@@ -1,11 +1,11 @@
-import NavBar from '../components/navbar'
-import Head from "next/head"
-import styles from "../styles/contact.module.scss"
-import React from 'react'
+import NavBar from "../components/navbar";
+import Head from "next/head";
+import styles from "../styles/contact.module.scss";
+import React, { ReactNode } from "react";
 
 export default class contact extends React.Component {
 
-  /*private submit = async (event: HTMLFormElement) => {
+  /* private submit = async (event: HTMLFormElement) => {
     event.preventDefault()
 
     const data = new URLSearchParams();
@@ -33,7 +33,7 @@ export default class contact extends React.Component {
       .then(response => response)
   }*/
 
-  render() {
+  render(): ReactNode {
     return (
       <>
         <Head>
@@ -44,7 +44,7 @@ export default class contact extends React.Component {
 
         <main className={styles.contactContainer}>
           <h1 className={styles.contactH1}>Contact</h1> <br />
-          <form className={styles.contactForm} /*onSubmit={this.submit}*/>
+          <form className={styles.contactForm} /* onSubmit={this.submit}*/>
             <fieldset className={styles.fieldset}>
               <legend>Name:</legend>
               <input className={styles.textInput} type="text" name="firstName" id="firstName" placeholder="First name" autoComplete="given-name"
@@ -75,6 +75,6 @@ export default class contact extends React.Component {
           </form>
         </main>
       </>
-    )
+    );
   }
 }

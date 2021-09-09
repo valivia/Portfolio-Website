@@ -1,8 +1,9 @@
-import '../styles/globals.scss'
-import type { AppProps } from 'next/app'
-import Head from "next/head"
+import "../styles/globals.scss";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import { ReactNode } from "react";
 
-function app({ Component, pageProps }: AppProps) {
+function app({ Component, pageProps }: AppProps): ReactNode {
   return (
     <>
       <Head>
@@ -10,6 +11,6 @@ function app({ Component, pageProps }: AppProps) {
       </Head>
       <Component {...pageProps} />
     </>
-  )
+  );
 }
-export default app
+export default app;

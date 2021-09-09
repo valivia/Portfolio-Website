@@ -1,6 +1,5 @@
 {
   "env": {
-    "es2021": true,
     "node": true
   },
   "parser": "@typescript-eslint/parser",
@@ -16,6 +15,7 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "@next/next/no-img-element": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
@@ -42,7 +42,7 @@
     "handle-callback-err": "off",
     "indent": [
       "error",
-      4,
+      2,
       {
         "SwitchCase": 1
       }

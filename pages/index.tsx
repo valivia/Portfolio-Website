@@ -1,8 +1,8 @@
-import NavBar from '../components/navbar'
-import React from 'react'
-import styles from '../styles/index.module.scss'
+import NavBar from "../components/navbar";
+import React, { ReactNode } from "react";
+import styles from "../styles/index.module.scss";
 
-export default function index() {
+export default function index(): ReactNode {
   return (
     <>
       <NavBar />
@@ -10,5 +10,5 @@ export default function index() {
         <h1 id="type">aaaaa</h1>
       </div>
     </>
-  )
+  );
 }
