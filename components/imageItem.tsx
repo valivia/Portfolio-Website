@@ -5,12 +5,14 @@ import styles from "../styles/browse.module.scss";
 import { Project } from "@prisma/client";
 
 interface galleryQuery extends Assets {
-    Project: Project
+  Project: Project
 }
 
-export default function GalleryAsset(data: galleryQuery): JSX.Element {
+export default function ImageItem(data: galleryQuery): JSX.Element {
 
   const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+
+  if (data.Type !== "Image") return (<></>);
 
   return (
     <Link href={`/project/${data.Project.ID}`} scroll={true}>

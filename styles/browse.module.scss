@@ -1,6 +1,39 @@
 $text: rgb(181, 166, 145);
+$cdn: "https://cdn.xayania.com";
 
 // GALLERY
+
+.subheader {
+    background: black url($cdn + "/file/s/tbhc_Low.jpg") no-repeat center;
+    background-image: image-set(
+        url($cdn + "/file/s/tbhc_Default.jpg") 2x,
+        url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
+        url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
+        url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
+        url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
+    );
+    background-image: -webkit-image-set(
+        url($cdn + "/file/s/tbhc_Default.jpg") 2x,
+        url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
+        url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
+        url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
+        url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
+    );
+
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: lighter;
+    font-family: "abel";
+    font-size: 5vh;
+    text-align: center;
+}
 
 .content {
     box-shadow: 0px 13px 38px 29px rgba(0, 0, 0, 0.75);
@@ -86,6 +119,14 @@ $text: rgb(181, 166, 145);
         vertical-align: center;
     }
 }
+
+.divider {
+    background-color: rgb(12, 12, 12);
+    width: 100%;
+    padding: 1% 1%;
+    font-size: 2rem;
+}
+
 @media only screen and (orientation: portrait) {
     .galleryInfo {
         padding: 3%;
@@ -103,5 +144,11 @@ $text: rgb(181, 166, 145);
         position: relative;
         flex-basis: calc(50% - 0px);
         margin: 0px;
+    }
+
+    .subheader {
+        padding: 20% 0;
+        height: 30%;
+        width: 100%;
     }
 }

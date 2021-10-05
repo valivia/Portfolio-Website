@@ -1,4 +1,3 @@
-import db, { Project } from ".prisma/client";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 import React, { ReactNode } from "react";
@@ -18,16 +17,16 @@ export default class Projects extends React.Component<ProjectQuery, never> {
   }
 
   render(): ReactNode {
-    const { Assets, TagLink } = this.props;
+    const { Assets, Tags } = this.props;
     const project = this.props;
-    const tags = TagLink.map(r => r.Tags);
+    const tags = Tags;
     const banner = Assets.find(asset => asset.Thumbnail === true);
     return (
       <>
         <Head>
           <title>{project.Name}</title>
           <meta name="theme-color" content="#B5A691" />
-          <meta name="description" content="Gallery with all artworks" />
+          <meta name="description" content={project.Description || ""} />
         </Head>
         <NavBar />
 
@@ -38,21 +37,23 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         </div>
 
         <main className={`${styles.content} ${styles.project}`} id="main">
+
           <div className={styles.projectInfo}>
             <h1>{project.Name}</h1>
-            {project.Description}
+            <p>{project.Description}</p>
+
             <div className={styles.tags}>
               {tags.map((tag) => <Tag key={tag.TagID} {...tag} />)}
             </div>
-            status: {project.Status}
-            <br />
-            created: {project.Created}
+
+            <p> status: {project.Status} </p>
+            <p> created: {new Date(project.Created).toDateString()} </p>
+
           </div>
 
           <div className={styles.projectContentContainer}>
             {project.Assets.map((asset) => <ProjectAsset key={asset.ID} {...asset} />)};
           </div>
-
 
         </main>
       </>
@@ -63,8 +64,8 @@ export default class Projects extends React.Component<ProjectQuery, never> {
 
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${cdn}/gallery?assets=no`);
-  const data = await res.json() as (db.Assets & { Project: Project; })[];
+  const res = await fetch(`${cdn}/project`);
+  const data = await res.json() as ProjectQuery[];
 
   const paths = data.map((project) => { return { params: { id: project.ID.toString() } }; });
 
@@ -76,7 +77,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const res = await fetch(`${cdn}/project/${params?.id}`);
-  const data = await res.json() as (db.Assets & { Project: Project; })[];
+  const data = await res.json() as ProjectQuery;
 
   if (!data) {
     return {

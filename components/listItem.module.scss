@@ -1,0 +1,9 @@
+.item {
+    width: 100%;
+    padding: .6% 2%;
+    background-color: rgb(15, 15, 15);
+
+    &:hover {
+        background-color: rgb(53, 53, 53);
+    }
+}

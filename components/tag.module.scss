@@ -14,3 +14,12 @@ $text: rgb(181, 166, 145);
 .tag:hover {
     color: #887d6d;
 }
+
+@media only screen and (orientation: portrait) {
+    .tag,
+    .tag:link,
+    .tag:visited {
+        padding: 2vw;
+        margin: 1vw;
+    }
+}

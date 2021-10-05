@@ -3,8 +3,8 @@ $cdn: "https://cdn.xayania.com";
 // SUBHEADER
 
 .subheader {
-  background: black url($cdn + "/file/s/tbhc_Low.jpg") no-repeat center;
-  background-image: image-set(
+  background: black url($cdn + "/file/a/a871b21f-486a-4109-916c-d29d31673295_Default.jpg") no-repeat center;
+  /*background-image: image-set(
     url($cdn + "/file/s/tbhc_Default.jpg") 2x,
     url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
     url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
@@ -17,7 +17,7 @@ $cdn: "https://cdn.xayania.com";
     url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
     url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
     url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
-  );
+  );*/
   background-size: cover;
   height: 100vh;
   width: 100%;
@@ -31,12 +31,4 @@ $cdn: "https://cdn.xayania.com";
   font-family: "abel";
   font-size: 5vh;
   text-align: center;
-}
-
-@media only screen and (orientation: portrait) {
-  .subheader {
-    padding: 20% 0;
-    height: 30%;
-    width: 100%;
-  }
 }

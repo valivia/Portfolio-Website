@@ -1,10 +1,16 @@
-import { Project, Assets, TagLink, Tags } from ".prisma/client";
+import { Project, Assets, Tags } from ".prisma/client";
+
+export interface ProjectsQuery extends Project {
+    Assets: Assets[]
+    Tags: Tags;
+}
 
 export interface ProjectQuery extends Project {
     Assets: Assets[]
-    TagLink: (TagLink & { Tags: Tags; })[];
+    Tags: Tags[]
 }
 
 export interface GalleryQuery extends Assets {
     Project: Project;
+    Tags: Tags[];
 }

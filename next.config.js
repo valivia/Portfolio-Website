@@ -5,7 +5,7 @@ module.exports = {
     domains: ["cdn.xayania.com"],
   },
   i18n: {
-    locales: ['en-UK', "en-US"],
-    defaultLocale: 'en-UK',
+    locales: ['en'],
+    defaultLocale: 'en',
   },
 }

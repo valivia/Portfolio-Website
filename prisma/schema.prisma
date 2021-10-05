@@ -7,10 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Assets {
+  FileName    String?     @unique @db.VarChar(36)
+  Description String?     @db.VarChar(256)
+  ID          Int         @id @default(autoincrement())
+  Display     Boolean     @default(false)
+  Type        Assets_Type
+  ProjectID   Int
+  Thumbnail   Boolean     @default(false)
+  Alt         String      @db.VarChar(128)
+  Created     DateTime    @default(now()) @db.Timestamp(0)
+  Project     Project     @relation(fields: [ProjectID], references: [ID])
+
+  @@index([ProjectID], name: "Assets_FK")
+}
+
 model Categories {
   Name       String @unique @db.VarChar(16)
   CategoryID Int    @id @default(autoincrement())
   Tags       Tags[]
+}
+
+model Project {
+  ID          Int            @id @default(autoincrement())
+  Created     DateTime       @default(now()) @db.Timestamp(0)
+  Updated     DateTime       @default(now()) @db.Timestamp(0)
+  Name        String         @db.VarChar(32)
+  Description String?        @db.VarChar(1024)
+  Status      Project_Status @default(Unknown)
+  Assets      Assets[]
+  TagLink     TagLink[]
 }
 
 model TagLink {
@@ -34,29 +60,11 @@ model Tags {
   @@index([CategoryID], name: "Tags_FK")
 }
 
-model Project {
-  ID          Int            @id @default(autoincrement())
-  Created     DateTime       @default(now()) @db.Timestamp(0)
-  Updated     DateTime       @default(now()) @db.Timestamp(0)
-  Name        String         @db.VarChar(32)
-  Description String?        @db.VarChar(1024)
-  Status      Project_Status @default(Unknown)
-  Assets      Assets[]
-  TagLink     TagLink[]
-}
-
-model Assets {
-  FileName    String?     @unique @db.VarChar(36)
-  Description String?     @db.VarChar(256)
-  ID          Int         @id @default(autoincrement())
-  Display     Boolean     @default(false)
-  Type        Assets_Type
-  ProjectID   Int
-  Thumbnail   Boolean     @default(false)
-  Alt         String      @db.VarChar(128)
-  Project     Project     @relation(fields: [ProjectID], references: [ID])
-
-  @@index([ProjectID], name: "Assets_FK")
+enum Assets_Type {
+  Image
+  Audio
+  Video
+  Programming
 }
 
 enum Project_Status {
@@ -64,9 +72,4 @@ enum Project_Status {
   In_Progress @map("In Progress")
   Abandoned
   Unknown
-}
-
-enum Assets_Type {
-  Image
-  Audio
 }
