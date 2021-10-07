@@ -1,25 +1,21 @@
-import { Assets } from ".prisma/client";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "../styles/browse.module.scss";
-import { Project } from "@prisma/client";
+import { GalleryImage } from "../types/types";
 
-interface galleryQuery extends Assets {
-  Project: Project
-}
 
-export default function ImageItem(data: galleryQuery): JSX.Element {
+export default function ImageItem(data: GalleryImage): JSX.Element {
 
   const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
   if (data.Type !== "Image") return (<></>);
 
   return (
-    <Link href={`/project/${data.Project.ID}`} scroll={true}>
+    <Link href={`/project/${data.ID}`} scroll={true}>
       <a className={styles.square}>
         <div className={styles.galleryInfo}>
-          <h3>{data.Project.Name}</h3>
-          <p>{data.Project.Description}</p>
+          <h3>{data.Name}</h3>
+          <p>{data.Description}</p>
         </div>
         <Image
           className={styles.galleryContent}

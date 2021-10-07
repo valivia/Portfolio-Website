@@ -5,18 +5,21 @@ import styles from "../styles/browse.module.scss";
 import Head from "next/head";
 import ImageItem from "../components/imageItem";
 import React from "react";
-import { GalleryQuery } from "../types/types";
 import GalleryList from "../components/listItem";
 import Footer from "../components/footer";
+import { GalleryImage } from "../types/types";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
-export default function Browse({ projects, repos }: { projects: GalleryQuery[], repos: repo[] }): JSX.Element {
+export default function Browse({ projects, repos }: { projects: GalleryImage[], repos: repo[] }): JSX.Element {
   const router = useRouter();
 
-  const statusFilter = (data: GalleryQuery): boolean => !router.query.status || data.Project.Status === router.query.status;
-  const TagFilter = (data: GalleryQuery): boolean => !router.query.tag || data.Tags.find((x) => x.TagID === Number(router.query.tag)) !== undefined;
-  const duplicateFilter = (data: GalleryQuery): boolean => !router.query.duplicates || router.query.duplicates == "true" || (router.query.duplicates == "false" && data.Thumbnail);
+  function filter(filterList: GalleryImage) {
+    const statusFilter = (data: GalleryImage): boolean => !router.query.status || data.Status === router.query.status;
+    const TagFilter = (data: GalleryImage): boolean => !router.query.tag || data.Tags.find((x) => x.TagID === Number(router.query.tag)) !== undefined;
+    const duplicateFilter = (data: GalleryImage): boolean => !router.query.duplicates || router.query.duplicates == "true" || (router.query.duplicates == "false" && data.Thumbnail);
+    return statusFilter(filterList) && TagFilter(filterList) && duplicateFilter(filterList);
+  }
 
   return (
     <>
@@ -32,8 +35,9 @@ export default function Browse({ projects, repos }: { projects: GalleryQuery[], 
         <div>Gallery</div>
         <div>ᐯ</div>
       </div>
+
       <main className={`${styles.squareContainer} ${styles.content}`}>
-        {projects.map((data) => statusFilter(data) && TagFilter(data) && duplicateFilter(data) && <ImageItem key={data.FileName} {...data} />)}
+        {projects.map((data) => filter(data) && <ImageItem key={data.FileName} {...data} />)}
         <div className={styles.divider}>Github</div>
         {repos.map((repo) => <GalleryList key={repo.id}{...repo} />)}
         <div className={styles.divider}>Music</div>
@@ -49,8 +53,8 @@ export default function Browse({ projects, repos }: { projects: GalleryQuery[], 
 
 export const getStaticProps: GetStaticProps = async () => {
   const projectData = await fetch(`${cdn}/gallery`);
-  const projects = await projectData.json() as GalleryQuery[];
-  const gitData = await fetch("https://api.github.com/users/valivia/repos");
+  const projects = await projectData.json() as GalleryImage[];
+  const gitData = await fetch(`https://api.github.com/users/${process.env.NEXT_PUBLIC_GITHUB}/repos`);
   const repos = await gitData.json() as repo[];
 
 

@@ -1,10 +1,12 @@
 import Link from "next/link";
 import styles from "./navbar.module.scss";
 
+const git = process.env.NEXT_PUBLIC_GITHUB;
+
 export default function NavBar(): JSX.Element {
   return (
     <nav className={styles.navbar}>
-      <Link href="https://github.com/valivia">
+      <Link href={`https://github.com/${git}`}>
         <a className={styles.button1} target="_blank" rel="noreferrer">Github</a>
       </Link>
       <Link href="/browse">
@@ -19,6 +21,6 @@ export default function NavBar(): JSX.Element {
       <Link href="/">
         <a className={styles.icon}></a>
       </Link>
-    </nav>
+    </nav >
   );
 }
