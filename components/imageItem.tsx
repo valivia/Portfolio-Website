@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import styles from "../styles/browse.module.scss";
+import styles from "./imageItem.module.scss";
 import { GalleryImage } from "../types/types";
 
 

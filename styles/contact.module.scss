@@ -12,8 +12,22 @@ $cdn: "https://cdn.xayania.com";
   justify-content: center;
   align-items: center;
 
-  // background: black url($cdn + "/file/s/tbhc_Default.jpg") no-repeat center;
-  background: black url($cdn + "/file/a/c46d9e15-c9b1-48c3-897e-efca58aa9ddc_Default.jpg") no-repeat center;
+  background: black url($cdn + "/file/s/earth_MediumHigh.jpg") no-repeat center;
+  background-image: image-set(
+    url($cdn + "/file/s/earth_Default.jpg") 2x,
+    url($cdn + "/file/s/earth_High.jpg") 1.5x,
+    url($cdn + "/file/s/earth_MediumHigh.jpg") 1x,
+    url($cdn + "/file/s/earth_Medium.jpg") 0.75x,
+    url($cdn + "/file/s/earth_Low.jpg") 0.25x
+  );
+  background-image: -webkit-image-set(
+    url($cdn + "/file/s/earth_Default.jpg") 2x,
+    url($cdn + "/file/s/earth_High.jpg") 1.5x,
+    url($cdn + "/file/s/earth_MediumHigh.jpg") 1x,
+    url($cdn + "/file/s/earth_Medium.jpg") 0.75x,
+    url($cdn + "/file/s/earth_Low.jpg") 0.25x
+  );
+
   background-size: cover;
 }
 
@@ -27,17 +41,17 @@ $cdn: "https://cdn.xayania.com";
   height: 50%;
 
   & > * {
-      padding: 0.2vw;
+    padding: 0.2vw;
   }
 }
 
 .fieldset {
   border-style: none;
-  width: 100%;
+  max-width: 100%;
   display: flex;
   gap: 2em;
   padding: 0;
-  margin: 0;
+  margin: 0.2vw;
 }
 
 .textInput {
@@ -56,7 +70,7 @@ $cdn: "https://cdn.xayania.com";
   font-size: 100%;
 
   &:focus {
-      border: 3px solid #805315;
+    border: 3px solid #805315;
   }
 }
 
@@ -71,8 +85,8 @@ $cdn: "https://cdn.xayania.com";
   font-size: 100%;
 
   &:hover {
-      color: black;
-      background-color: $text;
+    color: black;
+    background-color: $text;
   }
 }
 

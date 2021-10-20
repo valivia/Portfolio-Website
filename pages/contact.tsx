@@ -2,6 +2,7 @@ import NavBar from "../components/navbar";
 import Head from "next/head";
 import styles from "../styles/contact.module.scss";
 import React, { ReactNode } from "react";
+import Footer from "../components/footer";
 
 export default class contact extends React.Component {
   state = {
@@ -18,17 +19,23 @@ export default class contact extends React.Component {
   }
 
 
-  public submit = (event: React.FormEvent<HTMLFormElement>): void => {
+  public submit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     console.log(this.state);
-    for (const x in this.state) this.setState({ [x]: "" });
-    /*
-    const res = fetch(url, {
+
+    const response = await fetch("https://cdn.xayania.com/contact", {
       method: "POST",
-      body: this.state,
-    })
-      .then(response => response);
-      */
+      mode: "cors",
+      credentials: "include",
+      headers: new Headers({ "Content-Type": "application/json" }),
+      body: JSON.stringify(this.state),
+    });
+
+    if (response.ok) {
+      for (const x in this.state) this.setState({ [x]: "" });
+
+      return;
+    }
   }
 
   render(): ReactNode {
@@ -122,6 +129,8 @@ export default class contact extends React.Component {
             </div>
           </form>
         </main>
+
+        <Footer />
       </>
     );
   }
