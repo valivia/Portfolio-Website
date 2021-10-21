@@ -10,6 +10,8 @@ const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
 class Login extends React.Component<WithRouterProps> {
   state = { code: "" };
+  error = "";
+  ratelimit = false;
 
   public handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     if (event == null) return;
@@ -21,6 +23,8 @@ class Login extends React.Component<WithRouterProps> {
     event.preventDefault();
     console.log(this.state);
 
+    this.state.code = this.state.code.replace(" ", "");
+
     const response = await fetch(`${cdn}/login`, {
       method: "POST",
       mode: "cors",
@@ -30,6 +34,8 @@ class Login extends React.Component<WithRouterProps> {
     });
 
     if (!response.ok) {
+      this.error = response.statusText;
+      if (response.status === 429) this.ratelimit = true;
       for (const x in this.state) this.setState({ [x]: "" });
     } else {
       this.props.router.push("/admin");
@@ -46,7 +52,7 @@ class Login extends React.Component<WithRouterProps> {
         <NavBar />
 
         <main className={styles.main}>
-          <h1 className={styles.contactH1}>Login</h1>
+          <h1 className={styles.contactH1}>{this.error ? this.error : "Login"}</h1>
           <form className={`${styles.form} ${styles.half}`} onSubmit={this.submit} >
 
             <div>
@@ -57,6 +63,7 @@ class Login extends React.Component<WithRouterProps> {
                 name="code"
                 onChange={this.handleChange}
                 value={this.state.code}
+                disabled={this.ratelimit}
                 required />
             </div>
 
