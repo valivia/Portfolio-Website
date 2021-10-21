@@ -47,13 +47,13 @@ export default class contact extends React.Component {
 
         <NavBar />
 
-        <main className={styles.contactContainer}>
+        <main className={styles.main}>
           <h1 className={styles.contactH1}>Contact</h1> <br />
-          <form className={styles.contactForm} onSubmit={this.submit}>
+          <form className={styles.form} onSubmit={this.submit}>
             <fieldset className={styles.fieldset}>
               <legend>Name:</legend>
               <input
-                className={styles.textInput}
+                className={styles.input}
                 type="text"
                 name="firstName"
                 placeholder="First name"
@@ -66,7 +66,7 @@ export default class contact extends React.Component {
               />
 
               <input
-                className={styles.textInput}
+                className={styles.input}
                 type="text"
                 name="lastName"
                 placeholder="Last name"
@@ -82,7 +82,7 @@ export default class contact extends React.Component {
             <div>
               <label htmlFor="email">Email: </label>
               <input
-                className={styles.textInput}
+                className={styles.input}
                 type="email"
                 name="email"
                 placeholder="Email"
@@ -95,7 +95,7 @@ export default class contact extends React.Component {
             <div>
               <label htmlFor="subject">Subject: </label>
               <input
-                className={styles.textInput}
+                className={styles.input}
                 type="text"
                 name="subject"
                 placeholder="Subject"
@@ -111,7 +111,7 @@ export default class contact extends React.Component {
             <div>
               <label htmlFor="message">Message: </label>
               <textarea
-                className={styles.textInput}
+                className={styles.input}
                 name="message"
                 placeholder="Message"
                 autoComplete="off"

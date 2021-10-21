@@ -3,7 +3,7 @@ $cdn: "https://cdn.xayania.com";
 
 // CONTACT
 
-.contactContainer {
+.main {
   font-family: "abel";
   min-height: 100vh;
   width: 100%;
@@ -12,20 +12,20 @@ $cdn: "https://cdn.xayania.com";
   justify-content: center;
   align-items: center;
 
-  background: black url($cdn + "/file/s/earth_MediumHigh.jpg") no-repeat center;
+  background: black url($cdn + "/file/s/crow_MediumHigh.jpg") no-repeat center;
   background-image: image-set(
-    url($cdn + "/file/s/earth_Default.jpg") 2x,
-    url($cdn + "/file/s/earth_High.jpg") 1.5x,
-    url($cdn + "/file/s/earth_MediumHigh.jpg") 1x,
-    url($cdn + "/file/s/earth_Medium.jpg") 0.75x,
-    url($cdn + "/file/s/earth_Low.jpg") 0.25x
+    url($cdn + "/file/s/crow_Default.jpg") 2x,
+    url($cdn + "/file/s/crow_High.jpg") 1.5x,
+    url($cdn + "/file/s/crow_MediumHigh.jpg") 1x,
+    url($cdn + "/file/s/crow_Medium.jpg") 0.75x,
+    url($cdn + "/file/s/crow_Low.jpg") 0.25x
   );
   background-image: -webkit-image-set(
-    url($cdn + "/file/s/earth_Default.jpg") 2x,
-    url($cdn + "/file/s/earth_High.jpg") 1.5x,
-    url($cdn + "/file/s/earth_MediumHigh.jpg") 1x,
-    url($cdn + "/file/s/earth_Medium.jpg") 0.75x,
-    url($cdn + "/file/s/earth_Low.jpg") 0.25x
+    url($cdn + "/file/s/crow_Default.jpg") 2x,
+    url($cdn + "/file/s/crow_High.jpg") 1.5x,
+    url($cdn + "/file/s/crow_MediumHigh.jpg") 1x,
+    url($cdn + "/file/s/crow_Medium.jpg") 0.75x,
+    url($cdn + "/file/s/crow_Low.jpg") 0.25x
   );
 
   background-size: cover;
@@ -36,7 +36,7 @@ $cdn: "https://cdn.xayania.com";
   font-weight: 100;
 }
 
-.contactForm {
+.form {
   width: 50%;
   height: 50%;
 
@@ -54,7 +54,7 @@ $cdn: "https://cdn.xayania.com";
   margin: 0.2vw;
 }
 
-.textInput {
+.input {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -72,6 +72,10 @@ $cdn: "https://cdn.xayania.com";
   &:focus {
     border: 3px solid #805315;
   }
+}
+
+.half {
+  width: 25%;
 }
 
 .submit {

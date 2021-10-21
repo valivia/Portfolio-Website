@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 
 import styles from "../styles/main.module.scss";
 
-export default class notFound extends React.Component {
+export default class NotFound extends React.Component {
   render(): ReactNode {
     return (
       <>

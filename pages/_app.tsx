@@ -1,5 +1,5 @@
 import "../styles/globals.scss";
-import type { AppProps } from "next/app";
+import type { AppProps, NextWebVitalsMetric } from "next/app";
 import Head from "next/head";
 import { ReactNode } from "react";
 
@@ -13,4 +13,10 @@ function app({ Component, pageProps }: AppProps): ReactNode {
     </>
   );
 }
+
+export function reportWebVitals(metric: NextWebVitalsMetric): void {
+  console.log(metric);
+}
+
+
 export default app;

@@ -52,7 +52,7 @@ export default function Browse({ projects, repos }: { projects: GalleryImage[], 
 
 
 export const getStaticProps: GetStaticProps = async () => {
-  const projectData = await fetch(`${cdn}/gallery`);
+  const projectData = await fetch(`${cdn}/gallery`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const projects = await projectData.json() as GalleryImage[];
   const gitData = await fetch(`https://api.github.com/users/${process.env.NEXT_PUBLIC_GITHUB}/repos`);
   const repos = await gitData.json() as repo[];

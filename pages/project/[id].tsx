@@ -64,7 +64,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
 
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${cdn}/project`);
+  const res = await fetch(`${cdn}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const data = await res.json() as ProjectQuery[];
 
   const paths = data.map((project) => { return { params: { id: project.ID.toString() } }; });
@@ -76,7 +76,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const res = await fetch(`${cdn}/project/${params?.id}`);
+  const res = await fetch(`${cdn}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const data = await res.json() as ProjectQuery;
 
   if (!data) {
