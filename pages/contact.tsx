@@ -21,7 +21,6 @@ export default class contact extends React.Component {
 
   public submit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    console.log(this.state);
 
     const response = await fetch("https://cdn.xayania.com/contact", {
       method: "POST",

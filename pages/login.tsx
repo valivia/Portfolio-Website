@@ -21,7 +21,6 @@ class Login extends React.Component<WithRouterProps> {
 
   public submit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    console.log(this.state);
 
     this.state.code = this.state.code.replace(" ", "");
 

@@ -21,8 +21,6 @@ export default function Browse({ projects, repos }: { projects: GalleryImage[], 
     return statusFilter(filterList) && TagFilter(filterList) && duplicateFilter(filterList);
   }
 
-  console.log(projects);
-
   return (
     <>
       <Head>

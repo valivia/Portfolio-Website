@@ -18,8 +18,6 @@ export default function Browse({ projects, tags }: { projects: GalleryImage[], t
   if (loggedOut) return <NotFound />;
   if (loading) return <></>;
 
-  console.log(tags);
-
   return (
     <>
       <Head>
