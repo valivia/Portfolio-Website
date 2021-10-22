@@ -8,6 +8,7 @@ const securityHeaders = [
 
 module.exports = {
   reactStrictMode: true,
+  poweredByHeader: false,
   images: {
     domains: ["cdn.xayania.com"],
   },
