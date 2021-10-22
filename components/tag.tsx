@@ -1,11 +1,11 @@
-import { Tags } from ".prisma/client";
+import { tag } from ".prisma/client";
 import Link from "next/link";
 import styles from "./tag.module.scss";
 
-export default function Tag(tag: Tags): JSX.Element {
+export default function Tag(data: tag): JSX.Element {
   return (
-    <Link key={tag.TagID} href={`/browse?tag=${tag.TagID}`}>
-      <a className={styles.tag}>{tag.Name}</a>
+    <Link key={data.uuid} href={`/browse?tag=${data.uuid}`}>
+      <a className={styles.tag}>{data.name}</a>
     </Link>
   );
 }

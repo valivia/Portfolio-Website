@@ -1,4 +1,4 @@
-import { Tags } from ".prisma/client";
+import { tag } from "@prisma/client";
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import React from "react";
@@ -10,13 +10,15 @@ import NotFound from "./404";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
-export default function Browse({ projects, tags }: { projects: GalleryImage[], tags: Tags[] }): JSX.Element {
+export default function Browse({ projects, tags }: { projects: GalleryImage[], tags: tag[] }): JSX.Element {
 
   const { loading, loggedOut } = AuthSwr();
 
 
   if (loggedOut) return <NotFound />;
   if (loading) return <></>;
+
+  console.log(tags);
 
   return (
     <>
@@ -31,38 +33,38 @@ export default function Browse({ projects, tags }: { projects: GalleryImage[], t
           <h2>New project</h2>
           <div>
             <label>Name:</label>
-            <input className={form.input} type="text" id="name" name="Name" />
+            <input className={form.input} type="text" name="name" />
           </div>
 
           <div>
             <label>Image</label>
-            <input className={form.input} type="file" name="Banner" />
+            <input className={form.input} type="file" name="banner" />
           </div>
 
           <div>
             <label>Alt-text:</label>
-            <textarea className={form.input} name="Alt" maxLength={128} rows={1}></textarea>
+            <textarea className={form.input} name="alt" maxLength={128} rows={1}></textarea>
           </div>
 
           <div>
             <label>Description:</label>
-            <textarea className={form.input} name="Description" maxLength={1024}></textarea>
+            <textarea className={form.input} name="description" maxLength={1024}></textarea>
           </div>
 
           <div>
             <label>Status:</label>
-            <select className={form.input} name="Status">
-              <option value="Unknown">Unknown</option>
-              <option value="Abandoned">Abandoned</option>
-              <option value="In_Progress">In progress</option>
-              <option value="Finished">Finished</option>
+            <select className={form.input} name="status">
+              <option value="unknown">Unknown</option>
+              <option value="abandoned">Abandoned</option>
+              <option value="in_progress">In progress</option>
+              <option value="finished">Finished</option>
             </select>
           </div>
 
           <div>
             <label>tag:</label>
-            <select className={form.input} name="Tags" multiple>
-              {tags.map(data => <option key={data.TagID} value={data.TagID}>{data.Name}</option>)}
+            <select className={form.input} name="tags" multiple>
+              {tags.map(data => <option key={data.uuid} value={data.uuid}>{data.name}</option>)}
             </select>
           </div>
 
@@ -75,29 +77,29 @@ export default function Browse({ projects, tags }: { projects: GalleryImage[], t
           <h2>Add content</h2>
           <div>
             <label>Project</label>
-            <select className={form.input} name="ID">
-              {projects.map(data => <option key={data.ID} value={data.ID}>{data.ID} - {data.Name}</option>)}
+            <select className={form.input} name="uuid">
+              {projects.map(data => <option key={data.uuid} value={data.uuid}>{data.uuid} - {data.name}</option>)}
             </select>
           </div>
 
           <div>
-            <label htmlFor="Image">Image</label>
-            <input className={form.input} type="file" name="Image" />
+            <label htmlFor="image">Image</label>
+            <input className={form.input} type="file" name="image" />
           </div>
 
           <div>
             <label>Alt-text:</label>
-            <textarea className={form.input} name="Alt" maxLength={128} rows={1}></textarea>
+            <textarea className={form.input} name="alt" maxLength={128} rows={1}></textarea>
           </div>
 
           <div>
             <label>Description:</label>
-            <textarea className={form.input} name="Description" maxLength={1024}></textarea>
+            <textarea className={form.input} name="description" maxLength={1024}></textarea>
           </div>
 
           <div>
             <label>Display in gallery?</label>
-            <input type="checkbox" name="Display" />
+            <input type="checkbox" name="display" />
           </div>
 
           <div>
@@ -108,9 +110,9 @@ export default function Browse({ projects, tags }: { projects: GalleryImage[], t
         <form className={form.form} action={`${cdn}/delete`} method="POST">
           <h2>Remove project</h2>
           <div>
-            <label htmlFor="ID">Project</label>
-            <select className={form.input} name="ID">
-              {projects.map(data => <option key={data.ID} value={data.ID}>{data.ID} - {data.Name}</option>)}
+            <label htmlFor="uuid">Project</label>
+            <select className={form.input} name="uuid">
+              {projects.map(data => <option key={data.uuid} value={data.uuid}>{data.uuid} - {data.name}</option>)}
             </select>
           </div>
 
@@ -130,7 +132,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const projects = await projectData.json() as GalleryImage[];
 
   const tagData = await fetch(`${cdn}/tags`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
-  const tags = await tagData.json() as GalleryImage[];
+  const tags = await tagData.json() as tag[];
 
   if (!projects || !tags) {
     return {

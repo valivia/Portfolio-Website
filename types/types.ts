@@ -1,25 +1,24 @@
-import { Project, Assets, Tags, Assets_Type } from ".prisma/client";
-import { Project_Status } from "@prisma/client";
+import { asset, tag, project_status, asset_type, project } from ".prisma/client";
 
-export interface ProjectsQuery extends Project {
-    Assets: Assets[]
-    Tags: Tags;
+export interface ProjectsQuery extends project {
+    assets: asset[]
+    tags: tag;
 }
 
-export interface ProjectQuery extends Project {
-    Assets: Assets[]
-    Tags: Tags[]
+export interface ProjectQuery extends project {
+    assets: asset[]
+    tags: tag[]
 }
 
 export interface GalleryImage {
-    FileName: string | null;
-    Name: string;
-    Created: Date;
-    Description: string;
-    Alt: string;
-    ID: number;
-    Tags: Tags[];
-    Status: Project_Status;
-    Type: Assets_Type;
-    Thumbnail: boolean;
-  }
+    alt: string;
+    type: asset_type;
+    project_uuid: string;
+    created: Date;
+    name: string;
+    uuid: string;
+    thumbnail: boolean;
+    status: project_status;
+    tags: tag[];
+    description: string;
+}

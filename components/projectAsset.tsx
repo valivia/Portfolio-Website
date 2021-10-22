@@ -1,20 +1,20 @@
-import { Assets } from ".prisma/client";
 import styles from "./projectAsset.module.scss";
+import { asset } from "@prisma/client";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
-export default function projectAsset(asset: Assets): JSX.Element {
+export default function projectAsset(data: asset): JSX.Element {
   return (
     <>
-      {asset.Description ? <p>{asset.Description}</p> : undefined}
+      {data.description ? <p>{data.description}</p> : undefined}
       <picture className={styles.projectContent}>
-        <source srcSet={`${cdn}/file/a/${asset.FileName}_Default.jpg 3840w,
-              ${cdn}/file/a/${asset.FileName}_High.jpg 2880w,
-              ${cdn}/file/a/${asset.FileName}_MediumHigh.jpg 1440w,
-              ${cdn}/file/a/${asset.FileName}_Medium.jpg 1920w,
-              ${cdn}/file/a/${asset.FileName}_Low.jpg 1080w`} />
-        <img decoding="async" loading="lazy" id={asset.ID.toString()} src={`${cdn}/file/a/${asset.FileName}_Low.jpg`}
-          alt={asset.Alt} />
+        <source srcSet={`${cdn}/file/a/${data.uuid}_Default.jpg 3840w,
+              ${cdn}/file/a/${data.uuid}_High.jpg 2880w,
+              ${cdn}/file/a/${data.uuid}_MediumHigh.jpg 1440w,
+              ${cdn}/file/a/${data.uuid}_Medium.jpg 1920w,
+              ${cdn}/file/a/${data.uuid}_Low.jpg 1080w`} />
+        <img decoding="async" loading="lazy" id={data.uuid} src={`${cdn}/file/a/${data.uuid}_Low.jpg`}
+          alt={data.alt} />
       </picture>
     </>
   );

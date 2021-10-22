@@ -3,73 +3,62 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Assets {
-  FileName    String?     @unique @db.VarChar(36)
-  Description String?     @db.VarChar(256)
-  ID          Int         @id @default(autoincrement())
-  Display     Boolean     @default(false)
-  Type        Assets_Type
-  ProjectID   Int
-  Thumbnail   Boolean     @default(false)
-  Alt         String      @db.VarChar(128)
-  Created     DateTime    @default(now()) @db.Timestamp(0)
-  Project     Project     @relation(fields: [ProjectID], references: [ID])
+model asset {
+  uuid        String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id  String      @db.Uuid
+  type        asset_type
+  description String?     @db.VarChar(256)
+  alt         String      @db.VarChar(128)
+  display     Boolean     @default(false)
+  thumbnail   Boolean     @default(false)
+  created     DateTime    @default(now()) @db.Timestamp(0)
+  project     project     @relation(fields: [project_id], references: [uuid])
 
-  @@index([ProjectID], name: "Assets_FK")
+  @@index([project_id], name: "Assets_FK")
 }
 
-model Categories {
-  Name       String @unique @db.VarChar(16)
-  CategoryID Int    @id @default(autoincrement())
-  Tags       Tags[]
+model project {
+  uuid        String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String         @db.VarChar(32)
+  description String?        @db.VarChar(1024)
+  status      project_status @default(unknown)
+  created     DateTime       @default(now()) @db.Timestamp(0)
+  updated     DateTime       @default(now()) @db.Timestamp(0)
+  assets     asset[]
+  tag_link    tag_link[]
 }
 
-model Project {
-  ID          Int            @id @default(autoincrement())
-  Created     DateTime       @default(now()) @db.Timestamp(0)
-  Updated     DateTime       @default(now()) @db.Timestamp(0)
-  Name        String         @db.VarChar(32)
-  Description String?        @db.VarChar(1024)
-  Status      Project_Status @default(Unknown)
-  Assets      Assets[]
-  TagLink     TagLink[]
+model tag_link {
+  uuid       String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id String  @db.Uuid
+  tag_id     String  @db.Uuid
+  project    project @relation(fields: [project_id], references: [uuid])
+  tag       tag     @relation(fields: [tag_id], references: [uuid])
+
+  @@index([project_id], name: "tag_link_pk_project")
+  @@index([tag_id], name: "tag_link_pk_tag")
 }
 
-model TagLink {
-  ProjectID Int
-  TagID     Int
-  TagLinkID Int     @id @default(autoincrement())
-  Project   Project @relation(fields: [ProjectID], references: [ID])
-  Tags      Tags    @relation(fields: [TagID], references: [TagID])
-
-  @@index([ProjectID], name: "TagLink_FK")
-  @@index([TagID], name: "TagLink_FK_1")
+model tag {
+  uuid     String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name     String     @db.VarChar(16)
+  tag_link tag_link[]
 }
 
-model Tags {
-  Name       String      @db.VarChar(16)
-  TagID      Int         @id @default(autoincrement())
-  CategoryID Int?
-  Categories Categories? @relation(fields: [CategoryID], references: [CategoryID])
-  TagLink    TagLink[]
-
-  @@index([CategoryID], name: "Tags_FK")
+enum asset_type {
+  image
+  audio
+  video
+  programming
 }
 
-enum Assets_Type {
-  Image
-  Audio
-  Video
-  Programming
-}
-
-enum Project_Status {
-  Finished
-  In_Progress @map("In Progress")
-  Abandoned
-  Unknown
+enum project_status {
+  finished
+  in_progress  @map("in Progress")
+  abandoned
+  unknown
 }

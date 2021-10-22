@@ -15,11 +15,13 @@ export default function Browse({ projects, repos }: { projects: GalleryImage[], 
   const router = useRouter();
 
   function filter(filterList: GalleryImage) {
-    const statusFilter = (data: GalleryImage): boolean => !router.query.status || data.Status === router.query.status;
-    const TagFilter = (data: GalleryImage): boolean => !router.query.tag || data.Tags.find((x) => x.TagID === Number(router.query.tag)) !== undefined;
-    const duplicateFilter = (data: GalleryImage): boolean => !router.query.duplicates || router.query.duplicates == "true" || (router.query.duplicates == "false" && data.Thumbnail);
+    const statusFilter = (data: GalleryImage): boolean => !router.query.status || data.status === router.query.status;
+    const TagFilter = (data: GalleryImage): boolean => !router.query.tag || data.tags.find((x) => x.uuid === router.query.tag) !== undefined;
+    const duplicateFilter = (data: GalleryImage): boolean => !router.query.duplicates || router.query.duplicates == "true" || (router.query.duplicates == "false" && data.thumbnail);
     return statusFilter(filterList) && TagFilter(filterList) && duplicateFilter(filterList);
   }
+
+  console.log(projects);
 
   return (
     <>
@@ -37,7 +39,7 @@ export default function Browse({ projects, repos }: { projects: GalleryImage[], 
       </div>
 
       <main className={`${styles.squareContainer} ${styles.content}`}>
-        {projects.map((data) => filter(data) && <ImageItem key={data.FileName} {...data} />)}
+        {projects.map((data) => filter(data) && <ImageItem key={data.uuid} {...data} />)}
         <div className={styles.divider}>Github</div>
         {repos.map((repo) => <GalleryList key={repo.id}{...repo} />)}
         <div className={styles.divider}>Music</div>
@@ -57,6 +59,8 @@ export const getStaticProps: GetStaticProps = async () => {
   const gitData = await fetch(`https://api.github.com/users/${process.env.NEXT_PUBLIC_GITHUB}/repos`);
   const repos = await gitData.json() as repo[];
 
+
+  console.log(projects);
 
   if (!projects && !repos) {
     return {

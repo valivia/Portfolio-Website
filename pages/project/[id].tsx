@@ -17,21 +17,20 @@ export default class Projects extends React.Component<ProjectQuery, never> {
   }
 
   render(): ReactNode {
-    const { Assets, Tags } = this.props;
+    const { assets, tags } = this.props;
     const project = this.props;
-    const tags = Tags;
-    const banner = Assets.find(asset => asset.Thumbnail === true);
+    const banner = assets.find(asset => asset.thumbnail === true);
     return (
       <>
         <Head>
-          <title>{project.Name}</title>
+          <title>{project.name}</title>
           <meta name="theme-color" content="#B5A691" />
-          <meta name="description" content={project.Description || ""} />
+          <meta name="description" content={project.description || ""} />
         </Head>
         <NavBar />
 
         <div className={styles.projectHeader}
-          style={{ backgroundImage: `url("${cdn}/file/a/${banner?.FileName}_MediumHigh.jpg")` }}>
+          style={{ backgroundImage: `url("${cdn}/file/a/${banner?.uuid}_MediumHigh.jpg")` }}>
           <h1 className={`${styles.projectBannerText} ${maincss.noselect}`}
             onClick={this.scroll}>ᐯ</h1>
         </div>
@@ -39,20 +38,20 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         <main className={`${styles.content} ${styles.project}`} id="main">
 
           <div className={styles.projectInfo}>
-            <h1>{project.Name}</h1>
-            <p>{project.Description}</p>
+            <h1>{project.name}</h1>
+            <p>{project.description}</p>
 
             <div className={styles.tags}>
-              {tags.map((tag) => <Tag key={tag.TagID} {...tag} />)}
+              {tags.map((tag) => <Tag key={tag.uuid} {...tag} />)}
             </div>
 
-            <p> status: {project.Status} </p>
-            <p> created: {new Date(project.Created).toDateString()} </p>
+            <p> status: {project.status} </p>
+            <p> created: {new Date(project.created).toDateString()} </p>
 
           </div>
 
           <div className={styles.projectContentContainer}>
-            {project.Assets.map((asset) => <ProjectAsset key={asset.ID} {...asset} />)};
+            {project.assets.map((asset) => <ProjectAsset key={asset.uuid} {...asset} />)};
           </div>
 
         </main>
@@ -67,7 +66,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const res = await fetch(`${cdn}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const data = await res.json() as ProjectQuery[];
 
-  const paths = data.map((project) => { return { params: { id: project.ID.toString() } }; });
+  const paths = data.map((project) => { return { params: { id: project.uuid } }; });
 
   return {
     paths: paths,
