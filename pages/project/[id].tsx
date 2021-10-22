@@ -30,7 +30,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         <NavBar />
 
         <div className={styles.projectHeader}
-          style={{ backgroundImage: `url("${cdn}/file/a/${banner?.uuid}_MediumHigh.jpg")` }}>
+          style={{ backgroundImage: `url("${cdn}/file/a/${banner?.uuid}_medium.jpg")` }}>
           <h1 className={`${styles.projectBannerText} ${maincss.noselect}`}
             onClick={this.scroll}>ᐯ</h1>
         </div>
@@ -51,7 +51,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
           </div>
 
           <div className={styles.projectContentContainer}>
-            {project.assets.map((asset) => <ProjectAsset key={asset.uuid} {...asset} />)};
+            {project.assets.map((asset) => <ProjectAsset key={asset.uuid} {...asset} />)}
           </div>
 
         </main>

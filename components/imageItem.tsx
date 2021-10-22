@@ -19,7 +19,7 @@ export default function ImageItem(data: GalleryImage): JSX.Element {
         </div>
         <Image
           className={styles.galleryContent}
-          src={`${cdn}/file/a/${data.uuid}_SDefault.jpg`}
+          src={`${cdn}/file/a/${data.uuid}_square.jpg`}
           layout="fill"
           alt={data.alt ?? ""}>
         </Image>
