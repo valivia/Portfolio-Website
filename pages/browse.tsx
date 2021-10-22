@@ -59,9 +59,6 @@ export const getStaticProps: GetStaticProps = async () => {
   const gitData = await fetch(`https://api.github.com/users/${process.env.NEXT_PUBLIC_GITHUB}/repos`);
   const repos = await gitData.json() as repo[];
 
-
-  console.log(projects);
-
   if (!projects && !repos) {
     return {
       notFound: true,

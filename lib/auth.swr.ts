@@ -9,8 +9,6 @@ const fetcher = async (url: string) => await fetch(url, { credentials: "include"
 export default function AuthSwr(): Record<string, unknown> {
   const { data, mutate, error } = useSWR("https://cdn.xayania.com/auth", fetcher);
 
-  console.log(data, error);
-
   const loading = !data && !error;
   const loggedOut = error;
 
