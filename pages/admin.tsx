@@ -17,6 +17,7 @@ export default function Browse({ projects, tags }: { projects: GalleryImage[], t
 
   if (loggedOut) return <NotFound />;
   if (loading) return <></>;
+  console.log(new Date().toISOString());
 
   return (
     <>
@@ -64,6 +65,11 @@ export default function Browse({ projects, tags }: { projects: GalleryImage[], t
             <select className={form.input} name="tags" multiple>
               {tags.map(data => <option key={data.uuid} value={data.uuid}>{data.name}</option>)}
             </select>
+          </div>
+
+          <div>
+            <label>Date</label>
+            <input className={form.input} type="date" name="date" defaultValue={new Date().toLocaleDateString("en-CA")}></input>
           </div>
 
           <div>

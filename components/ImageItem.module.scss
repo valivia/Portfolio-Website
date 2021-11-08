@@ -50,21 +50,9 @@ $text: rgb(181, 166, 145);
     }
 }
 
-.square .galleryContent {
+.galleryContent {
     transition: opacity 0.1s;
     transition: filter 0.2s;
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
     & > img {
         height: 100%;
         object-fit: cover;

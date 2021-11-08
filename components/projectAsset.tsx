@@ -6,7 +6,7 @@ const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 export default function projectAsset(data: asset): JSX.Element {
   return (
     <>
-      {data.description ? `${<p>{data.description}</p>}` : ""}
+      {data.description ? <p>{data.description}</p> : ""}
       <picture className={styles.projectContent}>
         <source srcSet={`${cdn}/file/a/${data.uuid}_default.jpg 3840w,
               ${cdn}/file/a/${data.uuid}_high.jpg 2880w,
