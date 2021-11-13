@@ -2,6 +2,7 @@ import prisma from ".prisma/client";
 import { Component, ReactNode } from "react";
 import form from "../../styles/form.module.scss";
 import { parsedProject } from "../../types/types";
+import Link from "next/link";
 
 export default class ProjectEdit extends Component<Props> {
   render(): ReactNode {
@@ -10,7 +11,9 @@ export default class ProjectEdit extends Component<Props> {
 
     return (
       <form className={form.form} id={this.props.identifier} onSubmit={(e) => this.props.onSubmit(e, "project", "PATCH")}>
-        <h2>{data?.name || "New project"}</h2>
+        <Link href={`/project/${this.props.identifier}`}>
+          <a><h2>{data?.name || "New project"}</h2></a>
+        </Link>
 
         <div>
           <label>Name:</label>
@@ -76,7 +79,7 @@ export default class ProjectEdit extends Component<Props> {
         <div>
           <input className={form.submit} type="submit" value="Submit!" />
         </div>
-      </form>
+      </form >
     );
   }
 }

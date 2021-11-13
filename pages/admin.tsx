@@ -5,7 +5,6 @@ import { NextRouter, withRouter } from "next/router";
 import React from "react";
 import ContentCreate from "../components/admin/content.create.module";
 import ProjectCreate from "../components/admin/project.create.module";
-// import AuthSwr from "../lib/auth.swr";
 import styles from "../styles/admin.module.scss";
 import formStyles from "../styles/form.module.scss";
 import DeleteModule from "../components/admin/delete.module";
@@ -43,7 +42,7 @@ class Admin extends React.Component<Props, State> {
       body = new FormData();
 
       for (const x in data) {
-        if (x === "tags") (data[x] as string[]).forEach(y => body.append(`${x}[]`, y));
+        if (x === "tags") (data[x] as string[]).forEach(y => (body as FormData).append(`${x}[]`, y));
         else body.append(x, data[x] as string | File);
       }
 

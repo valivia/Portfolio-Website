@@ -8,7 +8,7 @@ export default class DeleteModule extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { confirm: false };
+    this.state = { confirm: false, failed: false };
   }
 
   public submit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
@@ -22,10 +22,9 @@ export default class DeleteModule extends Component<Props, State> {
       headers: new Headers({ "Content-Type": "application/json" }),
     });
 
-    if (response.ok) {
-      console.log(await response.json());
-      return;
-    }
+    if (!response.ok) this.setState({ failed: true });
+
+    setTimeout(() => { this.setState({ failed: false }); }, 3000);
   }
 
   public onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -51,6 +50,7 @@ export default class DeleteModule extends Component<Props, State> {
 
         <div>
           <input className={form.submit} type="submit" value="Delete" disabled={!this.state.confirm} />
+          <p>{this.state.failed ? "error" : ""}</p>
         </div>
       </form>
     );
@@ -64,4 +64,5 @@ interface Props {
 
 interface State {
   confirm: boolean;
+  failed: boolean;
 }

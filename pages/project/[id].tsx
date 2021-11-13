@@ -71,19 +71,24 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths: paths,
-    fallback: false,
+    fallback: "blocking",
   };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const res = await fetch(`${cdn}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
-  const data = await res.json() as ProjectQuery;
+  const res = await fetch(`${cdn}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
+    .then(x => {
+      if (x.ok) return x;
+      else return false;
+    });
 
-  if (!data) {
+  if (!res) {
     return {
       notFound: true,
     };
   }
+
+  const data = await res.json() as ProjectQuery;
 
   return {
     props: data,

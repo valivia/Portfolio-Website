@@ -14,7 +14,7 @@ export default function projectAsset(data: asset): JSX.Element {
               ${cdn}/file/a/${data.uuid}_low.jpg 1920w,
               ${cdn}/file/a/${data.uuid}_lowest.jpg 1080w`} />
         <img decoding="async" loading="lazy" id={data.uuid} src={`${cdn}/file/a/${data.uuid}_lowest.jpg`}
-          alt={data.alt} />
+          alt={data.alt || ""} />
       </picture>
     </>
   );

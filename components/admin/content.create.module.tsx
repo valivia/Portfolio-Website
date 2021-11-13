@@ -1,14 +1,14 @@
-import prisma from ".prisma/client";
 import { Component, ReactNode } from "react";
 import form from "../../styles/form.module.scss";
 
 export default class ContentCreate extends Component<Props> {
   render(): ReactNode {
 
-    const data = this.props.state.cache.contentCreate;
+    const uuid = this.props.uuid;
+    const data = this.props.state.cache[`cc${uuid}`];
 
     return (
-      <form className={form.form} id="contentCreate" onSubmit={(e) => this.props.onSubmit(e, "content", "POST")}>
+      <form className={form.form} id={`cc${uuid}`} onSubmit={(e) => this.props.onSubmit(e, "content", "POST", { uuid: uuid })}>
         <h2>Add content</h2>
 
         <div>
@@ -64,7 +64,7 @@ export default class ContentCreate extends Component<Props> {
 
 interface Props {
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
-  onSubmit: (e: React.FormEvent<HTMLFormElement>, url: string, method: string) => void
-  projects: prisma.project[]
+  onSubmit: (e: React.FormEvent<HTMLFormElement>, url: string, method: string, extra?: Record<string, string>) => void
   state: any;
+  uuid: string;
 }
