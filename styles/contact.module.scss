@@ -45,6 +45,10 @@ $cdn: "https://cdn.xayania.com";
   }
 }
 
+.half {
+  width: 25%;
+}
+
 .fieldset {
   border-style: none;
   max-width: 100%;
@@ -52,30 +56,6 @@ $cdn: "https://cdn.xayania.com";
   gap: 2em;
   padding: 0;
   margin: 0.2vw;
-}
-
-.input {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  border: 3px solid #ccc;
-  -webkit-transition: 0.5s;
-  transition: 0.5s;
-  outline: none;
-  resize: none;
-
-  font-family: "abel";
-  font-weight: 100;
-  font-size: 100%;
-
-  &:focus {
-    border: 3px solid #805315;
-  }
-}
-
-.half {
-  width: 25%;
 }
 
 .submit {

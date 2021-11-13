@@ -1,6 +1,7 @@
 import NavBar from "../components/navbar";
 import Head from "next/head";
 import styles from "../styles/contact.module.scss";
+import form from "../styles/form.module.scss";
 import React, { ReactNode } from "react";
 import Footer from "../components/footer";
 
@@ -52,7 +53,7 @@ export default class contact extends React.Component {
             <fieldset className={styles.fieldset}>
               <legend>Name:</legend>
               <input
-                className={styles.input}
+                className={form.input}
                 type="text"
                 name="firstName"
                 placeholder="First name"
@@ -65,7 +66,7 @@ export default class contact extends React.Component {
               />
 
               <input
-                className={styles.input}
+                className={form.input}
                 type="text"
                 name="lastName"
                 placeholder="Last name"
@@ -81,7 +82,7 @@ export default class contact extends React.Component {
             <div>
               <label htmlFor="email">Email: </label>
               <input
-                className={styles.input}
+                className={form.input}
                 type="email"
                 name="email"
                 placeholder="Email"
@@ -94,7 +95,7 @@ export default class contact extends React.Component {
             <div>
               <label htmlFor="subject">Subject: </label>
               <input
-                className={styles.input}
+                className={form.input}
                 type="text"
                 name="subject"
                 placeholder="Subject"
@@ -110,7 +111,7 @@ export default class contact extends React.Component {
             <div>
               <label htmlFor="message">Message: </label>
               <textarea
-                className={styles.input}
+                className={form.input}
                 name="message"
                 placeholder="Message"
                 autoComplete="off"
@@ -124,7 +125,7 @@ export default class contact extends React.Component {
             </div>
 
             <div>
-              <input className={styles.submit} type="submit" value="Submit" />
+              <input className={form.submit} type="submit" value="Submit" />
             </div>
           </form>
         </main>

@@ -1,6 +1,7 @@
 import NavBar from "../components/navbar";
 import React, { ReactNode } from "react";
 import styles from "../styles/contact.module.scss";
+import form from "../styles/form.module.scss";
 import Head from "next/head";
 import Footer from "../components/footer";
 import { withRouter } from "next/router";
@@ -57,7 +58,7 @@ class Login extends React.Component<WithRouterProps> {
             <div>
               <label>code:</label>
               <input
-                className={styles.input}
+                className={form.input}
                 type="text"
                 name="code"
                 onChange={this.handleChange}
@@ -67,7 +68,7 @@ class Login extends React.Component<WithRouterProps> {
             </div>
 
             <div>
-              <input className={styles.submit} type="submit" value="Login" />
+              <input className={form.submit} type="submit" value="Login" />
             </div>
 
           </form>
