@@ -18,3 +18,13 @@ export interface GalleryImage {
     tags: tag[];
     description: string;
 }
+
+export interface Project extends project {
+    tags: tag[];
+    assets: asset[];
+}
+
+export interface parsedProject extends project {
+    tags: string[];
+    assets: asset[];
+}

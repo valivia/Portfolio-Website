@@ -8,15 +8,17 @@ datasource db {
 }
 
 model asset {
-  uuid        String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  project_id  String      @db.Uuid
+  uuid        String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id  String     @db.Uuid
   type        asset_type
-  description String?     @db.VarChar(256)
-  alt         String      @db.VarChar(128)
-  display     Boolean     @default(false)
-  thumbnail   Boolean     @default(false)
-  created     DateTime    @default(now()) @db.Timestamp(0)
-  project     project     @relation(fields: [project_id], references: [uuid])
+  description String?    @db.VarChar(256)
+  alt         String?    @db.VarChar(128)
+  width       Int        @db.Integer
+  height      Int        @db.Integer
+  display     Boolean    @default(false)
+  thumbnail   Boolean    @default(false)
+  created     DateTime   @default(now()) @db.Timestamp(0)
+  project     project    @relation(fields: [project_id], references: [uuid])
 
   @@index([project_id], name: "Assets_FK")
 }
@@ -28,25 +30,16 @@ model project {
   status      project_status @default(unknown)
   created     DateTime       @default(now()) @db.Timestamp(0)
   updated     DateTime       @default(now()) @db.Timestamp(0)
-  assets     asset[]
-  tag_link    tag_link[]
-}
 
-model tag_link {
-  uuid       String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  project_id String  @db.Uuid
-  tag_id     String  @db.Uuid
-  project    project @relation(fields: [project_id], references: [uuid])
-  tag       tag     @relation(fields: [tag_id], references: [uuid])
-
-  @@index([project_id], name: "tag_link_pk_project")
-  @@index([tag_id], name: "tag_link_pk_tag")
+  assets asset[]
+  tags   tag[]
 }
 
 model tag {
-  uuid     String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name     String     @db.VarChar(16)
-  tag_link tag_link[]
+  uuid String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name String @db.VarChar(16)
+
+  projects project[]
 }
 
 enum asset_type {

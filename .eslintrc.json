@@ -59,7 +59,7 @@
         "max": 2
       }
     ],
-    "no-console": "off",
+    "no-console": "warn",
     "no-empty-function": "error",
     "no-floating-decimal": "error",
     "no-inline-comments": "off",
