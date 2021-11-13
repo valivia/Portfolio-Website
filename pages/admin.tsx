@@ -17,28 +17,24 @@ const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
 class Admin extends React.Component<Props, State> {
 
-  /*
-    const { loading, loggedOut } = AuthSwr();
-  const router = useRouter();
-
-  if (loggedOut) {
-    router.push("/login");
-    return <></>;
-  }
-  if (loading) return <></>;
-  */
-
-
   constructor(props: Props) {
     super(props);
 
-    this.state = { project: "new_project", response: undefined, cache: {} };
+    this.state = {
+      project: "new_project",
+      response: undefined,
+      cache: {},
+      loading: true,
+      failed: false,
+    };
   }
 
-  public submit = async (event: React.FormEvent<HTMLFormElement>, url: string, method: string): Promise<void> => {
+  public submit = async (event: React.FormEvent<HTMLFormElement>, url: string, method: string, extra?: Record<string, string>): Promise<void> => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
-    const data = this.state.cache[form.id];
+    let data = this.state.cache[form.id];
+
+    if (extra) data = { ...data, ...extra };
 
     let body: FormData | string;
 
@@ -46,19 +42,25 @@ class Admin extends React.Component<Props, State> {
 
       body = new FormData();
 
-      for (const x in data) body.append(x, data[x] as string | File);
+      for (const x in data) {
+        if (x === "tags") (data[x] as string[]).forEach(y => body.append(`${x}[]`, y));
+        else body.append(x, data[x] as string | File);
+      }
 
     } else {
       body = JSON.stringify(data);
     }
 
-    const response = await fetch(`${cdn}/${url}`, {
+    let options = {
       method: method,
       mode: "cors",
       credentials: "include",
-      headers: new Headers({ "Content-Type": method === "POST" ? "multipart/form-data" : "application/json" }),
       body: body,
-    });
+    } as RequestInit;
+
+    if (method !== "POST") options = { ...options, headers: new Headers({ "Content-Type": "application/json" }) };
+
+    const response = await fetch(`${cdn}/${url}`, options);
 
     if (response.ok) {
       if (form.id === "new_project") this.setState({ cache: { [form.id]: {} } });
@@ -116,8 +118,24 @@ class Admin extends React.Component<Props, State> {
     this.setState({ cache: { ...this.state.cache, [form.id]: { ...this.state.cache[form.id], [target.name]: value } } });
   }
 
+  async componentDidMount() {
+    const result = await fetch(`${cdn}/auth`, { credentials: "include", mode: "cors", method: "POST" })
+      .then(x => { if (x.ok) return true; })
+      .catch(() => false);
+
+
+    if (result) this.setState({ loading: false });
+    else this.setState({ loading: false, failed: true });
+  }
+
 
   public render = (): JSX.Element => {
+
+    if (this.state.loading) return <> </>;
+    if (this.state.failed) {
+      this.props.router.push("/login");
+      return <></>;
+    }
 
     const currentProject = this.props.projects.find(x => x.uuid === this.state.project) as Project;
     return (
@@ -148,7 +166,7 @@ class Admin extends React.Component<Props, State> {
 
               {currentProject.assets.map(x => <ContentEdit key={x.uuid} identifier={x.uuid} onChange={this.onChange} onSubmit={this.submit} state={this.state} />)}
 
-              <ContentCreate onChange={this.onChange} onSubmit={this.submit} projects={this.props.projects} state={this.state} />
+              <ContentCreate onChange={this.onChange} onSubmit={this.submit} uuid={currentProject.uuid} state={this.state} />
             </>
           }
         </main>
@@ -167,6 +185,8 @@ export interface Props {
 }
 
 export interface State {
+  loading: boolean;
+  failed: boolean;
   project: string;
   response: response | undefined
   cache: Record<string, Record<string, string | string[] | boolean | File>>;
