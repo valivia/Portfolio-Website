@@ -26,6 +26,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
           <title>{project.name}</title>
           <meta name="theme-color" content="#B5A691" />
           <meta name="description" content={project.description || ""} />
+          <meta property="og:image" content={`${cdn}/file/a/${banner?.uuid}_medium.jpg`} />
         </Head>
         <NavBar />
 
