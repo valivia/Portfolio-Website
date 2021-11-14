@@ -21,6 +21,7 @@ $cdn: "https://cdn.xayania.com";
     );
 
     background-size: cover;
+    background-attachment: fixed;
     height: 100vh;
     width: 100%;
     display: flex;
@@ -33,6 +34,10 @@ $cdn: "https://cdn.xayania.com";
     font-family: "abel";
     font-size: 5vh;
     text-align: center;
+
+    & > *:hover {
+        cursor: pointer;
+    }
 }
 
 .content {

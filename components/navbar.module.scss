@@ -10,16 +10,23 @@
     overflow: hidden;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, 0) 100%);
     align-items: center;
-}
 
-.navbar > * {
-    display: flex;
-    justify-content: center;
-    grid-row: 2 / 3;
-    font-family: "abel";
-    font-size: 140%;
-    color: rgb(181, 166, 145);
-    cursor: pointer;
+    & > * {
+        display: flex;
+        justify-content: center;
+        grid-row: 2 / 3;
+        font-family: "abel";
+        font-size: 140%;
+        color: rgb(181, 166, 145);
+        cursor: pointer;
+        transition: opacity 100ms;
+
+        &:hover {
+            opacity: 0.7;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    }
 }
 
 .icon {
@@ -30,12 +37,6 @@
     background-position: center;
     background-size: 53%;
     height: 100%;
-}
-
-.icon:hover {
-    opacity: 0.7;
-    text-decoration: none;
-    cursor: pointer;
 }
 
 .button1 {
@@ -52,11 +53,6 @@
 
 .button4 {
     grid-column: 10 / 11;
-}
-
-.a:hover {
-    opacity: 0.7;
-    text-decoration: none;
 }
 
 @media only screen and (orientation: portrait) {
