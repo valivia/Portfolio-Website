@@ -5,6 +5,8 @@ import form from "../styles/form.module.scss";
 import React, { ReactNode } from "react";
 import Footer from "../components/footer";
 
+const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+
 export default class contact extends React.Component {
   state = {
     firstName: "",
@@ -23,7 +25,7 @@ export default class contact extends React.Component {
   public submit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
-    const response = await fetch("https://cdn.xayania.com/contact", {
+    const response = await fetch(`${cdn}/contact`, {
       method: "POST",
       mode: "cors",
       credentials: "include",
