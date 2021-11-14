@@ -7,10 +7,8 @@ export default function ListItem(repo: repo): JSX.Element {
 
 
   return (
-    <Link href={repo.html_url} scroll={true}>
-      <a className={styles.item}>
-        • {repo.name}
-      </a>
+    <Link href={repo.html_url} passHref={true}>
+      <li className={styles.item}>{repo.name}</li>
     </Link>
   );
 }

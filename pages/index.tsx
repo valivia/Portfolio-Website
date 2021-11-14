@@ -7,7 +7,6 @@ export default function index(): ReactNode {
     <>
       <NavBar />
       <div className={styles.subheader}>
-        <h1 id="type">aaaaa</h1>
       </div>
     </>
   );

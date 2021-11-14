@@ -10,19 +10,25 @@ export default function ImageItem(data: GalleryImage): JSX.Element {
 
   if (data.type !== "image") return (<></>);
 
+
   return (
     <Link href={`/project/${data.project_uuid}`} scroll={true}>
-      <a className={styles.square}>
-        <div className={styles.galleryInfo}>
+      <a className={styles.main}>
+        <div className={styles.info}>
           <h3>{data.name}</h3>
           <p>{data.description}</p>
         </div>
-        <Image
-          className={styles.galleryContent}
-          src={`${cdn}/file/a/${data.uuid}_square.jpg`}
-          layout="fill"
-          alt={data.alt ?? ""}>
-        </Image>
+        <div className={styles.image}>
+          <Image
+            src={`${cdn}/file/a/${data.uuid}_square.jpg`}
+            layout="responsive"
+            height={data.size}
+            width={data.size}
+            sizes={"(orientation: portrait) 50vw, 20vw"}
+            quality={95}
+            alt={data.alt ?? ""}>
+          </Image>
+        </div>
       </a>
     </Link>
   );

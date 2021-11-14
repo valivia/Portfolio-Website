@@ -19,7 +19,7 @@ export default function NavBar(): JSX.Element {
         <a className={styles.button4}>Contact</a>
       </Link>
       <Link href="/">
-        <a className={styles.icon}></a>
+        <a className={styles.icon}>home</a>
       </Link>
     </nav >
   );

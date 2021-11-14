@@ -11,12 +11,11 @@ import { GalleryImage } from "../types/types";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
-// export default function Browse({ projects, repos }: { projects: GalleryImage[], repos: repo[] }): JSX.Element {
 class Browse extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { mainref: createRef() };
+    this.state = { mainref: createRef(), projects: this.props.projects.slice(0, 35) };
   }
 
   public scroll = () => (this.state.mainref.current as HTMLElement).scrollIntoView({ behavior: "smooth" });
@@ -35,7 +34,7 @@ class Browse extends React.Component<Props, State> {
         <Head>
           <title>Gallery</title>
           <meta name="theme-color" content="#B5A691" />
-          <meta name="description" content="Gallery with all artworks" />
+          <meta name="description" content="Art gallery." />
         </Head>
 
         <NavBar />
@@ -45,10 +44,14 @@ class Browse extends React.Component<Props, State> {
           <div onClick={this.scroll}>ᐯ</div>
         </div>
 
-        <main className={`${styles.squareContainer} ${styles.content}`} ref={this.state.mainref}>
-          {this.props.projects.map((data) => this.filter(data) && <ImageItem key={data.uuid} {...data} />)}
+        <main className={styles.content} ref={this.state.mainref}>
+          <div className={styles.squares}>
+            {this.state.projects.map((data) => this.filter(data) && <ImageItem key={data.uuid} {...data} />)}
+          </div>
           <div className={styles.divider}>Github</div>
-          {this.props.repos.map((repo) => <GalleryList key={repo.id}{...repo} />)}
+          <ul className={styles.list}>
+            {this.props.repos.map((repo) => <GalleryList key={repo.id}{...repo} />)}
+          </ul>
           <div className={styles.divider}>Music</div>
           <div className={styles.divider}>Video</div>
         </main>
@@ -71,6 +74,7 @@ export interface Props {
 
 interface State {
   mainref: React.RefObject<HTMLElement>
+  projects: GalleryImage[]
 }
 
 
