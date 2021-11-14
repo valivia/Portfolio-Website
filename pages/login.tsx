@@ -10,13 +10,11 @@ import { WithRouterProps } from "next/dist/client/with-router";
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
 class Login extends React.Component<WithRouterProps> {
-  state = { code: "" };
-  error = "";
-  ratelimit = false;
+  state = { code: "", error: "", ratelimit: false, loading: true, failed: false };
 
   public handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     if (event == null) return;
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({ code: event.target.value });
   }
 
 
@@ -24,6 +22,17 @@ class Login extends React.Component<WithRouterProps> {
     event.preventDefault();
 
     this.state.code = this.state.code.replace(" ", "");
+
+    if (this.state.code.length > 6) {
+      this.setState({ code: "", error: "invalid code" });
+      return;
+    }
+
+    const code = Number(this.state.code);
+    if (isNaN(code)) {
+      this.setState({ code: "", error: "Not a number" });
+      return;
+    }
 
     const response = await fetch(`${cdn}/login`, {
       method: "POST",
@@ -34,15 +43,33 @@ class Login extends React.Component<WithRouterProps> {
     });
 
     if (!response.ok) {
-      this.error = response.statusText;
-      if (response.status === 429) this.ratelimit = true;
-      for (const x in this.state) this.setState({ [x]: "" });
+      let error = response.statusText;
+      if (response.status === 403) error = "Invalid code";
+      if (response.status === 429) this.setState({ ratelimit: true });
+      this.setState({ error: error, code: "" });
     } else {
       this.props.router.push("/admin");
     }
   }
 
+  async componentDidMount() {
+    const result = await fetch(`${cdn}/auth`, { credentials: "include", mode: "cors", method: "POST" })
+      .then(x => { if (x.ok) return true; })
+      .catch(() => false);
+
+
+    if (result) this.setState({ loading: false, failed: true });
+    else this.setState({ loading: false });
+  }
+
   render(): ReactNode {
+
+    if (this.state.loading) return <> </>;
+    if (this.state.failed) {
+      this.props.router.push("/admin");
+      return <></>;
+    }
+
     return (
       <>
         <Head>
@@ -52,7 +79,7 @@ class Login extends React.Component<WithRouterProps> {
         <NavBar />
 
         <main className={styles.main}>
-          <h1 className={styles.contactH1}>{this.error ? this.error : "Login"}</h1>
+          <h1 className={styles.contactH1}>{this.state.error || "Login"}</h1>
           <form className={`${styles.form} ${styles.half}`} onSubmit={this.submit} >
 
             <div>
@@ -63,7 +90,7 @@ class Login extends React.Component<WithRouterProps> {
                 name="code"
                 onChange={this.handleChange}
                 value={this.state.code}
-                disabled={this.ratelimit}
+                disabled={this.state.ratelimit}
                 required />
             </div>
 
