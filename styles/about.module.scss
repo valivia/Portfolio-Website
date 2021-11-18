@@ -1,0 +1,28 @@
+.main {
+    width: 100vw;
+
+    & > section {
+        min-height: 30vh;
+        background-color: rgb(17, 17, 17);
+    }
+
+    & > div {
+        min-width: 100vw;
+        text-align: center;
+        padding: 1%;
+    }
+}
+
+.skills {
+    padding: 5%;
+}
+
+.iconCategory {
+    display: flex;
+    flex-wrap: wrap;
+
+    & > img {
+        height: 40px;
+        margin: 2px;
+    }
+}
