@@ -1,9 +1,13 @@
 import NavBar from "../components/navbar";
 import index from "../styles/index.module.scss";
-import styles from "../styles/about.module.scss"
+import styles from "../styles/about.module.scss";
 import Head from "next/head";
 import React from "react";
 import { NextRouter, withRouter } from "next/router";
+import SkillList from "../components/skill.module";
+import skillData from "../public/skills.json";
+import { SkillCategory } from "../types/types";
+import { GetStaticProps } from "next";
 
 class About extends React.Component<Props, State> {
   render() {
@@ -28,20 +32,12 @@ class About extends React.Component<Props, State> {
 
           <div><label htmlFor="skills">skills</label></div>
           <section id="skills" className={styles.skills}>
+            <SkillList skills={this.props.skills}/>
+          </section>
 
-            <div className={styles.iconCategory}>
-              <img alt="typescript" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-plain.svg" />
-              <img alt="javascript" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-plain.svg" />
-              <img alt="python" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-plain.svg" />
-              <img alt="java" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-plain.svg" />
+          <div><label>amogus</label></div>
+          <section>
 
-
-              
-            </div>
-
-            <div className={styles.iconCategory}>
-              <img alt="typescript" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-plain.svg" />
-            </div>
           </section>
 
         </main>
@@ -52,8 +48,17 @@ class About extends React.Component<Props, State> {
 
 export default withRouter(About);
 
+export const getStaticProps: GetStaticProps = async () => {
+  if (!skillData) return { notFound: true };
+  return {
+    props: { skills: skillData },
+  };
+};
+
+
 export interface Props {
   router: NextRouter;
+  skills: SkillCategory[]
 }
 
 interface State {

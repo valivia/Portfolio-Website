@@ -28,3 +28,13 @@ export interface parsedProject extends project {
     tags: string[];
     assets: asset[];
 }
+
+export interface SkillCategory {
+    name: string;
+    items: Skill[];
+}
+
+export interface Skill {
+    name: string;
+    url: string;
+}

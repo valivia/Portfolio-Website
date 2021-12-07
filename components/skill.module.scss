@@ -1,0 +1,10 @@
+.main {
+    display: flex;
+    flex-wrap: wrap;
+
+    & > img {
+        height: 60px;
+        width: 60px;
+        margin: 2px;
+    }
+}
