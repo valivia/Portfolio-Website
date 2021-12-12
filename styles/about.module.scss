@@ -4,6 +4,7 @@
     & > section {
         min-height: 30vh;
         background-color: rgb(17, 17, 17);
+        display: flex;
     }
 
     & > div {
@@ -13,6 +14,44 @@
     }
 }
 
-.skills {
+.skillSection {
     padding: 5%;
+    display: flex;
+}
+
+.skills {
+    width: 30%;
+}
+
+.aboutPic {
+    width: 10%;
+    margin-left: auto;
+}
+
+.sectionText {
+    min-width: 80%;
+    max-width: fit-content;
+    padding: 0 30px;
+}
+
+.textbox {
+    padding: 3% 5%;
+}
+
+@media only screen and (orientation: portrait) {
+    .skillSection {
+        flex-direction: column;
+    }
+
+    .skills {
+        width: 100%;
+    }
+
+    .skillText {
+        width: 100%;
+    }
+
+    .main > div {
+        padding: 5%;
+    }
 }

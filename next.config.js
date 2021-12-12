@@ -10,7 +10,7 @@ module.exports = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    domains: ["cdn.xayania.com"],
+    domains: ["cdn.xayania.com","cdn.discordapp.com"],
   },
   i18n: {
     locales: ['en'],
