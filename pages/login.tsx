@@ -66,7 +66,7 @@ class Login extends React.Component<WithRouterProps> {
 
     if (this.state.loading) return <> </>;
     if (this.state.failed) {
-      this.props.router.push("/admin");
+      this.props.router.replace("/admin");
       return <></>;
     }
 

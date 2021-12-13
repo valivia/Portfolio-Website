@@ -132,7 +132,7 @@ class Admin extends React.Component<Props, State> {
 
     if (this.state.loading) return <> </>;
     if (this.state.failed) {
-      this.props.router.push("/login");
+      this.props.router.replace("/login");
       return <></>;
     }
 
