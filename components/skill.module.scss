@@ -1,10 +1,15 @@
 .category {
     display: flex;
     flex-wrap: wrap;
+    margin: 2px;
 
     & > img {
         height: 60px;
         width: 60px;
         margin: 2px;
     }
+}
+
+.inverted {
+    filter: invert(100%);
 }

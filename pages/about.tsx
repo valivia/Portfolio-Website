@@ -99,11 +99,7 @@ class About extends React.Component<Props, State> {
               <h3>among us?</h3>
               <p>
                 Natus quia facilis sed. Velit odio eum in iusto aut. Labore aut sequi tempora incidunt eos ea veritatis. Numquam qui quia et sit voluptates laboriosam eum. Et voluptatibus quia totam perspiciatis.
-              </p>
-              <p>
                 Ratione veritatis modi fuga quam beatae. Laborum debitis et et. Et sint minus eaque quisquam non mollitia animi.
-              </p>
-              <p>
                 Animi natus culpa veritatis corrupti voluptatum. Modi est voluptas nemo. Illo totam dolores beatae quia aut et cum. Vero vitae qui quas. Sunt perferendis nihil dolores atque consequatur.
               </p>
             </div>

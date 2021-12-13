@@ -1,5 +1,5 @@
 .main {
-    width: 100vw;
+    width: 100%;
 
     & > section {
         min-height: 30vh;
@@ -20,17 +20,16 @@
 }
 
 .skills {
-    width: 30%;
+    min-width: 35%;
 }
 
 .aboutPic {
-    width: 10%;
+    min-width: 12%;
     margin-left: auto;
 }
 
 .sectionText {
-    min-width: 80%;
-    max-width: fit-content;
+    min-width: 70%;
     padding: 0 30px;
 }
 
@@ -53,5 +52,9 @@
 
     .main > div {
         padding: 5%;
+    }
+
+    .aboutPic {
+        display: none;
     }
 }

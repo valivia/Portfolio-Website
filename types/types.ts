@@ -36,5 +36,6 @@ export interface SkillCategory {
 
 export interface Skill {
     name: string;
+    inverted: boolean;
     url: string;
 }
