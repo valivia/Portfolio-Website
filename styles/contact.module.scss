@@ -11,6 +11,7 @@ $cdn: "https://cdn.xayania.com";
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 2% 0 10% 0;
 
   background: black url($cdn + "/file/s/crow_MediumHigh.jpg") no-repeat center;
   background-image: image-set(
@@ -37,8 +38,8 @@ $cdn: "https://cdn.xayania.com";
 }
 
 .form {
-  width: 50%;
-  height: 50%;
+  width: 55%;
+  height: 30%;
 
   & > * {
     padding: 0.2vw;
