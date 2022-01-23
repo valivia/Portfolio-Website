@@ -3,7 +3,7 @@ import Head from "next/head";
 import styles from "../styles/contact.module.scss";
 import form from "../styles/form.module.scss";
 import React, { ReactNode } from "react";
-import Footer from "../components/footer";
+import Footer from "../components/footer.module";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 

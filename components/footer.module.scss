@@ -1,11 +1,13 @@
 $text: rgb(181, 166, 145);
 
-.footer {
+.main {
     font-family: "abel";
     background: black;
     border-top: 1px solid $text;
     padding: 3%;
     text-align: center;
+    display: flex;
+    justify-content: space-evenly;
 
     & > * {
         text-decoration: none;

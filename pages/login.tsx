@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 import styles from "../styles/contact.module.scss";
 import form from "../styles/form.module.scss";
 import Head from "next/head";
-import Footer from "../components/footer";
+import Footer from "../components/footer.module";
 import { withRouter } from "next/router";
 import { WithRouterProps } from "next/dist/client/with-router";
 

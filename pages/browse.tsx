@@ -6,7 +6,7 @@ import Head from "next/head";
 import ImageItem from "../components/imageItem";
 import React, { createRef } from "react";
 import GalleryList from "../components/listItem";
-import Footer from "../components/footer";
+import Footer from "../components/footer.module";
 import { GalleryImage } from "../types/types";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
@@ -45,15 +45,18 @@ class Browse extends React.Component<Props, State> {
         </div>
 
         <main className={styles.content} ref={this.state.mainref}>
-          <div className={styles.squares}>
+          <div className={styles.squares} id="art">
             {this.state.projects.map((data) => this.filter(data) && <ImageItem key={data.uuid} {...data} />)}
           </div>
-          <div className={styles.divider}>Github</div>
+
+          <div className={styles.divider} id="github">Github</div>
           <ul className={styles.list}>
             {this.props.repos.map((repo) => <GalleryList key={repo.id}{...repo} />)}
           </ul>
-          <div className={styles.divider}>Music</div>
-          <div className={styles.divider}>Video</div>
+
+          <div className={styles.divider} id="music">Music</div>
+
+          <div className={styles.divider} id="video">Video</div>
         </main>
 
         <Footer />

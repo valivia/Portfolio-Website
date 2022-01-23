@@ -10,6 +10,8 @@ datasource db {
 model asset {
   uuid        String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   project_id  String     @db.Uuid
+  created     DateTime   @default(now()) @db.Timestamp(0)
+
   type        asset_type
   description String?    @db.VarChar(256)
   alt         String?    @db.VarChar(128)
@@ -17,19 +19,20 @@ model asset {
   height      Int        @db.Integer
   display     Boolean    @default(false)
   thumbnail   Boolean    @default(false)
-  created     DateTime   @default(now()) @db.Timestamp(0)
   project     project    @relation(fields: [project_id], references: [uuid])
 
   @@index([project_id], name: "Assets_FK")
 }
 
 model project {
-  uuid        String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  uuid    String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created DateTime @default(now()) @db.Timestamp(0)
+  updated DateTime @default(now()) @db.Timestamp(0)
+
   name        String         @db.VarChar(32)
   description String?        @db.VarChar(1024)
   status      project_status @default(unknown)
-  created     DateTime       @default(now()) @db.Timestamp(0)
-  updated     DateTime       @default(now()) @db.Timestamp(0)
+
 
   assets asset[]
   tags   tag[]

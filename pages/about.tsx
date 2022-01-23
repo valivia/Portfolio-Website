@@ -9,7 +9,8 @@ import SkillList from "../components/skill.module";
 import skillData from "../public/skills.json";
 import { SkillCategory } from "../types/types";
 import { GetStaticProps } from "next";
-import Footer from "../components/footer";
+import Footer from "../components/footer.module";
+import Link from "next/link";
 
 class About extends React.Component<Props, State> {
   render() {
@@ -48,10 +49,15 @@ class About extends React.Component<Props, State> {
               <p>
                 Animi natus culpa veritatis corrupti voluptatum. Modi est voluptas nemo. Illo totam dolores beatae quia aut et cum. Vero vitae qui quas. Sunt perferendis nihil dolores atque consequatur.
               </p>
+              <ul>
+                <li><Link href="/browse#art"><a>art</a></Link></li>
+                <li><Link href="/browse#github"><a>github</a></Link></li>
+                <li><Link href="/projects"><a>projects</a></Link></li>
+              </ul>
             </div>
             <div className={styles.aboutPic}>
               <Image
-                src="https://cdn.discordapp.com/attachments/750401650019008663/919738970475225088/server-icon.png"
+                src="https://cdn.discordapp.com/attachments/742497830249431062/920115152907538452/IMG_20211214_013131.jpg"
                 height={480}
                 width={240}
                 alt=""
@@ -103,6 +109,10 @@ class About extends React.Component<Props, State> {
                 Animi natus culpa veritatis corrupti voluptatum. Modi est voluptas nemo. Illo totam dolores beatae quia aut et cum. Vero vitae qui quas. Sunt perferendis nihil dolores atque consequatur.
               </p>
             </div>
+          </section>
+
+          <div><label>notable projects</label></div>
+          <section className={styles.textbox}>
           </section>
 
           <Footer />
