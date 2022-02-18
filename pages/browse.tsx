@@ -2,9 +2,10 @@ import type { GetStaticProps } from "next";
 import { NextRouter, withRouter } from "next/router";
 import NavBar from "../components/navbar";
 import styles from "../styles/browse.module.scss";
+import stylesMain from "../styles/main.module.scss";
 import Head from "next/head";
 import ImageItem from "../components/imageItem";
-import React, { createRef } from "react";
+import React from "react";
 import GalleryList from "../components/listItem";
 import Footer from "../components/footer.module";
 import { GalleryImage } from "../types/types";
@@ -15,10 +16,10 @@ class Browse extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { mainref: createRef(), projects: this.props.projects.slice(0, 35) };
+    this.state = { projects: this.props.projects.slice(0, 35) };
   }
 
-  public scroll = () => (this.state.mainref.current as HTMLElement).scrollIntoView({ behavior: "smooth" });
+  private scroll = () => document.getElementById("main")?.scrollIntoView({ behavior: "smooth" })
 
   public filter = (filterList: GalleryImage) => {
     const router = this.props.router;
@@ -39,12 +40,12 @@ class Browse extends React.Component<Props, State> {
 
         <NavBar />
 
-        <div className={styles.subheader}>
+        <div className={`${styles.subheader} ${stylesMain.subheader}`}>
           <div onClick={this.scroll}>Gallery</div>
           <div onClick={this.scroll}>ᐯ</div>
         </div>
 
-        <main className={styles.content} ref={this.state.mainref}>
+        <main className={styles.content} id="main">
           <div className={styles.squares} id="art">
             {this.state.projects.map((data) => this.filter(data) && <ImageItem key={data.uuid} {...data} />)}
           </div>
@@ -76,7 +77,6 @@ export interface Props {
 }
 
 interface State {
-  mainref: React.RefObject<HTMLElement>
   projects: GalleryImage[]
 }
 

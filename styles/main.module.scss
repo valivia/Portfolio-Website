@@ -33,3 +33,22 @@
         font-size: 4vh;
     }
 }
+
+.subheader {
+    background-size: cover;
+    width: 100%;
+    display: flex;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: lighter;
+    font-family: "abel";
+    font-size: 5vh;
+    text-align: center;
+
+    & > *:hover {
+        cursor: pointer;
+    }
+}

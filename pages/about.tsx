@@ -1,6 +1,6 @@
 import NavBar from "../components/navbar";
-import index from "../styles/index.module.scss";
 import styles from "../styles/about.module.scss";
+import stylesMain from "../styles/main.module.scss";
 import Head from "next/head";
 import Image from "next/image";
 import React from "react";
@@ -13,6 +13,10 @@ import Footer from "../components/footer.module";
 import Link from "next/link";
 
 class About extends React.Component<Props, State> {
+  private scroll() {
+    document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
+  }
+
   render() {
     return (
       <>
@@ -23,11 +27,11 @@ class About extends React.Component<Props, State> {
 
         <NavBar />
 
-        <div className={index.subheader}>
-          <div>haii</div>
-          <div>ᐯ</div>
+        <div className={`${stylesMain.subheader} ${styles.subheader}`}>
+          <div onClick={this.scroll}>haii</div>
+          <div onClick={this.scroll}>ᐯ</div>
         </div>
-        <main className={styles.main}>
+        <main className={styles.main} id="main">
           <div><label>About me</label></div>
           <section className={styles.textbox}>
             <div className={styles.sectionText}>
@@ -57,7 +61,7 @@ class About extends React.Component<Props, State> {
             </div>
             <div className={styles.aboutPic}>
               <Image
-                src="https://cdn.discordapp.com/attachments/742497830249431062/920115152907538452/IMG_20211214_013131.jpg"
+                src="https://portfolio.xayania.com/api/file/a/4d289bf5-e3ce-4f01-8628-14f2bbec5ac1_default.jpg"
                 height={480}
                 width={240}
                 alt=""

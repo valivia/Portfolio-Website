@@ -7,9 +7,9 @@ export default class SkillList extends Component<Props> {
     return (
       <>
         {this.props.skills.map(skill => (
-          <>
+          <div key={skill.name}>
             {skill.name}
-            <div key={skill.name} className={styles.category}>
+            <div className={styles.category}>
               {skill.items.map(x =>
                 <img
                   key={x.name}
@@ -19,7 +19,7 @@ export default class SkillList extends Component<Props> {
                   className={x.inverted ? styles.inverted : ""}
                 />)}
             </div>
-          </>
+          </div>
         ))
         }
       </>

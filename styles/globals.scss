@@ -30,10 +30,6 @@ body {
   font-weight: lighter;
 }
 
-html::-webkit-scrollbar {
-  display: none;
-}
-
 a {
   color: inherit;
   text-decoration: none;
@@ -41,4 +37,26 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+
+/* Scrollbar */
+
+body {
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff66 #00000033;
+}
+
+*::-webkit-scrollbar {
+  // width: 12px;
+  display: none;
+}
+
+*::-webkit-scrollbar-track {
+background: #00000033;
+}
+
+*::-webkit-scrollbar-thumb {
+background-color: #ffffff66;
 }

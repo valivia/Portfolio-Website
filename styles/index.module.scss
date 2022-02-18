@@ -18,17 +18,6 @@ $cdn: "https://portfolio.xayania.com/api";
     url($cdn + "/file/s/crow_Medium.jpg") 0.75x,
     url($cdn + "/file/s/crow_Low.jpg") 0.25x
   );
-  background-size: cover;
+
   height: 100vh;
-  width: 100%;
-  display: flex;
-
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  font-weight: lighter;
-  font-family: "abel";
-  font-size: 5vh;
-  text-align: center;
 }
