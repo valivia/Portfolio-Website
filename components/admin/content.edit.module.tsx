@@ -33,17 +33,6 @@ export default class ContentEdit extends Component<Props> {
               ></textarea>
             </div>
 
-            <div>
-              <label>Description:</label>
-              <textarea
-                className={form.input}
-                name="description"
-                maxLength={1024}
-                onChange={this.props.onChange}
-                value={data?.description || ""}
-              ></textarea>
-            </div>
-
             <span>
               <input
                 type="checkbox"

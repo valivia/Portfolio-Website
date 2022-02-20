@@ -1,0 +1,27 @@
+$text: rgb(181, 166, 145);
+
+.main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 0.3vw 0;
+
+    & > * {
+        text-decoration: none;
+        color: $text;
+        padding: 0.5vw;
+        margin: 0;
+        background-color: #080808;
+        text-transform: uppercase;
+    }
+
+    & > a :hover {
+        color: #887d6d;
+    }
+}
+
+@media only screen and (orientation: portrait) {
+    .main > a {
+        padding: 3%;
+    }
+}

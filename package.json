@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mdx-js/loader": "^2.0.0",
+    "@next/mdx": "^12.1.0",
     "@prisma/client": "^2.29.1",
+    "framer-motion": "^6.2.6",
     "fs": "^0.0.1-security",
     "next": "^11.1.2",
+    "next-mdx-remote": "^3.0.8",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "sass": "^1.37.5",

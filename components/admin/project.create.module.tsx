@@ -20,11 +20,12 @@ export default class ProjectCreate extends Component<Props> {
             name="name"
             onChange={this.props.onChange}
             value={data?.name || ""}
+            required
           />
         </div>
 
         <div>
-          <label>Image</label>
+          <label>Banner</label>
           <input
             className={form.input}
             type="file"
@@ -45,12 +46,24 @@ export default class ProjectCreate extends Component<Props> {
         </div>
 
         <div>
+          <label>Markdown:</label>
+          <textarea
+            className={form.input}
+            name="markdown"
+            maxLength={4096}
+            onChange={this.props.onChange}
+            value={data?.markdown || ""}
+          ></textarea>
+        </div>
+
+        <div>
           <label>Status:</label>
           <select
             className={form.input}
             name="status"
             onChange={this.props.onChange}
             value={data?.status || ""}
+            required
           >
             <option value="unknown">Unknown</option>
             <option value="abandoned">Abandoned</option>
@@ -73,6 +86,17 @@ export default class ProjectCreate extends Component<Props> {
         </div>
 
         <div>
+          <label>external url:</label>
+          <input
+            className={form.input}
+            type="text"
+            name="external_url"
+            onChange={this.props.onChange}
+            value={data?.external_url || ""}
+          />
+        </div>
+
+        <div>
           <label>Date</label>
           <input
             className={form.input}
@@ -80,8 +104,31 @@ export default class ProjectCreate extends Component<Props> {
             name="created"
             onChange={this.props.onChange}
             defaultValue={new Date(data?.created).toLocaleDateString("en-CA") || new Date().toLocaleDateString("en-CA")}
+            required
           ></input>
         </div>
+
+        <span>
+          <input
+            type="checkbox"
+            name="projects"
+            id={`projects${this.props.identifier}`}
+            onChange={this.props.onChange}
+            defaultChecked={data?.projects}
+          />
+          <label htmlFor={`projects${this.props.identifier}`}>Display on projects page?</label>
+        </span>
+
+        <span>
+          <input
+            type="checkbox"
+            name="pinned"
+            id={`pinned${this.props.identifier}`}
+            onChange={this.props.onChange}
+            defaultChecked={data?.pinned}
+          />
+          <label htmlFor={`pinned${this.props.identifier}`}>Display as pinned?</label>
+        </span>
 
         <div>
           <input className={form.submit} type="submit" value="Submit!" />

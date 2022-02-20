@@ -38,6 +38,17 @@ export default class ProjectEdit extends Component<Props> {
         </div>
 
         <div>
+          <label>Markdown:</label>
+          <textarea
+            className={form.input}
+            name="markdown"
+            maxLength={4096}
+            onChange={this.props.onChange}
+            value={data?.markdown || ""}
+          ></textarea>
+        </div>
+
+        <div>
           <label>Status:</label>
           <select
             className={form.input}
@@ -75,6 +86,28 @@ export default class ProjectEdit extends Component<Props> {
             defaultValue={new Date(data?.created).toLocaleDateString("en-CA") || new Date().toLocaleDateString("en-CA")}
           ></input>
         </div>
+
+        <span>
+          <input
+            type="checkbox"
+            name="projects"
+            id={`projects${this.props.identifier}`}
+            onChange={this.props.onChange}
+            defaultChecked={data?.projects}
+          />
+          <label htmlFor={`projects${this.props.identifier}`}>Display on projects page?</label>
+        </span>
+
+        <span>
+          <input
+            type="checkbox"
+            name="pinned"
+            id={`pinned${this.props.identifier}`}
+            onChange={this.props.onChange}
+            defaultChecked={data?.pinned}
+          />
+          <label htmlFor={`pinned${this.props.identifier}`}>Display as pinned?</label>
+        </span>
 
         <div>
           <input className={form.submit} type="submit" value="Submit!" />

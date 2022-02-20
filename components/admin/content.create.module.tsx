@@ -34,17 +34,6 @@ export default class ContentCreate extends Component<Props> {
         </div>
 
         <div>
-          <label>Description:</label>
-          <textarea
-            className={form.input}
-            name="description"
-            maxLength={1024}
-            onChange={this.props.onChange}
-            value={data?.description || ""}
-          ></textarea>
-        </div>
-
-        <div>
           <label>Display in gallery?</label>
           <input
             type="checkbox"

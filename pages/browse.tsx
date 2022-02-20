@@ -16,7 +16,7 @@ class Browse extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { projects: this.props.projects.slice(0, 35) };
+    this.state = { projects: this.props.projects };
   }
 
   private scroll = () => document.getElementById("main")?.scrollIntoView({ behavior: "smooth" })

@@ -1,0 +1,19 @@
+.main {
+    background-color: rgb(17, 17, 17);
+    border-radius: 10px;
+
+    & > header {
+        background-color: rgb(8, 8, 8);
+        padding: 10px;
+        padding-left: 25px;
+        border-radius: 10px 10px 0 0;
+    }
+
+    & > section {
+        padding: 10px 20px;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+}

@@ -8,31 +8,34 @@ datasource db {
 }
 
 model asset {
-  uuid        String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  project_id  String     @db.Uuid
-  created     DateTime   @default(now()) @db.Timestamp(0)
+  uuid       String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id String   @db.Uuid
+  created    DateTime @default(now()) @db.Timestamp(0)
 
-  type        asset_type
-  description String?    @db.VarChar(256)
-  alt         String?    @db.VarChar(128)
-  width       Int        @db.Integer
-  height      Int        @db.Integer
-  display     Boolean    @default(false)
-  thumbnail   Boolean    @default(false)
-  project     project    @relation(fields: [project_id], references: [uuid])
+  type      asset_type
+  alt       String?    @db.VarChar(128)
+  width     Int        @db.Integer
+  height    Int        @db.Integer
+  display   Boolean    @default(false)
+  thumbnail Boolean    @default(false)
+  project   project    @relation(fields: [project_id], references: [uuid])
 
   @@index([project_id], name: "Assets_FK")
 }
 
 model project {
-  uuid    String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  uuid String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+
   created DateTime @default(now()) @db.Timestamp(0)
   updated DateTime @default(now()) @db.Timestamp(0)
 
-  name        String         @db.VarChar(32)
-  description String?        @db.VarChar(1024)
-  status      project_status @default(unknown)
-
+  name         String         @db.VarChar(32)
+  description  String?        @db.VarChar(256)
+  external_url String?        @db.VarChar(256)
+  markdown     String?        @db.VarChar(4096)
+  status       project_status @default(unknown)
+  projects     Boolean        @default(false) @db.Boolean()
+  pinned       Boolean        @default(false) @db.Boolean()
 
   assets asset[]
   tags   tag[]

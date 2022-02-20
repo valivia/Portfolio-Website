@@ -16,7 +16,6 @@ export default function ImageItem(data: GalleryImage): JSX.Element {
       <a className={styles.main}>
         <div className={styles.info}>
           <h3>{data.name}</h3>
-          <p>{data.description}</p>
         </div>
         <div className={styles.image}>
           <Image

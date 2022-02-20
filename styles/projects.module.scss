@@ -1,44 +1,81 @@
 $text: rgb(181, 166, 145);
 $cdn: "https://portfolio.xayania.com/api";
+$highlight: rgb(8, 8, 8);
+$base: rgb(17, 17, 17);
 
 // PROJECTS
-
 .main {
     width: 100%;
     min-height: 100vh;
-    display: grid;
-    grid-template-columns: 15vw auto 15vw;
-    grid-template-rows: 12vh 10vh auto 5vh;
+    padding: 0 10%;
+    padding-bottom: 10vh;
 
-    background-color: rgb(17, 17, 17);
+    background-color: rgb(24, 24, 24);
+    background: black url($cdn + "/file/s/tbhc_Low.jpg") no-repeat center;
+    background-image: image-set(
+        url($cdn + "/file/s/tbhc_Default.jpg") 2x,
+        url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
+        url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
+        url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
+        url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
+    );
+    background-image: -webkit-image-set(
+        url($cdn + "/file/s/tbhc_Default.jpg") 2x,
+        url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
+        url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
+        url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
+        url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
+    );
+    background-size: cover;
+    background-attachment: fixed;
 
     & > header {
-        height: 10vh;
+        padding-top: 10vh;
+        text-align: center;
+        font-size: 3.5vh;
+        font-weight: 100;
+        margin: 0;
+
+        & > p {
+            font-size: 1.2rem;
+        }
+    }
+
+    & > h2 {
+        text-align: center;
     }
 }
 
-.title {
-    grid-row: 2 / 3;
-    grid-column: 2 / 3;
-    text-align: center;
-    font-size: 6vh;
+.pinned {
     width: 100%;
-    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
 }
 
-.container {
-    grid-column: 2 / 3;
-    grid-row: 3 / 4;
-    padding: 1%;
-    display: flex;
-    flex-wrap: wrap;
+.list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
     gap: 10px;
-    align-content: flex-start;
 }
 
 @media only screen and (orientation: portrait) {
     .main {
-        grid-template-columns: 0 auto 0;
-        grid-template-rows: 8vh 10vh auto 5vh;
+        padding: 10vh 1vw;
+    }
+
+    .pinned {
+        grid-template-columns: 100%;
+        grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .list {
+        grid-template-columns: 100%;
+        grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 10px;
     }
 }
