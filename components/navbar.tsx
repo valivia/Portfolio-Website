@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./navbar.module.scss";
+import icon from "../public/icon.svg";
 
 const git = process.env.NEXT_PUBLIC_GITHUB;
 
@@ -9,18 +11,10 @@ export default function NavBar(): JSX.Element {
       <Link href={`https://github.com/${git}`}>
         <a target="_blank" rel="noreferrer">Github</a>
       </Link>
-      <Link href="/browse">
-        <a>Gallery</a>
-      </Link>
-      <Link href="/projects">
-        <a>Projects</a>
-      </Link>
-      <Link href="/about">
-        <a>About</a>
-      </Link>
-      <Link href="/">
-        <a className={styles.icon}>home</a>
-      </Link>
+      <Link href="/browse">Gallery</Link>
+      <Link href="/" passHref={true}><Image src={icon} alt="Icon" /></Link>
+      <Link href="/projects">Projects</Link>
+      <Link href="/about">About</Link>
     </nav >
   );
 }

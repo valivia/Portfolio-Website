@@ -7,8 +7,7 @@ $base: rgb(17, 17, 17);
 .main {
     width: 100%;
     min-height: 100vh;
-    padding: 0 10%;
-    padding-bottom: 10vh;
+    padding: 10vh 0;
 
     background-color: rgb(24, 24, 24);
     background: black url($cdn + "/file/s/tbhc_Low.jpg") no-repeat center;
@@ -30,7 +29,6 @@ $base: rgb(17, 17, 17);
     background-attachment: fixed;
 
     & > header {
-        padding-top: 10vh;
         text-align: center;
         font-size: 3.5vh;
         font-weight: 100;
@@ -47,6 +45,7 @@ $base: rgb(17, 17, 17);
 }
 
 .pinned {
+    padding: 0 10%;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -55,6 +54,7 @@ $base: rgb(17, 17, 17);
 }
 
 .list {
+    padding: 0 2%;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
