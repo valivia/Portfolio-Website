@@ -12,7 +12,7 @@ $cdn: "https://portfolio.xayania.com/api";
   align-items: center;
   padding: 2% 0 10% 0;
 
-  background: black url($cdn + "/file/s/crow_MediumHigh.jpg") no-repeat center;
+  background: black url($cdn + "/file/s/crow_MediumHigh.jpg");
   background-image: image-set(
     url($cdn + "/file/s/crow_Default.jpg") 2x,
     url($cdn + "/file/s/crow_High.jpg") 1.5x,

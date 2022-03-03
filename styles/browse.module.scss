@@ -4,7 +4,7 @@ $cdn: "https://portfolio.xayania.com/api";
 // GALLERY
 
 .subheader {
-    background: black url($cdn + "/file/s/tbhc_Low.jpg") no-repeat center;
+    background: black url($cdn + "/file/s/tbhc_Low.jpg");
     background-image: image-set(
         url($cdn + "/file/s/tbhc_Default.jpg") 2x,
         url($cdn + "/file/s/tbhc_High.jpg") 1.5x,

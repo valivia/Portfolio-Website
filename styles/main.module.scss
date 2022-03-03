@@ -17,7 +17,7 @@
 }
 
 .notfound {
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     font-family: "tbhc";
     display: flex;
@@ -36,7 +36,10 @@
 
 .subheader {
     background-size: cover;
-    width: 100vw;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
     display: flex;
 
     flex-direction: column;
