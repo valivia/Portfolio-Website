@@ -11,7 +11,7 @@ function Error({ statusCode }: { statusCode: string | number }): JSX.Element {
       </Head>
       <main className={`${styles.notfound} ${styles.noselect}`}>
         <h1>{statusCode}</h1>
-        <p>{statusCode === 404 ? "Not found" : "An error occurred"}</p>
+        <p>{statusCode === 404 ? "Not found" : statusCode === 505 ? "If it's a seven-hour flight or a forty-five-minute drive" : "An error occurred"}</p>
       </main>
     </>
   );
