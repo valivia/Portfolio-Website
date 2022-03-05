@@ -1,7 +1,7 @@
 import { ApiError } from "next/dist/server/api-utils";
 import Head from "next/head";
 import React from "react";
-import styles from "../styles/main.module.scss";
+import styles from "../styles/error.module.scss";
 
 function Error({ statusCode }: { statusCode: string | number }): JSX.Element {
   return (
@@ -9,7 +9,7 @@ function Error({ statusCode }: { statusCode: string | number }): JSX.Element {
       <Head>
         <title>{statusCode}</title>
       </Head>
-      <main className={`${styles.notfound} ${styles.noselect}`}>
+      <main className={styles.main}>
         <h1>{statusCode}</h1>
         <p>{statusCode === 404 ? "Not found" : statusCode === 505 ? "If it's a seven-hour flight or a forty-five-minute drive" : "An error occurred"}</p>
       </main>

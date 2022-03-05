@@ -1,5 +1,4 @@
-$text: rgb(181, 166, 145);
-$cdn: "https://portfolio.xayania.com/api";
+@use "styles/vars" as *;
 
 // CONTACT
 
@@ -12,7 +11,8 @@ $cdn: "https://portfolio.xayania.com/api";
   align-items: center;
   padding: 2% 0 10% 0;
 
-  background: black url($cdn + "/file/s/crow_MediumHigh.jpg");
+  @include subheaderTemplate;
+  background-image: url($cdn + "/file/s/crow_MediumHigh.jpg");
   background-image: image-set(
     url($cdn + "/file/s/crow_Default.jpg") 2x,
     url($cdn + "/file/s/crow_High.jpg") 1.5x,

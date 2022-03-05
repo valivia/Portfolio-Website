@@ -1,3 +1,5 @@
+@use "styles/vars" as *;
+
 @font-face {
   font-family: "abel";
   src: url("/abel.ttf");
@@ -9,8 +11,6 @@
   src: url("/tbhc.ttf");
   font-display: swap;
 }
-
-$text: rgb(181, 166, 145);
 
 html,
 body {
@@ -42,7 +42,7 @@ a {
 /* Scrollbar */
 
 body {
-  scrollbar-width: thin;
+  // scrollbar-width: thin;
   scrollbar-color: #ffffff66 #00000033;
 }
 

@@ -7,7 +7,6 @@ import React, { ReactNode } from "react";
 import NavBar from "../../components/navbar";
 
 import styles from "../../styles/project.module.scss";
-import maincss from "../../styles/main.module.scss";
 import { ProjectQuery } from "../../types/types";
 
 import { serialize } from "next-mdx-remote/serialize";
@@ -25,12 +24,6 @@ export default class Projects extends React.Component<ProjectQuery, never> {
 
   ResponsiveImage = (props: any): JSX.Element => (<Image alt={props.alt} layout="fill" {...props} />);
   LinkElement = (props: any): JSX.Element => (<Link href={props.href} {...props}><a target="_blank">{props.children}</a></Link>);
-  GithubRow = () => (
-    <tr>
-      <td>Github</td>
-      <td><Link href={this.props.external_url as string}>{this.props.external_url?.split("/").pop()}</Link></td>
-    </tr>
-  )
 
 
   components = {
@@ -62,7 +55,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         <article className={styles.content} id="main">
           <header><h1>{project.name}</h1></header>
           <details className={styles.info}>
-            <summary className={maincss.noselect}>Project Info</summary>
+            <summary className={styles.noselect}>Project Info</summary>
             <section>
               <Tags tags={tags} clickable={true} />
               <table>
@@ -74,7 +67,6 @@ export default class Projects extends React.Component<ProjectQuery, never> {
                   <td>Status</td>
                   <td>{project.status}</td>
                 </tr>
-                {project.external_url ? this.GithubRow() : ""}
                 <tr>
                   <td>Asset count</td>
                   <td>{project.assets.length}</td>

@@ -1,9 +1,11 @@
+@use "../styles/vars" as *;
+
 .main {
-    background-color: rgb(17, 17, 17);
+    background-color: $primary;
     border-radius: 10px;
 
     & > header {
-        background-color: rgb(8, 8, 8);
+        background-color: $tetiary;
         padding: 10px;
         padding-left: 25px;
         border-radius: 10px 10px 0 0;

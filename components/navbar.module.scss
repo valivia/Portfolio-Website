@@ -1,3 +1,5 @@
+@use "../styles/vars" as *;
+
 .navbar {
     z-index: 9;
     position: fixed;
@@ -24,7 +26,7 @@
         align-items: center;
 
         font-size: 140%;
-        color: rgb(181, 166, 145);
+        color: $text;
         transition: opacity 100ms;
 
         &:hover {

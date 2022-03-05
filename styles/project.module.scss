@@ -1,14 +1,10 @@
-$text: rgb(181, 166, 145);
-$text: rgb(209, 196, 179);
-
-// PROJECT
+@use "styles/vars" as *;
 
 .header {
-    background-size: cover;
-    background-position: center;
     height: 100vh;
     width: 100%;
 
+    @include subheaderTemplate;
     display: flex;
     flex-direction: column-reverse;
     justify-content: unset;
@@ -69,7 +65,7 @@ $text: rgb(209, 196, 179);
             margin: 20px 0;
 
             & > tr {
-                border-bottom: 1px wheat solid;
+                border-bottom: 1px $text solid;
             }
 
             & > * > td {
@@ -97,7 +93,7 @@ $text: rgb(209, 196, 179);
     & > blockquote {
         margin: 0;
         padding-left: 10px;
-        border-left: 2px wheat solid;
+        border-left: 2px $text solid;
     }
 
     & > p > a {

@@ -1,7 +1,5 @@
-$text: rgb(181, 166, 145);
-$cdn: "https://portfolio.xayania.com/api";
-$highlight: rgb(8, 8, 8);
-$base: rgb(17, 17, 17);
+@use "styles/vars" as *;
+
 
 // PROJECTS
 .main {
@@ -9,8 +7,7 @@ $base: rgb(17, 17, 17);
     min-height: 100vh;
     padding: 10vh 0;
 
-    background-color: rgb(24, 24, 24);
-    background: black url($cdn + "/file/s/tbhc_Low.jpg") no-repeat center;
+    background-image: url($cdn + "/file/s/tbhc_Low.jpg");
     background-image: image-set(
         url($cdn + "/file/s/tbhc_Default.jpg") 2x,
         url($cdn + "/file/s/tbhc_High.jpg") 1.5x,

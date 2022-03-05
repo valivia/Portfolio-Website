@@ -1,3 +1,5 @@
+@use "../styles/vars" as *;
+
 .main {
     width: 70%;
     
@@ -21,7 +23,7 @@
 .open {
     background-color: transparent;
     border: none;
-    color: wheat;
+    color: $text;
 }
 
 .next,

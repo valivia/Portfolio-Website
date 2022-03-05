@@ -1,10 +1,10 @@
-$text: rgb(181, 166, 145);
-$cdn: "https://portfolio.xayania.com/api";
+@use "styles/vars" as *;
 
 // GALLERY
 
 .subheader {
-    background: black url($cdn + "/file/s/tbhc_Low.jpg");
+    @include subheaderTemplate;
+    background-image: url($cdn + "/file/s/tbhc_Low.jpg");
     background-image: image-set(
         url($cdn + "/file/s/tbhc_Default.jpg") 2x,
         url($cdn + "/file/s/tbhc_High.jpg") 1.5x,

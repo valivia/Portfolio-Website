@@ -2,7 +2,6 @@ import type { GetStaticProps } from "next";
 import { NextRouter, withRouter } from "next/router";
 import NavBar from "../components/navbar";
 import styles from "../styles/browse.module.scss";
-import stylesMain from "../styles/main.module.scss";
 import Head from "next/head";
 import ImageItem from "../components/imageItem";
 import React from "react";
@@ -40,7 +39,7 @@ class Browse extends React.Component<Props, State> {
 
         <NavBar />
 
-        <header className={`${styles.subheader} ${stylesMain.subheader}`}>
+        <header className={styles.subheader}>
           <div onClick={this.scroll}>Gallery</div>
           <div onClick={this.scroll}>ᐯ</div>
         </header>

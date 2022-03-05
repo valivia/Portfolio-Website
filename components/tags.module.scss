@@ -1,4 +1,4 @@
-$text: rgb(181, 166, 145);
+@use "../styles/vars" as *;
 
 .main {
     display: flex;
@@ -11,7 +11,7 @@ $text: rgb(181, 166, 145);
         color: $text;
         padding: 0.5vw;
         margin: 0;
-        background-color: #080808;
+        background-color: $tetiary;
         text-transform: uppercase;
     }
 
