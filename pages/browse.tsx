@@ -40,10 +40,10 @@ class Browse extends React.Component<Props, State> {
 
         <NavBar />
 
-        <div className={`${styles.subheader} ${stylesMain.subheader}`}>
+        <header className={`${styles.subheader} ${stylesMain.subheader}`}>
           <div onClick={this.scroll}>Gallery</div>
           <div onClick={this.scroll}>ᐯ</div>
-        </div>
+        </header>
 
         <main className={styles.content} id="main">
           <div className={styles.squares} id="art">
@@ -84,13 +84,15 @@ interface State {
 export const getStaticProps: GetStaticProps = async () => {
   const projectData = await fetch(`${cdn}/gallery`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const projects = await projectData.json() as GalleryImage[];
-  const gitData = await fetch(`https://api.github.com/users/${process.env.NEXT_PUBLIC_GITHUB}/repos`);
-  const repos = await gitData.json() as repo[];
+  // const gitData = await fetch(`https://api.github.com/users/${process.env.NEXT_PUBLIC_GITHUB}/repos`);
+  // const repos = await gitData.json() as repo[];
+
+  const repos: never[] = [];
 
   if (!projects) return { notFound: true };
 
   return {
-    props: { projects, repos }, revalidate: 3600,
+    props: { projects, repos },
   };
 };
 
