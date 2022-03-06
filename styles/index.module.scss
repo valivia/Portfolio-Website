@@ -2,6 +2,8 @@
 // SUBHEADER
 
 .subheader {
+
+  @include subheaderTemplate;
   background-image: url($cdn + "/file/s/crow_MediumHigh.jpg");
   background-image: image-set(
     url($cdn + "/file/s/crow_Default.jpg") 2x,

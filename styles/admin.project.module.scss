@@ -1,0 +1,189 @@
+@use "./vars" as *;
+@use "./markdown" as md;
+
+.main {
+    display: grid;
+    min-height: 100vh;
+    width: 100%;
+    grid-template-columns: 1.3fr 2fr;
+    grid-template-rows: auto 40vh auto;
+    align-items: start;
+
+    row-gap: 20px;
+    background-color: rgb(26, 26, 26);
+
+    & > header {
+        grid-column: 1 / 3;
+        grid-row: 1 / 2;
+        background-color: $tetiary;
+        height: 70px;
+        width: 100%;
+        font-size: 40px;
+        padding: 10px;
+        padding-left: 20px;
+        border-bottom: 1px $text solid;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    & > section {
+        width: 100%;
+        padding: 0 20px 20px 20px;
+    }
+}
+
+.mainInput {
+    grid-column: 1 / 2;
+    grid-row: 2 / 4;
+    min-height: 100vh;
+    // border-right: 2px $text solid;
+}
+
+.form {
+    background-color: $secondary;
+    border-radius: 10px;
+    padding: 15px;
+
+    & > h2 {
+        max-width: 30vw;
+        margin: 0;
+        overflow-x: hidden;
+    }
+}
+
+.form > section {
+    padding: 5px;
+    & > label {
+        display: block;
+        text-align: left;
+    }
+    & > input:not([type="submit"]),
+    textarea,
+    select {
+        border-radius: 0;
+        border: none;
+        background-color: transparent;
+        border-bottom: 2px $text solid;
+        color: $text;
+        padding: 2px;
+        resize: none;
+        width: 100%;
+
+        &:hover {
+            border-bottom: 2px rgb(212, 173, 100) solid;
+        }
+
+        &:active {
+            border-bottom: 2px rgb(131, 97, 34) solid;
+        }
+    }
+
+    & > select > option {
+        background-color: $secondary;
+        color: $text;
+    }
+}
+
+.assets {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.checkbox {
+    padding: 3px 0;
+    & > input {
+        margin-right: 3px;
+    }
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+
+    & > input,
+    button {
+        font-family: "abel";
+        font-weight: 300;
+        text-transform: capitalize;
+        background-color: rgb(7, 7, 7);
+        color: $text;
+        border: none;
+        flex-grow: 1;
+        padding: 10px;
+
+        &:hover {
+            background-color: rgb(14, 14, 14);
+        }
+
+        &:active {
+            padding: 9px;
+            border: 1px $text solid;
+        }
+    }
+}
+
+.markdownInput {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    height: 100%;
+
+    & > textarea {
+        background-color: rgb(17, 17, 17);
+        border: rgb(8, 8, 8) 2px solid;
+        border-radius: 20px;
+        width: 100%;
+        height: 80%;
+        resize: none;
+        color: $text;
+        padding: 20px;
+    }
+
+    & > label {
+        margin-left: 20px;
+    }
+}
+
+.markdown {
+    @include md.markdown;
+
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+    padding: 0 20px;
+    overflow-y: scroll;
+}
+
+@media only screen and (orientation: portrait) {
+    .main {
+        min-height: 100vh;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mainInput {
+        min-height: 0;
+    }
+
+    .form > h2 {
+        max-width: 80vw;
+    }
+
+    .markdown {
+        min-height: 50vh;
+    }
+
+    .markdownInput {
+        min-height: 40vh;
+        overflow-y: auto;
+        padding: 20px;
+
+        & > textarea {
+            border-radius: 6px;
+            min-height: 40vh;
+        }
+    }
+}

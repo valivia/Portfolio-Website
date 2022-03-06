@@ -1,0 +1,50 @@
+@use "./vars" as *;
+
+@mixin markdown {
+    text-transform: none;
+    font-size: unset;
+
+    & > h1 {
+        font-size: 2rem;
+    }
+
+    & > h2 {
+        font-size: 1.7rem;
+    }
+
+    & > h3 {
+        font-size: 1.4rem;
+    }
+
+    & > header {
+        border-bottom: 2px $text solid;
+    }
+
+    & > * > strong {
+        font-weight: 900;
+    }
+
+    & > blockquote {
+        margin: 0;
+        padding-left: 10px;
+        border-left: 2px $text solid;
+    }
+
+    & > p > a {
+        color: rgb(67, 171, 255);
+    }
+
+    & > pre {
+        background-color: rgb(14, 14, 14);
+        border-radius: 10px;
+        border: black 2px solid;
+        padding: 10px;
+        overflow-x: scroll;
+
+        font-family: monospace;
+        text-transform: none;
+        letter-spacing: normal;
+        font-weight: normal;
+        font-size: auto;
+    }
+}

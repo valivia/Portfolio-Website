@@ -1,8 +1,9 @@
-import { asset, tag, project_status, asset_type, project } from ".prisma/client";
+import { asset, tag, project_status, asset_type, project, link } from ".prisma/client";
 
 export interface ProjectQuery extends project {
     assets: asset[]
     tags: tag[];
+    links: link[];
 }
 
 export interface GalleryImage {

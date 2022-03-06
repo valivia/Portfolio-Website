@@ -34,7 +34,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
   render(): ReactNode {
     const { assets, tags } = this.props;
     const project = this.props;
-    const banner = assets.find(asset => asset.thumbnail === true);
+    const banner = assets.find(asset => asset.uuid === project.banner_id);
     const markdown = this.props.markdown as MDXRemoteSerializeResult<Record<string, unknown>> | null;
 
     return (
@@ -42,7 +42,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         <Head>
           <title>{project.name}</title>
           <meta name="theme-color" content="#B5A691" />
-          <meta property="og:image" content={`${cdn}/file/a/${banner?.uuid}_medium.jpg`} />
+          <meta name="description" content={project.description || ""}></meta>
         </Head>
         <NavBar />
         {banner ?
@@ -85,7 +85,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
 
 
           {(markdown || project.description) ?
-            <section className={styles.contentWrapper}>
+            <section className={styles.markdown}>
               {markdown ? <MDXRemote {...markdown} components={this.components} /> : project.description}
             </section>
 

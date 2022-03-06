@@ -1,4 +1,5 @@
 @use "styles/vars" as *;
+@use "./markdown" as md;
 
 .header {
     height: 100vh;
@@ -83,35 +84,9 @@
     }
 }
 
-.contentWrapper {
+.markdown {
+    @include md.markdown;
     padding: 10px 50px;
-
-    & > p > strong {
-        font-weight: 900;
-    }
-
-    & > blockquote {
-        margin: 0;
-        padding-left: 10px;
-        border-left: 2px $text solid;
-    }
-
-    & > p > a {
-        color: rgb(67, 171, 255);
-    }
-
-    & > pre {
-        background-color: rgb(14, 14, 14);
-        border-radius: 10px;
-        border: black 2px solid;
-        padding: 10px;
-
-        font-family: monospace;
-        text-transform: none;
-        letter-spacing: normal;
-        font-weight: normal;
-        font-size: auto;
-    }
 }
 
 .carousel {
