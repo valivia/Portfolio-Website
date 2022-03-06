@@ -21,11 +21,13 @@ export default class Carousel extends Component<Props, State> {
     const pictures = this.props.pictures;
     const current = pictures[this.state.index];
     const count = pictures.length;
+    const url = `${cdn}/file/a/${current.uuid}_default.jpg`;
+
     return (
       <section className={styles.main}>
         <div className={styles.buttons}>
           {count > 1 ? <button onClick={() => this.changeIndex(-1)} className={styles.previous}>&lt;</button> : ""}
-          <button onClick={undefined} className={styles.open}></button>
+          <button onClick={() => window.open(url, "_blank")} className={styles.open}></button>
           {count > 1 ? <button onClick={() => this.changeIndex(1)} className={styles.next}>&gt;</button> : ""}
         </div>
         <motion.div
@@ -35,7 +37,7 @@ export default class Carousel extends Component<Props, State> {
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
         >
           <Image
-            src={`${cdn}/file/a/${current.uuid}_default.jpg`}
+            src={url}
             alt={current.alt || "No description provided"}
             height={current.height}
             width={current.width}

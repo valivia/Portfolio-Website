@@ -11,7 +11,6 @@
   align-items: center;
   padding: 2% 0 10% 0;
 
-  @include subheaderTemplate;
   background-image: url($cdn + "/file/s/crow_MediumHigh.jpg");
   background-image: image-set(
     url($cdn + "/file/s/crow_Default.jpg") 2x,
@@ -29,11 +28,11 @@
   );
 
   background-size: cover;
-}
 
-.contactH1 {
-  font-size: 5vw;
-  font-weight: 100;
+  & > h1 {
+    font-size: 5vw;
+    font-weight: 100;
+  }
 }
 
 .form {
@@ -43,43 +42,67 @@
   & > * {
     padding: 0.2vw;
   }
-}
 
-.half {
-  width: 25%;
-}
+  & > fieldset {
+    border-style: none;
+    max-width: 100%;
+    display: flex;
+    gap: 2em;
+    padding: 0;
+    margin: 0.2vw;
+  }
 
-.fieldset {
-  border-style: none;
-  max-width: 100%;
-  display: flex;
-  gap: 2em;
-  padding: 0;
-  margin: 0.2vw;
-}
+  & > section,
+  fieldset {
+    & > input:not([type="submit"]),
+    textarea {
+      width: 100%;
+      padding: 8px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 3px solid #ccc;
+      -webkit-transition: 0.5s;
+      transition: 0.5s;
+      outline: none;
+      resize: none;
 
-.submit {
-  background-color: transparent;
-  border-style: solid;
-  border-color: $text;
-  color: $text;
-  padding: 0.5vw 1.2vw;
-  font-weight: 100;
-  font-size: 100%;
+      font-weight: 100;
+      font-size: 100%;
 
-  &:hover {
-    color: black;
-    background-color: $text;
+      &:focus {
+        border: 3px solid #805315;
+      }
+    }
+
+    & > input[type="submit"] {
+      background-color: transparent;
+      border-style: solid;
+      border-color: $text;
+      color: $text;
+      padding: 0.5vw 1.2vw;
+      font-weight: 100;
+      font-size: 100%;
+
+      &:hover {
+        color: black;
+        background-color: $text;
+      }
+
+      &:disabled {
+        border-color: rgb(146, 0, 0);
+        color: rgb(146, 0, 0);
+        background-color: black;
+      }
+    }
   }
 }
 
 @media only screen and (orientation: portrait) {
-  .fieldset {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .half {
-    width: 50%;
+  .form {
+    width: 90%;
+    & > fieldset {
+      flex-direction: column;
+      gap: 0;
+    }
   }
 }

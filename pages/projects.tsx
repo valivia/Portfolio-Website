@@ -7,12 +7,19 @@ import Footer from "../components/footer.module";
 import PinnedProject from "../components/pinned_project.module";
 import { GetStaticProps } from "next";
 import { ProjectQuery } from "../types/types";
+import { motion } from "framer-motion";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
 class Projects extends React.Component<Props> {
 
   render() {
+    const list = {
+      visible: { opacity: 1 },
+      hidden: { opacity: 0 },
+    };
+
+
     return (
       <>
         <Head>
@@ -28,12 +35,17 @@ class Projects extends React.Component<Props> {
             <p>this is the place for my more technical projects</p>
           </header>
           <h2>Pinned Projects</h2>
-          <section className={styles.pinned}>
-            {this.props.pinned.map((x, y) => <PinnedProject key={y} project={x} />)}
-          </section>
+          <motion.section
+            className={styles.pinned}
+            initial="hidden"
+            animate="visible"
+            variants={list}
+          >
+            {this.props.pinned.map((x, y) => <PinnedProject key={y} index={y} project={x} />)}
+          </motion.section>
           <h2>All projects</h2>
           <section className={styles.list}>
-            {this.props.list.map((x, y) => <PinnedProject key={y} project={x} />)}
+            {this.props.list.map((x, y) => <PinnedProject key={y} index={y} project={x} />)}
           </section>
         </main>
 

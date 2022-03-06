@@ -5,7 +5,6 @@ import styles from "../styles/browse.module.scss";
 import Head from "next/head";
 import ImageItem from "../components/imageItem";
 import React from "react";
-import GalleryList from "../components/listItem";
 import Footer from "../components/footer.module";
 import { GalleryImage } from "../types/types";
 
@@ -41,22 +40,13 @@ class Browse extends React.Component<Props, State> {
 
         <header className={styles.subheader}>
           <div onClick={this.scroll}>Gallery</div>
-          <div onClick={this.scroll}>ᐯ</div>
+          <div onClick={this.scroll}>﹀</div>
         </header>
 
         <main className={styles.content} id="main">
           <div className={styles.squares} id="art">
             {this.state.projects.map((data) => this.filter(data) && <ImageItem key={data.uuid} {...data} />)}
           </div>
-
-          <div className={styles.divider} id="github">Github</div>
-          <ul className={styles.list}>
-            {this.props.repos.map((repo) => <GalleryList key={repo.id}{...repo} />)}
-          </ul>
-
-          <div className={styles.divider} id="music">Music</div>
-
-          <div className={styles.divider} id="video">Video</div>
         </main>
 
         <Footer />
@@ -72,7 +62,6 @@ export default withRouter(Browse);
 export interface Props {
   router: NextRouter;
   projects: GalleryImage[];
-  repos: repo[];
 }
 
 interface State {
@@ -83,15 +72,11 @@ interface State {
 export const getStaticProps: GetStaticProps = async () => {
   const projectData = await fetch(`${cdn}/gallery`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const projects = await projectData.json() as GalleryImage[];
-  // const gitData = await fetch(`https://api.github.com/users/${process.env.NEXT_PUBLIC_GITHUB}/repos`);
-  // const repos = await gitData.json() as repo[];
-
-  const repos: never[] = [];
 
   if (!projects) return { notFound: true };
 
   return {
-    props: { projects, repos },
+    props: { projects },
   };
 };
 

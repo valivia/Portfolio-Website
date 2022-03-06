@@ -28,7 +28,7 @@ class About extends React.Component<Props, State> {
 
         <header className={styles.subheader}>
           <div onClick={this.scroll}>haii</div>
-          <div onClick={this.scroll}>ᐯ</div>
+          <div onClick={this.scroll}>﹀</div>
         </header>
         <main className={styles.main} id="main">
 

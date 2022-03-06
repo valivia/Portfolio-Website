@@ -1,46 +1,49 @@
 import NavBar from "../components/navbar";
 import Head from "next/head";
 import styles from "../styles/contact.module.scss";
-import form from "../styles/form.module.scss";
 import React, { ReactNode } from "react";
 import Footer from "../components/footer.module";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
-export default class contact extends React.Component {
+export default class contact extends React.Component<State> {
   state = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    subject: "",
-    message: "",
+    sending: false,
+    form: {} as FormInputs,
   }
 
   public handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     if (event == null) return;
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({ form: { ...this.state.form, [event.target.name]: event.target.value } });
   }
 
 
   public submit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
+    this.setState({ sending: true });
+    let formData = this.state.form;
 
     const response = await fetch(`${cdn}/contact`, {
       method: "POST",
       mode: "cors",
       credentials: "include",
       headers: new Headers({ "Content-Type": "application/json" }),
-      body: JSON.stringify(this.state),
+      body: JSON.stringify(formData),
     });
 
     if (response.ok) {
-      for (const x in this.state) this.setState({ [x]: "" });
-
+      alert("Email successfully sent!");
+      formData = {} as FormInputs;
+      this.setState({ form: {} });
       return;
-    }
+    } else alert((await response.json()).message || "Unknown error");
+
+    this.setState({ sending: false });
   }
 
   render(): ReactNode {
+    const formData = this.state.form;
+
     return (
       <>
         <Head>
@@ -50,12 +53,12 @@ export default class contact extends React.Component {
         <NavBar />
 
         <main className={styles.main}>
-          <h1 className={styles.contactH1}>Contact</h1> <br />
-          <form className={styles.form} onSubmit={this.submit}>
-            <fieldset className={styles.fieldset}>
+          <h1>Contact</h1> <br />
+          <form onSubmit={this.submit} className={styles.form}>
+
+            <fieldset>
               <legend>Name:</legend>
               <input
-                className={form.input}
                 type="text"
                 name="firstName"
                 placeholder="First name"
@@ -63,12 +66,11 @@ export default class contact extends React.Component {
                 minLength={2}
                 maxLength={32}
                 onChange={this.handleChange}
-                value={this.state.firstName}
+                value={formData.firstName || ""}
                 required
               />
 
               <input
-                className={form.input}
                 type="text"
                 name="lastName"
                 placeholder="Last name"
@@ -76,28 +78,26 @@ export default class contact extends React.Component {
                 minLength={2}
                 maxLength={32}
                 onChange={this.handleChange}
-                value={this.state.lastName}
+                value={formData.lastName || ""}
                 required
               />
             </fieldset>
 
-            <div>
+            <section>
               <label htmlFor="email">Email: </label>
               <input
-                className={form.input}
                 type="email"
                 name="email"
                 placeholder="Email"
                 onChange={this.handleChange}
-                value={this.state.email}
+                value={formData.email || ""}
                 required
               />
-            </div>
+            </section>
 
-            <div>
+            <section>
               <label htmlFor="subject">Subject: </label>
               <input
-                className={form.input}
                 type="text"
                 name="subject"
                 placeholder="Subject"
@@ -105,15 +105,14 @@ export default class contact extends React.Component {
                 minLength={3}
                 maxLength={32}
                 onChange={this.handleChange}
-                value={this.state.subject}
+                value={formData.subject || ""}
                 required
               />
-            </div>
+            </section>
 
-            <div>
+            <section>
               <label htmlFor="message">Message: </label>
               <textarea
-                className={form.input}
                 name="message"
                 placeholder="Message"
                 autoComplete="off"
@@ -121,14 +120,14 @@ export default class contact extends React.Component {
                 maxLength={512}
                 rows={6}
                 onChange={this.handleChange}
-                value={this.state.message}
+                value={formData.message || ""}
                 required
               ></textarea>
-            </div>
+            </section>
 
-            <div>
-              <input className={form.submit} type="submit" value="Submit" />
-            </div>
+            <section>
+              <input type="submit" value="Submit" disabled={this.state.sending} />
+            </section>
           </form>
         </main>
 
@@ -136,4 +135,17 @@ export default class contact extends React.Component {
       </>
     );
   }
+}
+
+interface State {
+  form: FormInputs;
+  sending: boolean;
+}
+
+interface FormInputs {
+  firstName: string;
+  lastName: string;
+  email: string;
+  subject: string;
+  message: string;
 }

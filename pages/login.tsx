@@ -1,7 +1,6 @@
 import NavBar from "../components/navbar";
 import React, { ReactNode } from "react";
 import styles from "../styles/contact.module.scss";
-import form from "../styles/form.module.scss";
 import Head from "next/head";
 import Footer from "../components/footer.module";
 import { withRouter } from "next/router";
@@ -79,24 +78,22 @@ class Login extends React.Component<WithRouterProps> {
         <NavBar />
 
         <main className={styles.main}>
-          <h1 className={styles.contactH1}>{this.state.error || "Login"}</h1>
-          <form className={`${styles.form} ${styles.half}`} onSubmit={this.submit} >
-
-            <div>
+          <h1>{this.state.error || "Login"}</h1>
+          <form className={styles.form} onSubmit={this.submit} >
+            <section>
               <label>code:</label>
               <input
-                className={form.input}
                 type="text"
                 name="code"
                 onChange={this.handleChange}
                 value={this.state.code}
                 disabled={this.state.ratelimit}
                 required />
-            </div>
+            </section>
 
-            <div>
-              <input className={form.submit} type="submit" value="Login" />
-            </div>
+            <section>
+              <input type="submit" value="Login" />
+            </section>
 
           </form>
         </main>

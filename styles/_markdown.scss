@@ -3,6 +3,7 @@
 @mixin markdown {
     text-transform: none;
     font-size: unset;
+    letter-spacing: normal;
 
     & > h1 {
         font-size: 2rem;
@@ -35,16 +36,15 @@
     }
 
     & > pre {
+        font-family: monospace !important;
         background-color: rgb(14, 14, 14);
         border-radius: 10px;
         border: black 2px solid;
         padding: 10px;
         overflow-x: scroll;
 
-        font-family: monospace;
         text-transform: none;
         letter-spacing: normal;
         font-weight: normal;
-        font-size: auto;
     }
 }

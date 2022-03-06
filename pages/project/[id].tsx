@@ -38,20 +38,20 @@ export default class Projects extends React.Component<ProjectQuery, never> {
     const markdown = this.props.markdown as MDXRemoteSerializeResult<Record<string, unknown>> | null;
 
     return (
-      <main>
+      <>
         <Head>
           <title>{project.name}</title>
           <meta name="theme-color" content="#B5A691" />
           <meta name="description" content={project.description || ""}></meta>
         </Head>
         <NavBar />
-        {banner ?
-          <header className={styles.header} style={{ backgroundImage: `url("${cdn}/file/a/${banner?.uuid}_medium.jpg")` }}>
-            <p onClick={this.scroll}>ᐯ</p>
-          </header>
-          : <header className={styles.spacer}></header>
+        {
+          banner ?
+            <header className={styles.header} style={{ backgroundImage: `url("${cdn}/file/a/${banner?.uuid}_medium.jpg")` }}>
+              <p onClick={this.scroll}>﹀</p>
+            </header>
+            : <header className={styles.spacer}></header>
         }
-
         <article className={styles.content} id="main">
           <header><h1>{project.name}</h1></header>
           <details className={styles.info}>
@@ -102,7 +102,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
 
         </article>
         <Footer />
-      </main>
+      </>
     );
   }
 

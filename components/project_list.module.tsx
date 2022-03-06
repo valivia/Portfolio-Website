@@ -4,7 +4,7 @@ import { ProjectQuery } from "../types/types";
 import styles from "./pinned_project.module.scss";
 import Tags from "./tags.module";
 
-export default class PinnedProject extends Component<{ project: ProjectQuery; }> {
+export default class ListProject extends Component<{ project: ProjectQuery; }> {
   render(): ReactNode {
     const project = this.props.project;
     return (
