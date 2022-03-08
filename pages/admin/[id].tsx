@@ -83,6 +83,12 @@ class Projects extends React.Component<Props, State> {
 
 
   public render = (): ReactNode => {
+    if (this.state.loading) return <> </>;
+    if (this.state.failed) {
+      this.props.router.replace("/login");
+      return <></>;
+    }
+
 
     const project = this.state.project;
 
@@ -93,7 +99,10 @@ class Projects extends React.Component<Props, State> {
           <meta name="theme-color" content="#B5A691" />
         </Head>
         <main className={styles.main}>
-          <header onClick={() => this.props.router.push("/admin")}>&lt;</header>
+          <header>
+            <Link href="/admin">〈</Link>
+            <Link href={`/project/${project.uuid}`}> Project</Link>
+          </header>
           <section className={styles.mainInput}>
             <header><h2>Project</h2></header>
             <form className={styles.form} onSubmit={x => this.onSubmit(x)}>

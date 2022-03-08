@@ -9,6 +9,13 @@
         display: flex;
         flex-direction: column;
 
+        & > section {
+            text-transform: none;
+            letter-spacing: normal;
+            min-width: 70%;
+            padding: 0 30px;
+        }
+
         & > figure {
             display: none;
         }
@@ -28,7 +35,7 @@
 
     & > .skills {
         padding: 10px 40px;
-        width: 50vw;
+        width: 30vw;
     }
 }
 
@@ -52,20 +59,14 @@
     height: 80vh;
 }
 
-.sectionText {
-    min-width: 70%;
-    padding: 0 30px;
-}
-
 @media only screen and (orientation: portrait) {
     .skill > section {
         display: flex;
         flex-direction: column;
-    
+
         & > .skills {
-            padding: 10px 20px;
+            padding: 10px 0px;
             width: 100%;
         }
     }
-    
 }

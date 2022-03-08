@@ -4,20 +4,20 @@
 .subheader {
 
   @include subheaderTemplate;
-  background-image: url($cdn + "/file/s/crow_MediumHigh.jpg");
+  background-image: url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_high.jpg");
   background-image: image-set(
-    url($cdn + "/file/s/crow_Default.jpg") 2x,
-    url($cdn + "/file/s/crow_High.jpg") 1.5x,
-    url($cdn + "/file/s/crow_MediumHigh.jpg") 1x,
-    url($cdn + "/file/s/crow_Medium.jpg") 0.75x,
-    url($cdn + "/file/s/crow_Low.jpg") 0.25x
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_default.jpg") 2x,
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_high.jpg") 1.5x,
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_medium.jpg") 1x,
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_low.jpg") 0.75x,
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_lowest.jpg") 0.25x
   );
   background-image: -webkit-image-set(
-    url($cdn + "/file/s/crow_Default.jpg") 2x,
-    url($cdn + "/file/s/crow_High.jpg") 1.5x,
-    url($cdn + "/file/s/crow_MediumHigh.jpg") 1x,
-    url($cdn + "/file/s/crow_Medium.jpg") 0.75x,
-    url($cdn + "/file/s/crow_Low.jpg") 0.25x
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_default.jpg") 2x,
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_high.jpg") 1.5x,
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_medium.jpg") 1x,
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_low.jpg") 0.75x,
+    url($cdn + "/file/a/623a8963-0903-4689-8da3-4789774464e7_lowest.jpg") 0.25x
   );
 
   height: 100vh;

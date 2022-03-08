@@ -12,7 +12,7 @@ export default function NavBar(): JSX.Element {
         <a target="_blank" rel="noreferrer">Github</a>
       </Link>
       <Link href="/browse">Gallery</Link>
-      <Link href="/" passHref={true}><Image src={icon} layout="fill" alt="Icon" /></Link>
+      <Link href="/" passHref={true}><Image src={icon} layout="fill" alt="Icon" className={styles.icon} /></Link>
       <Link href="/projects">Projects</Link>
       <Link href="/about">About</Link>
     </nav >

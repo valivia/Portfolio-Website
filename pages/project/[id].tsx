@@ -54,34 +54,31 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         }
         <article className={styles.content} id="main">
           <header><h1>{project.name}</h1></header>
-          <details className={styles.info}>
-            <summary className={styles.noselect}>Project Info</summary>
-            <section>
-              <Tags tags={tags} clickable={true} />
-              <table>
-                <tr>
-                  <td>Name</td>
-                  <td>{project.name}</td>
-                </tr>
-                <tr>
-                  <td>Status</td>
-                  <td>{project.status}</td>
-                </tr>
-                <tr>
-                  <td>Asset count</td>
-                  <td>{project.assets.length}</td>
-                </tr>
-                <tr>
-                  <td>Last updated</td>
-                  <td>{new Date(project.updated).toDateString()}</td>
-                </tr>
-                <tr>
-                  <td>Created</td>
-                  <td>{new Date(project.created).toDateString()}</td>
-                </tr>
-              </table>
-            </section>
-          </details>
+          <section className={styles.info}>
+            <Tags tags={tags} clickable={true} />
+            <table>
+              <tr>
+                <td>Name</td>
+                <td>{project.name}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>{project.status}</td>
+              </tr>
+              <tr>
+                <td>Asset count</td>
+                <td>{project.assets.length}</td>
+              </tr>
+              <tr>
+                <td>Last updated</td>
+                <td>{new Date(project.updated).toDateString()}</td>
+              </tr>
+              <tr>
+                <td>Created</td>
+                <td>{new Date(project.created).toDateString()}</td>
+              </tr>
+            </table>
+          </section>
 
 
           {(markdown || project.description) ?

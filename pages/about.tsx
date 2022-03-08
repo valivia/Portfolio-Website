@@ -27,14 +27,14 @@ class About extends React.Component<Props, State> {
         <NavBar />
 
         <header className={styles.subheader}>
-          <div onClick={this.scroll}>haii</div>
+          <div onClick={this.scroll}>About</div>
           <div onClick={this.scroll}>﹀</div>
         </header>
         <main className={styles.main} id="main">
 
           <article className={styles.textbox}>
             <header>About me</header>
-            <section className={styles.sectionText}>
+            <section>
               <h1>aaaaa</h1>
               <p>
                 Expedita iste cum velit ipsum aut qui. Tempora tempora nihil omnis animi possimus ut non quia. Praesentium ratione natus temporibus consequatur
@@ -75,7 +75,7 @@ class About extends React.Component<Props, State> {
               <section className={styles.skills}>
                 <SkillList skills={this.props.skills} />
               </section>
-              <section className={styles.sectionText}>
+              <section>
                 <h2>Skills</h2>
                 <p>
                   Expedita iste cum velit ipsum aut qui. Tempora tempora nihil omnis animi possimus ut non quia. Praesentium ratione natus temporibus consequatur
@@ -99,7 +99,7 @@ class About extends React.Component<Props, State> {
 
           <article className={styles.textbox}>
             <header>Previous experiences</header>
-            <div className={styles.sectionText}>
+            <section>
               <h2>Experiences</h2>
               <p>
                 Expedita iste cum velit ipsum aut qui. Tempora tempora nihil omnis animi possimus ut non quia. Praesentium ratione natus temporibus consequatur
@@ -114,7 +114,7 @@ class About extends React.Component<Props, State> {
                 Ratione veritatis modi fuga quam beatae. Laborum debitis et et. Et sint minus eaque quisquam non mollitia animi.
                 Animi natus culpa veritatis corrupti voluptatum. Modi est voluptas nemo. Illo totam dolores beatae quia aut et cum. Vero vitae qui quas. Sunt perferendis nihil dolores atque consequatur.
               </p>
-            </div>
+            </section>
           </article>
 
           <article className={styles.textbox}>

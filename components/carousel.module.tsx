@@ -26,9 +26,9 @@ export default class Carousel extends Component<Props, State> {
     return (
       <section className={styles.main}>
         <div className={styles.buttons}>
-          {count > 1 ? <button onClick={() => this.changeIndex(-1)} className={styles.previous}>&lt;</button> : ""}
+          {count > 1 ? <button onClick={() => this.changeIndex(-1)} className={styles.previous}>〈</button> : ""}
           <button onClick={() => window.open(url, "_blank")} className={styles.open}></button>
-          {count > 1 ? <button onClick={() => this.changeIndex(1)} className={styles.next}>&gt;</button> : ""}
+          {count > 1 ? <button onClick={() => this.changeIndex(1)} className={styles.next}>〉</button> : ""}
         </div>
         <motion.div
           key={this.state.index}

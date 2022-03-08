@@ -50,36 +50,26 @@
 
 .info {
     background-color: $secondary;
+    padding: 1.2vw 2vw;
+    padding-top: 10px;
 
-    & > summary {
-        padding: 1.2vw 2vw;
-        &:hover {
-            color: white;
-            cursor: pointer;
+    & > table {
+        border-collapse: collapse;
+        margin: 20px 0;
+
+        & > tr {
+            border-bottom: 1px $text solid;
         }
-    }
 
-    & > section {
-        padding: 1.2vw 2vw;
-        padding-top: 0;
-        & > table {
-            border-collapse: collapse;
-            margin: 20px 0;
+        & > * > td {
+            padding: 6px 20px;
 
-            & > tr {
-                border-bottom: 1px $text solid;
+            & > a {
+                color: rgb(67, 171, 255);
             }
 
-            & > * > td {
-                padding: 6px 20px;
-
-                & > a {
-                    color: rgb(67, 171, 255);
-                }
-
-                &:first-child {
-                    font-weight: 600;
-                }
+            &:first-child {
+                font-weight: 600;
             }
         }
     }
