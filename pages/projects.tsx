@@ -8,6 +8,7 @@ import PinnedProject from "../components/pinned_project.module";
 import { GetStaticProps } from "next";
 import { ProjectQuery } from "../types/types";
 import { motion } from "framer-motion";
+import ListProject from "../components/list_project.module";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
@@ -18,7 +19,6 @@ class Projects extends React.Component<Props> {
       visible: { opacity: 1 },
       hidden: { opacity: 0 },
     };
-
 
     return (
       <>
@@ -45,7 +45,13 @@ class Projects extends React.Component<Props> {
           </motion.section>
           <h2>All projects</h2>
           <section className={styles.list}>
-            {this.props.list.map((x, y) => <PinnedProject key={y} index={y} project={x} />)}
+            <motion.table
+              initial="hidden"
+              animate="visible"
+              variants={list}
+            >
+              {this.props.list.map((x, y) => <ListProject key={y} index={y} project={x} delay={this.props.pinned.length * 0.2} />)}
+            </motion.table>
           </section>
         </main>
 

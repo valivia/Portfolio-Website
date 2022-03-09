@@ -1,29 +1,18 @@
 @use "styles/vars" as *;
 
-
 // PROJECTS
 .main {
     width: 100%;
     min-height: 100vh;
     padding: 10vh 0;
 
-    background-image: url($cdn + "/file/s/tbhc_Low.jpg");
-    background-image: image-set(
-        url($cdn + "/file/s/tbhc_Default.jpg") 2x,
-        url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
-        url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
-        url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
-        url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
-    );
-    background-image: -webkit-image-set(
-        url($cdn + "/file/s/tbhc_Default.jpg") 2x,
-        url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
-        url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
-        url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
-        url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
-    );
-    background-size: cover;
+    background-image: url("/noise.jpg");
+    background-repeat: repeat;
     background-attachment: fixed;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     & > header {
         text-align: center;
@@ -31,48 +20,46 @@
         font-weight: 100;
         margin: 0;
 
+        & > * {
+            font-family: "tbhc";
+        }
+
         & > p {
             font-size: 1.2rem;
         }
     }
 
     & > h2 {
+        font-family: "tbhc";
         text-align: center;
     }
 }
 
 .pinned {
-    padding: 0 10%;
+    padding: 6px;
+    max-width: 1920px;
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
+
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-rows: repeat(auto-fit, 20rem);
     gap: 20px;
 }
 
 .list {
     padding: 0 2%;
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > table {
+        border-collapse: collapse;
+    }
 }
 
 @media only screen and (orientation: portrait) {
     .main {
         padding: 10vh 1vw;
-    }
-
-    .pinned {
-        grid-template-columns: 100%;
-        grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-    }
-
-    .list {
-        grid-template-columns: 100%;
-        grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 10px;
     }
 }

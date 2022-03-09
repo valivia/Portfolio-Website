@@ -1,21 +1,48 @@
 @use "../styles/vars" as *;
 
 .main {
-    background-color: $primary;
+    background-color: rgba(0, 0, 0, 0.541);
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-template-rows: 0.2fr 1fr;
 
     & > header {
-        background-color: $tetiary;
-        padding: 10px;
-        padding-left: 25px;
-        border-radius: 10px 10px 0 0;
+        font-family: "tbhc";
+        padding: 5px;
+        border-bottom: $text 1px solid;
+        text-align: center;
+        width: 80%;
+
+        & > * {
+            font-family: "tbhc";
+        }
     }
 
     & > section {
         padding: 10px 20px;
+        text-align: center;
+
+        & > * {
+            font-family: "tbhc";
+        }
+
+        & > p {
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        & > label {
+            border-bottom: $text 1px solid;
+            display: inline-block;
+            margin: 6px;
+            font-weight: 700;
+        }
     }
 
     &:hover {
         cursor: pointer;
+        outline: 1px $text solid;
     }
 }

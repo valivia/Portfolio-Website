@@ -2,7 +2,6 @@ import { Component, ReactNode } from "react";
 import Link from "next/link";
 import { ProjectQuery } from "../types/types";
 import styles from "./pinned_project.module.scss";
-import Tags from "./tags.module";
 import { motion } from "framer-motion";
 
 export default class PinnedProject extends Component<Props> {
@@ -25,10 +24,12 @@ export default class PinnedProject extends Component<Props> {
             <h1>{project.name}</h1>
           </header>
           <section>
-            {project.description}
-          </section>
-          <section>
-            <Tags tags={project.tags} clickable={false} />
+            <label>Status:</label>
+            <p>{project.status}</p>
+            <label>Date:</label>
+            <p>{new Date(project.created).toDateString()}</p>
+            <label>Description:</label>
+            <p>{project.description}</p>
           </section>
         </motion.article>
       </Link>
