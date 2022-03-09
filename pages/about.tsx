@@ -22,6 +22,7 @@ class About extends React.Component<Props, State> {
         <Head>
           <title>About</title>
           <meta name="theme-color" content="#B5A691" />
+          <meta name="description" content="About the creator of this website and its purpose" />
         </Head>
 
         <NavBar />

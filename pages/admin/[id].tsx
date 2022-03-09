@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 
-import React, { ReactNode } from "react";
+import React, { AnchorHTMLAttributes, DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from "react";
 
 import { ProjectQuery } from "../../types/types";
 
@@ -61,7 +61,6 @@ class Projects extends React.Component<Props, State> {
       const project = (await response.json()).project as ProjectQuery | Project;
       if (this.state.new) await this.props.router.push(`/admin/${project.uuid}`);
       else {
-        console.log(project);
         project.tags = data.tags.map(x => (x as unknown as tag).uuid);
         this.setState({ project: project as Project });
         this.updateMD();
@@ -241,8 +240,8 @@ class Projects extends React.Component<Props, State> {
     else this.setState({ loading: false, failed: true });
   }
 
-  ResponsiveImage = (props: any): JSX.Element => (<Image alt={props.alt} layout="fill" {...props} />);
-  LinkElement = (props: any): JSX.Element => (<Link href={props.href} {...props}><a target="_blank">{props.children}</a></Link>);
+  ResponsiveImage = (props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>): JSX.Element => (<Image alt={props.alt} layout="fill" src={props.src as string} />);
+  LinkElement = (props: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>): JSX.Element => (<Link href={props.href as string}><a target="_blank">{props.children}</a></Link>);
 
   components = {
     img: this.ResponsiveImage,

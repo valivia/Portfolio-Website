@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 
-import React, { ReactNode } from "react";
+import React, { AnchorHTMLAttributes, DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from "react";
 import NavBar from "../../components/navbar";
 
 import styles from "../../styles/project.module.scss";
@@ -22,8 +22,8 @@ export default class Projects extends React.Component<ProjectQuery, never> {
     document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
   }
 
-  ResponsiveImage = (props: any): JSX.Element => (<Image alt={props.alt} layout="fill" {...props} />);
-  LinkElement = (props: any): JSX.Element => (<Link href={props.href} {...props}><a target="_blank">{props.children}</a></Link>);
+  ResponsiveImage = (props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>): JSX.Element => (<Image alt={props.alt} layout="fill" src={props.src as string} />);
+  LinkElement = (props: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>): JSX.Element => (<Link href={props.href as string}><a target="_blank">{props.children}</a></Link>);
 
 
   components = {
@@ -47,7 +47,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         <NavBar />
         {
           banner ?
-            <header className={styles.header} style={{ backgroundImage: `url("${cdn}/file/a/${banner?.uuid}_medium.jpg")` }}>
+            <header className={styles.header} style={{ backgroundImage: `url("${cdn}/file/a/${banner?.uuid}_high.jpg")` }}>
               <p onClick={this.scroll}>﹀</p>
             </header>
             : <header className={styles.spacer}></header>
