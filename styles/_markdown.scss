@@ -11,10 +11,12 @@
 
     & > h2 {
         font-size: 1.7rem;
+        margin-bottom: 0;
     }
 
     & > h3 {
         font-size: 1.4rem;
+        margin-bottom: 0;
     }
 
     & > header {
@@ -33,6 +35,10 @@
 
     & > p > a {
         color: rgb(67, 171, 255);
+    }
+
+    & > hr {
+        border-color: $text;
     }
 
     & > pre {

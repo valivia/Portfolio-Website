@@ -26,7 +26,7 @@ export default class PinnedProject extends Component<Props> {
           <section>
             <label>Status:</label>
             <p>{project.status}</p>
-            <label>Date:</label>
+            <label>Created:</label>
             <p>{new Date(project.created).toDateString()}</p>
             <label>Description:</label>
             <p>{project.description}</p>
