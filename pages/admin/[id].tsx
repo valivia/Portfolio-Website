@@ -159,6 +159,7 @@ class Projects extends React.Component<Props, State> {
                 >
                   <option value="unknown">Unknown</option>
                   <option value="abandoned">Abandoned</option>
+                  <option value="on_hold">On hold</option>
                   <option value="in_progress">In progress</option>
                   <option value="finished">Finished</option>
                 </select>
