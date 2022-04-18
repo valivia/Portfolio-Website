@@ -1,10 +1,10 @@
 import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { NextRouter, withRouter } from "next/router";
-import Link from "next/link";
 import React from "react";
 import styles from "../../styles/admin.module.scss";
 import { Project } from "../../types/types";
+import ProjectAdmin from "../../components/admin/project.module";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
@@ -38,6 +38,10 @@ class Admin extends React.Component<Props, State> {
       return <></>;
     }
 
+
+    console.log(this.props.projects);
+
+
     return (
       <>
         <Head>
@@ -47,10 +51,10 @@ class Admin extends React.Component<Props, State> {
         </Head>
         <main className={styles.main}>
           <h1>Admin Panel</h1>
-          <Link href="/admin/new">+ new</Link>
-          <ul>
-            {this.props.projects.map(x => (<li key={x.uuid}><Link href={`/admin/${x.uuid}`} >{x.name}</Link></li>))}
-          </ul>
+          <section className={styles.projects}>
+            <ProjectAdmin project={undefined}/>
+            {this.props.projects.map((x) => <ProjectAdmin key={x.uuid} project={x} />)}
+          </section>
         </main>
       </>
     );

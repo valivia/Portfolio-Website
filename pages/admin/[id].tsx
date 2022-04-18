@@ -40,6 +40,7 @@ class Projects extends React.Component<Props, State> {
     const target = e.target;
     const value = onChangeParser(target);
     if (target.name === "markdown") this.update = setTimeout(this.updateMD, 200);
+    console.log(this.state.project.tags);
     this.setState({ project: { ...this.state.project, [target.name]: value } });
   }
 
@@ -61,7 +62,7 @@ class Projects extends React.Component<Props, State> {
       const project = (await response.json()).project as ProjectQuery | Project;
       if (this.state.new) await this.props.router.push(`/admin/${project.uuid}`);
       else {
-        project.tags = data.tags.map(x => (x as unknown as tag).uuid);
+        project.tags = data.tags;
         this.setState({ project: project as Project });
         this.updateMD();
       }
@@ -78,6 +79,11 @@ class Projects extends React.Component<Props, State> {
     }
     const response = await submit({ uuid: this.state.project.uuid }, "project", "DELETE");
     if (response.ok) await this.props.router.push("/admin");
+  }
+
+  public stateChanger = (project: Project) => {
+    console.log(project);
+    this.setState({ project });
   }
 
 
@@ -210,8 +216,8 @@ class Projects extends React.Component<Props, State> {
             {!this.state.new ?
               <section className={styles.assets}>
                 <header><h2>Assets</h2></header>
-                {this.props.project.assets.map(x => <AssetAdmin key={x.uuid} asset={x} project={this.props.project as unknown as ProjectQuery} />)}
-                <AssetAdmin key="new" asset={undefined} project={this.props.project as unknown as ProjectQuery} />
+                {project.assets.map(x => <AssetAdmin key={x.uuid} asset={x} project={project as unknown as ProjectQuery} stateChanger={this.stateChanger} />)}
+                <AssetAdmin key="new" asset={undefined} project={project as unknown as ProjectQuery} stateChanger={this.stateChanger} />
               </section>
               : ""
             }

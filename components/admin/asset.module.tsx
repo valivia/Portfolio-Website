@@ -4,6 +4,8 @@ import styles from "./asset.module.scss";
 import onChangeParser from "../onchange";
 import submit from "../submit";
 import { ProjectQuery } from "../../types/types";
+
+
 export default class AssetAdmin extends Component<Props, State> {
 
   constructor(props: Props) {
@@ -34,7 +36,16 @@ export default class AssetAdmin extends Component<Props, State> {
 
     if (response.ok) {
       const asset = (await response.json()).asset as prisma.asset;
+      console.log(asset);
       this.setState({ asset, sending: false });
+
+      if (this.state.new) {
+        this.setState({ asset: { uuid: this.props.project.uuid } as prisma.asset });
+        this.props.stateChanger({ ...this.props.project, assets: [...this.props.project.assets, asset] });
+      } else {
+        this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.map((a) => a.uuid === asset.uuid ? asset : a) });
+      }
+
       return;
     }
 
@@ -46,10 +57,9 @@ export default class AssetAdmin extends Component<Props, State> {
     const response = await submit({ uuid: this.state.asset.uuid }, "content", "DELETE");
 
     if (response.ok) {
-      const asset = (await response.json()).asset as prisma.asset;
-      this.setState({ asset });
+      await response.json();
+      this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.filter((a) => a.uuid !== (this.props.asset as prisma.asset).uuid) });
     } else alert((await response.json()).message || "Unknown error");
-
 
   }
 
@@ -57,7 +67,7 @@ export default class AssetAdmin extends Component<Props, State> {
     const response = await submit({ asset: this.state.asset.uuid, project: this.props.project.uuid }, "banner", "PATCH");
 
     if (response.ok) {
-      return;
+      this.props.stateChanger({ ...this.props.project, banner_id: this.state.asset.uuid });
     } else alert((await response.json()).message || "Unknown error");
 
 
@@ -144,6 +154,7 @@ export default class AssetAdmin extends Component<Props, State> {
 interface Props {
   asset: prisma.asset | undefined;
   project: ProjectQuery;
+  stateChanger: any;
 }
 
 interface State {
