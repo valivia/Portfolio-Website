@@ -56,7 +56,7 @@ class Projects extends React.Component<Props, State> {
     const data = this.state.project;
     const method = this.state.new ? "POST" : "PATCH";
 
-    const response = await submit(data as unknown as Record<string, unknown>, "project", method);
+    const response = await submit(data as unknown as Record<string, unknown>, "project", method, method == "POST" ? "multipart/form-data" : "application/json");
 
     if (response.ok) {
       const project = (await response.json()).project as ProjectQuery | Project;
@@ -77,7 +77,7 @@ class Projects extends React.Component<Props, State> {
       this.setState({ project: {} as Project });
       return;
     }
-    const response = await submit({ uuid: this.state.project.uuid }, "project", "DELETE");
+    const response = await submit({ uuid: this.state.project.uuid }, "project", "DELETE", "application/json");
     if (response.ok) await this.props.router.push("/admin");
   }
 

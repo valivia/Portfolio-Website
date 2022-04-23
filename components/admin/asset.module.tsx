@@ -2,8 +2,8 @@ import prisma from "@prisma/client";
 import { Component, ReactNode } from "react";
 import styles from "./asset.module.scss";
 import onChangeParser from "../onchange";
-import submit from "../submit";
 import { ProjectQuery } from "../../types/types";
+import submit from "../submit";
 
 
 export default class AssetAdmin extends Component<Props, State> {
@@ -32,11 +32,16 @@ export default class AssetAdmin extends Component<Props, State> {
     const data = this.state.asset;
     const method = this.state.new ? "POST" : "PATCH";
 
-    const response = await submit(data as Record<string, unknown>, "content", method).catch(null);
+    let response = null;
+
+    if (method === "POST") {
+      response = await submit(data as Record<string, unknown>, "content", method, "multipart/form-data").catch(null);
+    } else {
+      response = await submit(data as Record<string, unknown>, "content", method, "application/json").catch(null);
+    }
 
     if (response.ok) {
       const asset = (await response.json()).asset as prisma.asset;
-      console.log(asset);
       this.setState({ asset, sending: false });
 
       if (this.state.new) {
@@ -54,7 +59,7 @@ export default class AssetAdmin extends Component<Props, State> {
 
   public delete = async (): Promise<void> => {
     if (!confirm("Are you sure you want to delete this asset?")) return;
-    const response = await submit({ uuid: this.state.asset.uuid }, "content", "DELETE");
+    const response = await submit({ uuid: this.state.asset.uuid }, "content", "DELETE", "application/json").catch(null);
 
     if (response.ok) {
       await response.json();
@@ -64,7 +69,7 @@ export default class AssetAdmin extends Component<Props, State> {
   }
 
   public makeBanner = async (): Promise<void> => {
-    const response = await submit({ asset: this.state.asset.uuid, project: this.props.project.uuid }, "banner", "PATCH");
+    const response = await submit({ asset: this.state.asset.uuid, project: this.props.project.uuid }, "banner", "PATCH", "application/json").catch(null);
 
     if (response.ok) {
       this.props.stateChanger({ ...this.props.project, banner_id: this.state.asset.uuid });

@@ -7,6 +7,7 @@ import ImageItem from "../components/imageItem";
 import React from "react";
 import Footer from "../components/footer.module";
 import { GalleryImage } from "../types/types";
+import MailingList from "../components/mailing.module";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
@@ -36,6 +37,7 @@ class Browse extends React.Component<Props, State> {
           <meta name="description" content="Art gallery." />
         </Head>
 
+        <MailingList />
         <NavBar />
 
         <header className={styles.subheader}>

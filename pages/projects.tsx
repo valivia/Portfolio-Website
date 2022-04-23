@@ -9,6 +9,7 @@ import { GetStaticProps } from "next";
 import { ProjectQuery } from "../types/types";
 import { motion } from "framer-motion";
 import ListProject from "../components/list_project.module";
+import MailingList from "../components/mailing.module";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
@@ -27,6 +28,7 @@ class Projects extends React.Component<Props> {
           <meta name="theme-color" content="#B5A691" />
         </Head>
 
+        <MailingList />
         <NavBar />
 
         <main className={styles.main}>

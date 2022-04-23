@@ -10,6 +10,7 @@ import { SkillCategory } from "../types/types";
 import { GetStaticProps } from "next";
 import Footer from "../components/footer.module";
 import Link from "next/link";
+import MailingList from "../components/mailing.module";
 
 class About extends React.Component<Props, State> {
   private scroll() {
@@ -25,6 +26,7 @@ class About extends React.Component<Props, State> {
           <meta name="description" content="About the creator of this website and its purpose" />
         </Head>
 
+        <MailingList />
         <NavBar />
 
         <header className={styles.subheader}>

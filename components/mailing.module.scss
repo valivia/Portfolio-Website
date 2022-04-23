@@ -1,0 +1,69 @@
+@use "../styles/vars" as *;
+
+.main {
+    display: flex;
+    width: 100%;
+    background-color: transparent;
+    justify-content: center;
+    height: 60px;
+    
+    border-bottom: 1px rgba(51, 51, 51, 0.532) solid;
+
+    z-index: 10;
+}
+
+.form {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & > input {
+        border: none;
+        height: 100%;
+        padding: 5px;
+        border-radius: 2px;
+        margin: 0 5px;
+    }
+
+    & > input[type="email"] {
+        background-color: black;
+        border: 1px $text solid;
+        color: $text;
+        padding: 10px;
+    }
+
+    & > input[type="submit"] {
+        font-family: "abel";
+        background-color: $text;
+        color: black;
+        letter-spacing: 0.2rem;
+        padding: 0 20px;
+        font-weight: 500;
+        transition: color 400ms;
+        transition: background-color 200ms;
+
+        &:hover {
+            cursor: pointer;
+            background-color: black;
+            color: $text;
+            outline: 1px $text solid;
+        }
+    }
+
+    & > label {
+        font-family: "tbhc";
+        font-size: .9rem;
+        line-height: 1;
+        display: block;
+        text-align: center;
+        font-weight: 100;
+        margin: 0 10px;
+    }
+}
+
+@media only screen and (orientation: portrait) {
+    .main {
+        display: none;
+    }
+}

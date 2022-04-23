@@ -17,11 +17,9 @@ body {
   padding: 0;
   margin: 0;
   background-color: black;
-  text-rendering: optimizeLegibility;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  overflow-y: scroll;
-
+  
   color: $text;
   text-transform: uppercase;
   letter-spacing: 3px;

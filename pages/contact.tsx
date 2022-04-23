@@ -3,8 +3,8 @@ import Head from "next/head";
 import styles from "../styles/contact.module.scss";
 import React, { ReactNode } from "react";
 import Footer from "../components/footer.module";
-
-const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+import submit from "../components/submit";
+import MailingList from "../components/mailing.module";
 
 export default class contact extends React.Component<State> {
   state = {
@@ -18,22 +18,14 @@ export default class contact extends React.Component<State> {
   }
 
 
-  public submit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  public onSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     this.setState({ sending: true });
-    let formData = this.state.form;
 
-    const response = await fetch(`${cdn}/contact`, {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: new Headers({ "Content-Type": "application/json" }),
-      body: JSON.stringify(formData),
-    });
+    const response = await submit(this.state.form as unknown as Record<string, string>, "/contact", "POST", "application/json");
 
     if (response.ok) {
       alert("Email successfully sent!");
-      formData = {} as FormInputs;
       this.setState({ form: {} });
       return;
     } else alert((await response.json()).message || "Unknown error");
@@ -50,11 +42,12 @@ export default class contact extends React.Component<State> {
           <title>Contact</title>
         </Head>
 
+        <MailingList />
         <NavBar />
 
         <main className={styles.main}>
           <h1>Contact</h1> <br />
-          <form onSubmit={this.submit} className={styles.form}>
+          <form onSubmit={this.onSubmit} className={styles.form}>
 
             <fieldset>
               <legend>Name:</legend>

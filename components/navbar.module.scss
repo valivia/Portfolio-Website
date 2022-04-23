@@ -1,11 +1,15 @@
 @use "../styles/vars" as *;
 
 .navbar {
-    z-index: 9;
-    position: fixed;
-    top: 0;
     height: 80px;
     width: 100%;
+
+    margin-bottom: -80px;
+    
+    position: -webkit-sticky;
+    position: sticky;
+    z-index: 10;
+    top: 0;
 
     display: grid;
     grid-template-columns: 15% 11.5% 11.5% 24% 11.5% 11.5% 15%;
@@ -13,9 +17,10 @@
     grid-template-rows: 100%;
     gap: 20px;
 
-    overflow: hidden;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, 0) 100%);
     align-items: center;
+
+    //border-top: .5px $text solid;
 
     & > * {
         grid-row: 1 / 2;
@@ -67,10 +72,14 @@
         grid-template-columns: 0 1fr 1fr 1fr 1fr 1fr 0;
         grid-template-rows: 100%;
         gap: 10px;
-        height: 7%;
+        height: 80px;
 
         & > * {
             font-size: 3.5vw;
         }
+    }
+
+    .icon {
+        padding-top: 0 !important;
     }
 }
