@@ -2,8 +2,10 @@ const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
 export default async function submit(data: Record<string, unknown>, url: string, method: "POST" | "PATCH" | "DELETE", type: "application/json" | "multipart/form-data"): Promise<Response> {
   let body: FormData | string;
+  let headers: HeadersInit;
 
   if (type == "multipart/form-data") {
+    headers = {};
 
     body = new FormData();
 
@@ -14,6 +16,7 @@ export default async function submit(data: Record<string, unknown>, url: string,
     }
 
   } else {
+    headers = new Headers({ "Content-Type": type });
     body = JSON.stringify(data);
   }
 
@@ -22,7 +25,7 @@ export default async function submit(data: Record<string, unknown>, url: string,
     mode: "cors",
     credentials: "include",
     body: body,
-    headers: new Headers({ "Content-Type": type }),
+    headers,
   } as RequestInit;
 
   return (await fetch(`${cdn}/${url}`, options));

@@ -1,7 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
 
 import React, { AnchorHTMLAttributes, DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from "react";
 import NavBar from "../../components/navbar";
@@ -12,8 +11,9 @@ import { ProjectQuery } from "../../types/types";
 import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import Footer from "../../components/footer.module";
-import Carousel from "../../components/carousel.module";
 import Tags from "../../components/tags.module";
+import AssetGallery from "../../components/assetGallery.module";
+import Link from "next/link";
 
 const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
 
@@ -89,12 +89,12 @@ export default class Projects extends React.Component<ProjectQuery, never> {
             : ""
           }
 
-
-          {assets.length !== 0 ?
-            <section className={styles.carousel}>
-              <Carousel pictures={assets} />
+          {assets.length > 0 ?
+            <section className={styles.assets}>
+              <header><h2>Gallery</h2></header>
+              <AssetGallery assets={assets} />
             </section>
-            : ""
+            : <></>
           }
 
         </article>
