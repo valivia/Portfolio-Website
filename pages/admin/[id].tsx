@@ -40,7 +40,6 @@ class Projects extends React.Component<Props, State> {
     const target = e.target;
     const value = onChangeParser(target);
     if (target.name === "markdown") this.update = setTimeout(this.updateMD, 200);
-    console.log(this.state.project.tags);
     this.setState({ project: { ...this.state.project, [target.name]: value } });
   }
 
@@ -82,7 +81,6 @@ class Projects extends React.Component<Props, State> {
   }
 
   public stateChanger = (project: Project) => {
-    console.log(project);
     this.setState({ project });
   }
 
