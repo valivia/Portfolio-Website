@@ -2,6 +2,7 @@ import Image from "next/image";
 import styles from "./assetGallery.module.scss";
 import prisma from "@prisma/client";
 import { Component, ReactNode } from "react";
+import { motion } from "framer-motion";
 
 
 export default class AssetGallery extends Component<Props, State> {
@@ -22,8 +23,9 @@ export default class AssetGallery extends Component<Props, State> {
 
   render(): ReactNode {
 
-    const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+    const mediaServer = process.env.NEXT_PUBLIC_MEDIA_SERVER;
     const current = this.state.current;
+    const assets = this.props.assets;
     const currentAsset = current !== undefined ? this.props.assets[current] : undefined;
 
     return (
@@ -38,7 +40,7 @@ export default class AssetGallery extends Component<Props, State> {
                 className={styles.image}
                 onClick={() => this.setState({ current: this.props.assets.indexOf(asset) })}>
                 <Image
-                  src={`${cdn}/file/a/${asset.uuid}_square.jpg`}
+                  src={`${mediaServer}/content/${asset.uuid}_square.jpg`}
                   layout="responsive"
                   height={size}
                   width={size}
@@ -56,16 +58,19 @@ export default class AssetGallery extends Component<Props, State> {
           <div
             className={styles.fullscreenMain}
           >
-            <div
+            <motion.div
+              key={currentAsset.uuid}
+              initial={{ x: "600px", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
               className={styles.content}
-              style={{ backgroundImage: `url("${cdn}/file/a/${currentAsset.uuid}_high.jpg")` }}
-            >
-            </div>
+              style={{ backgroundImage: `url("${mediaServer}/content/${currentAsset.uuid}_high.jpg")` }}
+            />
 
             <div className={styles.buttons}>
-              <button onClick={() => this.changeIndex(-1)}>&lt;</button>
+              {assets.length > 1 && <button onClick={() => this.changeIndex(-1)}>&lt;</button>}
               <div onClick={() => this.setState({ current: undefined })}></div>
-              <button onClick={() => this.changeIndex(1)}>&gt;</button>
+              {assets.length > 1 && <button onClick={() => this.changeIndex(1)}>&gt;</button>}
             </div>
 
           </div>
