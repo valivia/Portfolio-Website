@@ -23,7 +23,12 @@ export default class Projects extends React.Component<ProjectQuery, never> {
     document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
   }
 
-  ResponsiveImage = (props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>): JSX.Element => (<Image alt={props.alt} layout="fill" src={props.src as string} />);
+  ResponsiveImage = (props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>): JSX.Element => {
+    if (props.src?.endsWith(".mp4")) {
+      return (<video controls><source src={props.src} type="video/mp4" /></video>);
+    }
+    return (<Image alt={props.alt} layout="fill" src={props.src as string} />);
+  }
   LinkElement = (props: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>): JSX.Element => (<Link href={props.href as string}><a target="_blank">{props.children}</a></Link>);
 
 
