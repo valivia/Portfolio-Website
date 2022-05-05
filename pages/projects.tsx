@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import ListProject from "../components/list_project.module";
 import MailingList from "../components/mailing.module";
 
-const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
 class Projects extends React.Component<Props> {
 
@@ -74,7 +74,7 @@ interface Props {
 export default withRouter(Projects);
 
 export const getStaticProps: GetStaticProps = async () => {
-  const projectData = await fetch(`${cdn}/project?projects=true`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
+  const projectData = await fetch(`${apiServer}/project?projects=true`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const projects = await projectData.json() as ProjectQuery[];
 
   if (!projects) return { notFound: true };

@@ -64,7 +64,7 @@ class About extends React.Component<Props, State> {
             </section>
             <figure className={styles.aboutPic}>
               <Image
-                src="https://portfolio.xayania.com/api/file/a/4d289bf5-e3ce-4f01-8628-14f2bbec5ac1_default.jpg"
+                src={`${process.env.NEXT_PUBLIC_MEDIA_SERVER}/content/4d289bf5-e3ce-4f01-8628-14f2bbec5ac1_default.jpg`}
                 height={480}
                 width={240}
                 alt=""

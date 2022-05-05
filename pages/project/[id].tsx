@@ -15,7 +15,8 @@ import Tags from "../../components/tags.module";
 import AssetGallery from "../../components/assetGallery.module";
 import Link from "next/link";
 
-const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+const api = process.env.NEXT_PUBLIC_API_SERVER;
+const mediaServer = process.env.NEXT_PUBLIC_MEDIA_SERVER;
 
 export default class Projects extends React.Component<ProjectQuery, never> {
   private scroll() {
@@ -47,7 +48,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         <NavBar />
         {
           banner ?
-            <header className={styles.header} style={{ backgroundImage: `url("${cdn}/file/a/${banner?.uuid}_high.jpg")` }}>
+            <header className={styles.header} style={{ backgroundImage: `url("${mediaServer}/content/${banner?.uuid}_high.jpg")` }}>
               <p onClick={this.scroll}>﹀</p>
             </header>
             : <header className={styles.spacer}></header>
@@ -107,7 +108,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
 
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${cdn}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
+  const res = await fetch(`${api}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const data = await res.json() as ProjectQuery[];
 
   const paths = data.map((project) => { return { params: { id: project.uuid } }; });
@@ -119,7 +120,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const res = await fetch(`${cdn}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
+  const res = await fetch(`${api}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
     .then(x => {
       if (x.ok) return x;
       else return false;

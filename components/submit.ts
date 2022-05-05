@@ -1,4 +1,4 @@
-const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
 export default async function submit(data: Record<string, unknown>, url: string, method: "POST" | "PATCH" | "DELETE", type: "application/json" | "multipart/form-data"): Promise<Response> {
   let body: FormData | string;
@@ -28,5 +28,5 @@ export default async function submit(data: Record<string, unknown>, url: string,
     headers,
   } as RequestInit;
 
-  return (await fetch(`${cdn}/${url}`, options));
+  return (await fetch(`${apiServer}/${url}`, options));
 }

@@ -17,9 +17,9 @@ import AssetAdmin from "../../components/admin/asset.module";
 import onChangeParser from "../../components/onchange";
 import submit from "../../components/submit";
 
-const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
-class Projects extends React.Component<Props, State> {
+class AdminProject extends React.Component<Props, State> {
   private update: NodeJS.Timeout | undefined;
 
   constructor(props: Props) {
@@ -83,7 +83,6 @@ class Projects extends React.Component<Props, State> {
   public stateChanger = (project: Project) => {
     this.setState({ project });
   }
-
 
   public render = (): ReactNode => {
     if (this.state.loading) return <> </>;
@@ -236,7 +235,7 @@ class Projects extends React.Component<Props, State> {
   }
 
   async componentDidMount(): Promise<void> {
-    const result = await fetch(`${cdn}/auth`, { credentials: "include", mode: "cors", method: "POST" })
+    const result = await fetch(`${apiServer}/auth`, { credentials: "include", mode: "cors", method: "POST" })
       .then(x => { if (x.ok) return true; })
       .catch(() => false);
 
@@ -255,13 +254,13 @@ class Projects extends React.Component<Props, State> {
 
 }
 
-export default withRouter(Projects);
+export default withRouter(AdminProject);
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const projectData = await fetch(`${cdn}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
+  const projectData = await fetch(`${apiServer}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
     .then(x => x.ok ? x : false);
 
-  const tagData = await fetch(`${cdn}/tags`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
+  const tagData = await fetch(`${apiServer}/tags`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
     .then(x => x.ok ? x : false);
 
   const tags = tagData ? await tagData.json() as tag[] : [];

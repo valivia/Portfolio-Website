@@ -6,7 +6,7 @@ import styles from "../../styles/admin.module.scss";
 import { Project } from "../../types/types";
 import ProjectAdmin from "../../components/admin/project.module";
 
-const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
 class Admin extends React.Component<Props, State> {
 
@@ -20,7 +20,7 @@ class Admin extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    const result = await fetch(`${cdn}/auth`, { credentials: "include", mode: "cors", method: "POST" })
+    const result = await fetch(`${apiServer}/auth`, { credentials: "include", mode: "cors", method: "POST" })
       .then(x => { if (x.ok) return true; })
       .catch(() => false);
 
@@ -75,7 +75,7 @@ export interface State {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const projectData = await fetch(`${cdn}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
+  const projectData = await fetch(`${apiServer}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const projects = await projectData.json() as Project;
 
   if (!projects) return { notFound: true };

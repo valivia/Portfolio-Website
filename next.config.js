@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const securityHeaders = [
-  { key: "Content-Security-Policy", value: "default -src 'self'" },
+//  { key: "Content-Security-Policy", value: "default -src 'self'" },
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' }
 ]
 
@@ -19,7 +19,7 @@ module.exports = withMDX({
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    domains: ["portfolio.xayania.com", "cdn.discordapp.com"],
+    domains: ["portfolio.xayania.com"],
   },
   i18n: {
     locales: ['en'],

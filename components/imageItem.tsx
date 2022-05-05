@@ -6,7 +6,7 @@ import { GalleryImage } from "../types/types";
 
 export default function ImageItem(data: GalleryImage): JSX.Element {
 
-  const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+  const mediaServer = process.env.NEXT_PUBLIC_MEDIA_SERVER;
 
   if (data.type !== "image") return (<></>);
 
@@ -19,7 +19,7 @@ export default function ImageItem(data: GalleryImage): JSX.Element {
         </div>
         <div className={styles.image}>
           <Image
-            src={`${cdn}/file/a/${data.uuid}_square.jpg`}
+            src={`${mediaServer}/content/${data.uuid}_square.jpg`}
             layout="responsive"
             height={data.size}
             width={data.size}

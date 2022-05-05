@@ -4,21 +4,18 @@
 
 .subheader {
     @include subheaderTemplate;
-    background-image: url($cdn + "/file/s/tbhc_Low.jpg");
-    background-image: image-set(
-        url($cdn + "/file/s/tbhc_Default.jpg") 2x,
-        url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
-        url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
-        url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
-        url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
-    );
-    background-image: -webkit-image-set(
-        url($cdn + "/file/s/tbhc_Default.jpg") 2x,
-        url($cdn + "/file/s/tbhc_High.jpg") 1.5x,
-        url($cdn + "/file/s/tbhc_MediumHigh.jpg") 1x,
-        url($cdn + "/file/s/tbhc_Medium.jpg") 0.75x,
-        url($cdn + "/file/s/tbhc_Low.jpg") 0.25x
-    );
+
+    @media (max-width: 480px) {
+        background-image: url($media-server + "/server/tbhc_low.jpg");
+    }
+
+    @media (min-width: 481px) and (max-width: 1024px) {
+        background-image: url($media-server + "/server/tbhc_high.jpg");
+    }
+
+    @media (min-width: 1025px) {
+        background-image: url($media-server + "/server/tbhc_default.jpg");
+    }
 
     height: 100vh;
 }

@@ -147,7 +147,7 @@ export default class AssetAdmin extends Component<Props, State> {
 
         </form>
         {!newAsset ?
-          <figure style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_CDN_SERVER}/file/a/${data.uuid}_medium.jpg)` }}>
+          <figure style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_MEDIA_SERVER}/content/${data.uuid}_medium.jpg)` }}>
           </figure>
           : ""
         }

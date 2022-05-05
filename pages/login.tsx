@@ -6,7 +6,7 @@ import Footer from "../components/footer.module";
 import { withRouter } from "next/router";
 import { WithRouterProps } from "next/dist/client/with-router";
 
-const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
 class Login extends React.Component<WithRouterProps> {
   state = { code: "", error: "", ratelimit: false, loading: true, failed: false };
@@ -33,7 +33,7 @@ class Login extends React.Component<WithRouterProps> {
       return;
     }
 
-    const response = await fetch(`${cdn}/login`, {
+    const response = await fetch(`${apiServer}/login`, {
       method: "POST",
       mode: "cors",
       credentials: "include",
@@ -52,7 +52,7 @@ class Login extends React.Component<WithRouterProps> {
   }
 
   async componentDidMount() {
-    const result = await fetch(`${cdn}/auth`, { credentials: "include", mode: "cors", method: "POST" })
+    const result = await fetch(`${apiServer}/auth`, { credentials: "include", mode: "cors", method: "POST" })
       .then(x => { if (x.ok) return true; })
       .catch(() => false);
 

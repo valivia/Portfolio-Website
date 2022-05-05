@@ -3,20 +3,20 @@
 
 .subheader {
   @include subheaderTemplate;
-  background-image: url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_high.jpg");
+  background-image: url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_high.jpg");
   background-image: image-set(
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_default.jpg") 1.5x,
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_high.jpg") 1x,
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_medium.jpg") 0.7x,
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_low.jpg") 0.5x,
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_lowest.jpg") 0.25x
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_default.jpg") 1.5x,
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_high.jpg") 1x,
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_medium.jpg") 0.7x,
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_low.jpg") 0.5x,
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_lowest.jpg") 0.25x
   );
   background-image: -webkit-image-set(
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_default.jpg") 1.5x,
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_high.jpg") 1x,
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_medium.jpg") 0.7x,
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_low.jpg") 0.5x,
-    url($cdn + "/file/a/b5385d43-83a6-4f90-a092-0eacade08ceb_lowest.jpg") 0.25x
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_default.jpg") 1.5x,
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_high.jpg") 1x,
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_medium.jpg") 0.7x,
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_low.jpg") 0.5x,
+    url($media-server + "/content/b5385d43-83a6-4f90-a092-0eacade08ceb_lowest.jpg") 0.25x
   );
 
   height: 100vh;

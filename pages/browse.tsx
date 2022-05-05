@@ -9,7 +9,7 @@ import Footer from "../components/footer.module";
 import { GalleryImage } from "../types/types";
 import MailingList from "../components/mailing.module";
 
-const cdn = process.env.NEXT_PUBLIC_CDN_SERVER;
+const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
 class Browse extends React.Component<Props, State> {
 
@@ -72,7 +72,7 @@ interface State {
 
 
 export const getStaticProps: GetStaticProps = async () => {
-  const projectData = await fetch(`${cdn}/gallery`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
+  const projectData = await fetch(`${apiServer}/gallery`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
   const projects = await projectData.json() as GalleryImage[];
 
   if (!projects) return { notFound: true };
