@@ -11,5 +11,12 @@
 }
 
 .inverted {
-    filter: invert(100%);
+    filter: invert(100%); 
+}
+
+@media only screen and (orientation: portrait) {
+    .category > img {
+        height: 40px;
+        width: 40px;
+    }
 }
