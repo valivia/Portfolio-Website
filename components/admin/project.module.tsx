@@ -1,7 +1,8 @@
-import styles from "../pinned_project.module.scss";
+import styles from "./projects.module.scss";
 import Link from "next/link";
 import { Component } from "react";
 import { Project } from "../../types/types";
+import { motion } from "framer-motion";
 
 export default class ProjectAdmin extends Component<Props> {
   constructor(props: Props) {
@@ -9,35 +10,41 @@ export default class ProjectAdmin extends Component<Props> {
   }
 
   public render(): React.ReactNode {
-    const { project } = this.props;
-    if (!project) return (
-      <Link href={`/admin/new`} passHref={true}>
-        <article style={{ display: "flex", justifyContent: "center" }} className={styles.main}>
-          <h1 style={{ fontSize: "400%" }}>+</h1>
-        </article >
-      </Link >
-    );
+    const { projects } = this.props;
+    const item = {
+      visible: { opacity: 1, x: 0 },
+      hidden: { opacity: 0, x: -10 },
+    };
+    const list = {
+      visible: { opacity: 1 },
+      hidden: { opacity: 0 },
+    };
 
     return (
-      <Link href={`/admin/${project.uuid}`} passHref={true}>
-        <article className={styles.main}>
-          <header>
-            <h1>{project.name}</h1>
-          </header>
-          <section>
-            <label>Status:</label>
-            <p>{project.status}</p>
-            <label>Last Updated:</label>
-            <p>{new Date(project.updated).toDateString()}</p>
-            {project.description && <label>Description:</label>}
-            <p>{project.description}</p>
-          </section>
-        </article>
-      </Link>
+      <motion.table
+        initial="hidden"
+        animate="visible"
+        variants={list}
+        className={styles.main}
+      >
+        {projects.map((project, index) => (
+          <Link href={`/admin/${project.uuid}`} key={project.uuid} passHref={true}>
+            <motion.tr
+              transition={{ type: "spring", stiffness: 260, damping: 20, delay: index * 0.05 }}
+              variants={item}
+            >
+              <td>{new Date(project.updated).toDateString()}</td>
+              <td>{project.name}</td>
+              <td>{project.status}</td>
+            </motion.tr>
+          </Link>
+        )
+        )}
+      </motion.table>
     );
   }
 }
 
 interface Props {
-  project: Project | undefined
+  projects: Project[];
 }

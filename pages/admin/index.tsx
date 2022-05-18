@@ -5,6 +5,7 @@ import React from "react";
 import styles from "../../styles/admin.module.scss";
 import { Project } from "../../types/types";
 import ProjectAdmin from "../../components/admin/project.module";
+import Link from "next/link";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
@@ -16,6 +17,7 @@ class Admin extends React.Component<Props, State> {
     this.state = {
       loading: true,
       failed: false,
+      projects: this.props.projects,
     };
   }
 
@@ -29,6 +31,22 @@ class Admin extends React.Component<Props, State> {
     else this.setState({ loading: false, failed: true });
   }
 
+  public search = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let { value } = e.target;
+    const { projects } = this.props;
+    const result = [];
+    value = value.toLowerCase();
+
+    for (const project of projects) {
+      if (project.name.toLowerCase().includes(value)
+        || project.description?.toLowerCase().includes(value)
+        || project.markdown?.toLowerCase().includes(value)
+        || project.tags.find(x => x.name.toLowerCase().includes(value))
+      ) result.push(project);
+    }
+
+    this.setState({ projects: result });
+  }
 
   public render = (): JSX.Element => {
 
@@ -37,10 +55,6 @@ class Admin extends React.Component<Props, State> {
       this.props.router.replace("/login");
       return <></>;
     }
-
-
-    console.log(this.props.projects);
-
 
     return (
       <>
@@ -51,10 +65,11 @@ class Admin extends React.Component<Props, State> {
         </Head>
         <main className={styles.main}>
           <h1>Admin Panel</h1>
-          <section className={styles.projects}>
-            <ProjectAdmin project={undefined}/>
-            {this.props.projects.map((x) => <ProjectAdmin key={x.uuid} project={x} />)}
+          <section>
+            <input className={styles.search} onInput={this.search} type="text" placeholder="search" />
+            <Link href="/admin/new" ><a>+</a></Link>
           </section>
+          <ProjectAdmin projects={this.state.projects} />
         </main>
       </>
     );
@@ -72,6 +87,7 @@ export interface Props {
 export interface State {
   loading: boolean;
   failed: boolean;
+  projects: Project[];
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
