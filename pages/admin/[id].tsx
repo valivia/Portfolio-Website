@@ -32,8 +32,6 @@ class AdminProject extends React.Component<Props, State> {
       new: this.props.router.query.id == "new",
       sending: false,
     };
-
-    this.updateMD();
   }
 
   public onChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -80,6 +78,16 @@ class AdminProject extends React.Component<Props, State> {
     if (response.ok) await this.props.router.push("/admin");
   }
 
+  public confirmProceed = (event: { preventDefault: () => void; }): void => {
+    const current = this.state.project;
+    // const original = this.props.project;
+    if (this.state.new && Object.entries(current).find(x => x[1] !== "") == undefined) return;
+
+    if (confirm("Are you sure you want to proceed?")) return;
+    event.preventDefault();
+  }
+
+
   public stateChanger = (project: Project) => {
     this.setState({ project });
   }
@@ -91,7 +99,6 @@ class AdminProject extends React.Component<Props, State> {
       return <></>;
     }
 
-
     const project = this.state.project;
 
     return (
@@ -102,8 +109,8 @@ class AdminProject extends React.Component<Props, State> {
         </Head>
         <main className={styles.main}>
           <header>
-            <Link href="/admin">〈</Link>
-            <Link href={`/project/${project.uuid}`}> Project</Link>
+            <Link href="/admin"><a onClick={this.confirmProceed}>〈</a></Link>
+            <Link href={`/project/${project.uuid}`}><a onClick={this.confirmProceed}>Project</a></Link>
           </header>
           <section className={styles.mainInput}>
             <header><h2>Project</h2></header>
@@ -239,7 +246,7 @@ class AdminProject extends React.Component<Props, State> {
       .then(x => { if (x.ok) return true; })
       .catch(() => false);
 
-
+    this.updateMD();
     if (result) this.setState({ loading: false });
     else this.setState({ loading: false, failed: true });
   }
