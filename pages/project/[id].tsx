@@ -72,10 +72,6 @@ export default class Projects extends React.Component<ProjectQuery, never> {
                 <td>{project.status}</td>
               </tr>
               <tr>
-                <td>Asset count</td>
-                <td>{project.assets.length}</td>
-              </tr>
-              <tr>
                 <td>Last updated</td>
                 <td>{new Date(project.updated).toDateString()}</td>
               </tr>
