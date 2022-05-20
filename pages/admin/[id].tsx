@@ -167,11 +167,7 @@ class AdminProject extends React.Component<Props, State> {
                   value={project.status || ""}
                   required
                 >
-                  <option value="unknown">Unknown</option>
-                  <option value="abandoned">Abandoned</option>
-                  <option value="on_hold">On hold</option>
-                  <option value="in_progress">In progress</option>
-                  <option value="finished">Finished</option>
+                  {this.props.status.map(status => <option key={status} value={status}>{status}</option>)}
                 </select>
               </section>
 
@@ -275,7 +271,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const tagData = await fetch(`${apiServer}/tags`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
     .then(x => x.ok ? x : false);
 
+  const statusData = await fetch(`${apiServer}/status`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
+    .then(x => x.ok ? x : false);
+
   const tags = tagData ? await tagData.json() as tag[] : [];
+  const status = statusData ? await statusData.json() as string[] : [];
   let project: Project | Record<string, unknown> | undefined;
 
   if (projectData) {
@@ -291,7 +291,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   return {
-    props: { tags, project },
+    props: { tags, project, status },
   };
 };
 
@@ -299,6 +299,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 interface Props {
   router: NextRouter;
   tags: tag[];
+  status: string[];
   project: Project;
 }
 
