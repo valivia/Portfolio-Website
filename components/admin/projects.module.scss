@@ -1,23 +1,25 @@
 .main {
     border-collapse: collapse;
 
-    & > tr {
-        background-color: transparent;
-        transition: background-color .1s ease-in-out;
-        
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.527);
-            cursor: pointer;
-        }
+    & > tbody {
+        & > tr {
+            background-color: transparent;
+            transition: background-color 0.1s ease-in-out;
 
-        & > td {
-            padding: 10px;
-            font-family: "tbhc";
-            font-size: 1.1rem;
-            line-height: 1.3;
-
-            &:hover() {
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.527);
                 cursor: pointer;
+            }
+
+            & > td {
+                padding: 10px;
+                font-family: "tbhc";
+                font-size: 1.1rem;
+                line-height: 1.3;
+
+                &:hover() {
+                    cursor: pointer;
+                }
             }
         }
     }

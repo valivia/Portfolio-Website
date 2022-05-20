@@ -56,3 +56,7 @@ html {
 *::-webkit-scrollbar-thumb {
   background-color: #ffffff66;
 }
+
+button, input[type="submit"] {
+  cursor: pointer;
+}

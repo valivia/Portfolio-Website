@@ -27,19 +27,21 @@ export default class ProjectAdmin extends Component<Props> {
         variants={list}
         className={styles.main}
       >
-        {projects.map((project, index) => (
-          <Link href={`/admin/${project.uuid}`} key={project.uuid} passHref={true}>
-            <motion.tr
-              transition={{ type: "spring", stiffness: 260, damping: 20, delay: index * 0.05 }}
-              variants={item}
-            >
-              <td>{new Date(project.updated).toDateString()}</td>
-              <td>{project.name}</td>
-              <td>{project.status}</td>
-            </motion.tr>
-          </Link>
-        )
-        )}
+        <tbody>
+          {projects.map((project, index) => (
+            <Link href={`/admin/${project.uuid}`} key={project.uuid} passHref={true}>
+              <motion.tr
+                transition={{ type: "spring", stiffness: 260, damping: 20, delay: index * 0.05 }}
+                variants={item}
+              >
+                <td>{new Date(project.updated).toDateString()}</td>
+                <td>{project.name}</td>
+                <td>{project.status}</td>
+              </motion.tr>
+            </Link>
+          )
+          )}
+        </tbody>
       </motion.table>
     );
   }

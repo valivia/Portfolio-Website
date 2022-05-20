@@ -25,10 +25,11 @@
 
         & > * {
             padding-right: 20px;
-        }
 
-        &:hover {
-            cursor: pointer;
+            &:hover {
+                cursor: pointer;
+                color: beige;
+            }
         }
     }
 
