@@ -61,7 +61,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
         <article className={styles.content} id="main">
           <header><h1>{project.name}</h1></header>
           <section className={styles.info}>
-            <Tags tags={tags} clickable={true} />
+            <Tags tags={tags} />
             <table>
               <tr>
                 <td>Name</td>

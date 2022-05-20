@@ -20,14 +20,6 @@ class Browse extends React.Component<Props, State> {
 
   private scroll = () => document.getElementById("main")?.scrollIntoView({ behavior: "smooth" })
 
-  public filter = (filterList: GalleryImage) => {
-    const router = this.props.router;
-    const statusFilter = (data: GalleryImage): boolean => !router.query.status || data.status === router.query.status;
-    const TagFilter = (data: GalleryImage): boolean => !router.query.tag || data.tags.find((x) => x.uuid === router.query.tag) !== undefined;
-    const duplicateFilter = (data: GalleryImage): boolean => !router.query.duplicates || router.query.duplicates == "true" || (router.query.duplicates == "false" && data.thumbnail);
-    return statusFilter(filterList) && TagFilter(filterList) && duplicateFilter(filterList);
-  }
-
   render() {
     return (
       <>
@@ -47,7 +39,7 @@ class Browse extends React.Component<Props, State> {
 
         <main className={styles.content} id="main">
           <div className={styles.squares} id="art">
-            {this.state.projects.map((data) => this.filter(data) && <ImageItem key={data.uuid} {...data} />)}
+            {this.state.projects.map((data) => <ImageItem key={data.uuid} {...data} />)}
           </div>
         </main>
 
