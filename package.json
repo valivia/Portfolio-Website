@@ -6,12 +6,13 @@
     "dev": "next dev -p 9100",
     "build": "next build",
     "start": "next start -p 9100",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prismaUpdate": "npm i --save-dev prisma@latest && npm i @prisma/client@latest"
   },
   "dependencies": {
     "@mdx-js/loader": "^2.0.0",
     "@next/mdx": "^12.1.0",
-    "@prisma/client": "^2.29.1",
+    "@prisma/client": "^3.14.0",
     "@types/js-cookie": "^3.0.1",
     "framer-motion": "^6.2.6",
     "fs": "^0.0.1-security",
@@ -30,7 +31,7 @@
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.0",
-    "prisma": "^2.29.1",
+    "prisma": "^3.14.0",
     "typescript": "4.3.5"
   }
 }

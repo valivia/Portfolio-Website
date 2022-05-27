@@ -3,9 +3,9 @@ import Head from "next/head";
 
 import React, { AnchorHTMLAttributes, DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from "react";
 
-import { ProjectQuery } from "../../types/types";
+import { ProjectQuery } from "@typeFiles/api_project.type";
 
-import styles from "../../styles/admin.project.module.scss";
+import styles from "@styles/admin.project.module.scss";
 
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { NextRouter, withRouter } from "next/router";
@@ -13,9 +13,9 @@ import { tag } from "@prisma/client";
 import { serialize } from "next-mdx-remote/serialize";
 import Link from "next/link";
 import Image from "next/image";
-import AssetAdmin from "../../components/admin/asset.module";
-import onChangeParser from "../../components/onchange";
-import submit from "../../components/submit";
+import AssetAdmin from "@components/admin_project/asset.module";
+import onChangeParser from "@components/onchange";
+import submit from "@components/submit";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
@@ -100,6 +100,7 @@ class AdminProject extends React.Component<Props, State> {
     }
 
     const project = this.state.project;
+
 
     return (
       <>
@@ -271,7 +272,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const tagData = await fetch(`${apiServer}/tags`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
     .then(x => x.ok ? x : false);
 
-  const statusData = await fetch(`${apiServer}/status`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
+  const statusData = await fetch(`${apiServer}/enum/project/status`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
     .then(x => x.ok ? x : false);
 
   const tags = tagData ? await tagData.json() as tag[] : [];

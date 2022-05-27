@@ -1,6 +1,6 @@
-import NavBar from "../components/navbar";
+import NavBar from "@components/global/navbar.module";
 import React, { ReactNode } from "react";
-import styles from "../styles/index.module.scss";
+import styles from "@styles/index.module.scss";
 import Head from "next/head";
 
 export default function index(): ReactNode {

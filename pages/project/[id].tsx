@@ -3,16 +3,16 @@ import Head from "next/head";
 import Image from "next/image";
 
 import React, { AnchorHTMLAttributes, DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from "react";
-import NavBar from "../../components/navbar";
+import NavBar from "@components/global/navbar.module";
 
 import styles from "../../styles/project.module.scss";
-import { ProjectQuery } from "../../types/types";
+import { ProjectQuery } from "@typeFiles/api_project.type";
 
 import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import Footer from "../../components/footer.module";
-import Tags from "../../components/tags.module";
-import AssetGallery from "../../components/assetGallery.module";
+import Footer from "@components/global/footer.module";
+import Tags from "@components/project/tags.module";
+import AssetGallery from "@components/project/assetGallery.module";
 import Link from "next/link";
 
 const api = process.env.NEXT_PUBLIC_API_SERVER;

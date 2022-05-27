@@ -1,14 +1,10 @@
 import React, { ReactNode } from "react";
 import styles from "./mailing.module.scss";
-import submit from "./submit";
+import submit from "@components/submit";
 import Cookies from "js-cookie";
 
 export default class MailingList extends React.Component<Record<string, never>, State> {
-
-  constructor() {
-    super({});
-    this.state = { email: "" };
-  }
+  state = { email: "" };
 
   onsubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();

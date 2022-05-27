@@ -1,8 +1,8 @@
-import NavBar from "../components/navbar";
+import NavBar from "@components/global/navbar.module";
 import React, { ReactNode } from "react";
-import styles from "../styles/contact.module.scss";
+import styles from "@styles/contact.module.scss";
 import Head from "next/head";
-import Footer from "../components/footer.module";
+import Footer from "@components/global/footer.module";
 import { withRouter } from "next/router";
 import { WithRouterProps } from "next/dist/client/with-router";
 

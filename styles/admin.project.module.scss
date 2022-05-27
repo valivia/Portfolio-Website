@@ -1,5 +1,6 @@
 @use "./vars" as *;
 @use "./markdown" as md;
+@use "./form" as formModule;
 
 .main {
     display: grid;
@@ -39,56 +40,18 @@
     }
 }
 
+.form {
+    @include formModule.form;
+    background-color: $secondary;
+    border-radius: 10px;
+    padding: 15px;
+}
+
 .mainInput {
     grid-column: 1 / 2;
     grid-row: 2 / 4;
     min-height: 100vh;
     // border-right: 2px $text solid;
-}
-
-.form {
-    background-color: $secondary;
-    border-radius: 10px;
-    padding: 15px;
-
-    & > h2 {
-        max-width: 30vw;
-        margin: 0;
-        overflow-x: hidden;
-    }
-}
-
-.form > section {
-    padding: 5px;
-    & > label {
-        display: block;
-        text-align: left;
-    }
-    & > input:not([type="submit"]),
-    textarea,
-    select {
-        border-radius: 0;
-        border: none;
-        background-color: transparent;
-        border-bottom: 2px $text solid;
-        color: $text;
-        padding: 2px;
-        resize: none;
-        width: 100%;
-
-        &:hover {
-            border-bottom: 2px rgb(212, 173, 100) solid;
-        }
-
-        &:active {
-            border-bottom: 2px rgb(131, 97, 34) solid;
-        }
-    }
-
-    & > select > option {
-        background-color: $secondary;
-        color: $text;
-    }
 }
 
 .assets {
@@ -101,33 +64,6 @@
     padding: 3px 0;
     & > input {
         margin-right: 3px;
-    }
-}
-
-.buttons {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-
-    & > input,
-    button {
-        font-family: "abel";
-        font-weight: 300;
-        text-transform: capitalize;
-        background-color: rgb(7, 7, 7);
-        color: $text;
-        border: none;
-        flex-grow: 1;
-        padding: 10px;
-
-        &:hover {
-            background-color: rgb(14, 14, 14);
-        }
-
-        &:active {
-            padding: 9px;
-            border: 1px $text solid;
-        }
     }
 }
 

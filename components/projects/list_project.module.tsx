@@ -1,8 +1,8 @@
 import { Component, ReactNode } from "react";
 import Link from "next/link";
-import { ProjectQuery } from "../types/types";
 import styles from "./list_project.module.scss";
 import { motion } from "framer-motion";
+import { ProjectQuery } from "@typeFiles/api_project.type";
 
 export default class ListProject extends Component<Props> {
   render(): ReactNode {

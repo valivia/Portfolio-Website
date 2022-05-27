@@ -1,4 +1,4 @@
-@use "../styles/vars" as *;
+@use "@styles/vars" as *;
 
 .main {
     min-height: 100vh;
@@ -23,11 +23,15 @@
         & > a {
             font-size: 1.5rem;
 
-            &:hover{
+            &:hover {
                 color: beige;
             }
         }
     }
+}
+
+.menu > * {
+    padding: 10px;
 }
 
 .search {

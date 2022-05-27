@@ -1,15 +1,15 @@
 import { NextRouter, withRouter } from "next/router";
-import NavBar from "../components/navbar";
-import styles from "../styles/projects.module.scss";
+import NavBar from "@components/global/navbar.module";
+import styles from "@styles/projects.module.scss";
 import Head from "next/head";
 import React from "react";
-import Footer from "../components/footer.module";
-import PinnedProject from "../components/pinned_project.module";
+import Footer from "@components/global/footer.module";
+import PinnedProject from "@components/projects/pinned_project.module";
 import { GetStaticProps } from "next";
-import { ProjectQuery } from "../types/types";
+import { ProjectQuery } from "@typeFiles/api_project.type";
 import { motion } from "framer-motion";
-import ListProject from "../components/list_project.module";
-import MailingList from "../components/mailing.module";
+import ListProject from "@components/projects/list_project.module";
+import MailingList from "@components/global/mailing.module";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 

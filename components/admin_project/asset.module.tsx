@@ -2,7 +2,7 @@ import prisma from "@prisma/client";
 import { Component, ReactNode } from "react";
 import styles from "./asset.module.scss";
 import onChangeParser from "../onchange";
-import { ProjectQuery } from "../../types/types";
+import { ProjectQuery } from "@typeFiles/api_project.type";
 import submit from "../submit";
 
 

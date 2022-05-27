@@ -1,7 +1,7 @@
 import { ApiError } from "next/dist/server/api-utils";
 import Head from "next/head";
 import React from "react";
-import styles from "../styles/error.module.scss";
+import styles from "@styles/error.module.scss";
 
 function Error({ statusCode }: { statusCode: string | number }): JSX.Element {
   return (

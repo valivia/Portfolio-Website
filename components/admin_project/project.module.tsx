@@ -1,7 +1,7 @@
 import styles from "./projects.module.scss";
 import Link from "next/link";
 import { Component } from "react";
-import { Project } from "../../types/types";
+import { ExtendedProject } from "@typeFiles/extended_project.type";
 import { motion } from "framer-motion";
 
 export default class ProjectAdmin extends Component<Props> {
@@ -29,7 +29,7 @@ export default class ProjectAdmin extends Component<Props> {
       >
         <tbody>
           {projects.map((project, index) => (
-            <Link href={`/admin/${project.uuid}`} key={project.uuid} passHref={true}>
+            <Link href={`/admin/project/${project.uuid}`} key={project.uuid} passHref={true}>
               <motion.tr
                 transition={{ type: "spring", stiffness: 260, damping: 20, delay: index * 0.05 }}
                 variants={item}
@@ -48,5 +48,5 @@ export default class ProjectAdmin extends Component<Props> {
 }
 
 interface Props {
-  projects: Project[];
+  projects: ExtendedProject[];
 }

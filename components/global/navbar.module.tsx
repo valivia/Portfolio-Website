@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./navbar.module.scss";
-import icon from "../public/icon.svg";
+import icon from "@public/icon.svg";
 
 const git = process.env.NEXT_PUBLIC_GITHUB;
 

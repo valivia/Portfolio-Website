@@ -2,9 +2,9 @@ import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { NextRouter, withRouter } from "next/router";
 import React from "react";
-import styles from "../../styles/admin.module.scss";
-import { Project } from "../../types/types";
-import ProjectAdmin from "../../components/admin/project.module";
+import styles from "@styles/admin.module.scss";
+import { ExtendedProject } from "@typeFiles/extended_project.type";
+import ProjectAdmin from "@components/admin_project/project.module";
 import Link from "next/link";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
@@ -65,9 +65,13 @@ class Admin extends React.Component<Props, State> {
         </Head>
         <main className={styles.main}>
           <h1>Admin Panel</h1>
+          <section className={styles.menu}>
+            <Link href="/admin/experience">Experiences</Link>
+            <Link href="/admin/markdown">Markdown</Link>
+          </section>
           <section>
             <input className={styles.search} onInput={this.search} type="text" placeholder="search" />
-            <Link href="/admin/new" ><a>+</a></Link>
+            <Link href="/admin/project/new" ><a>+</a></Link>
           </section>
           <ProjectAdmin projects={this.state.projects} />
         </main>
@@ -81,18 +85,18 @@ export default withRouter(Admin);
 
 export interface Props {
   router: NextRouter;
-  projects: Project[];
+  projects: ExtendedProject[];
 }
 
 export interface State {
   loading: boolean;
   failed: boolean;
-  projects: Project[];
+  projects: ExtendedProject[];
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const projectData = await fetch(`${apiServer}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
-  const projects = await projectData.json() as Project;
+  const projects = await projectData.json() as ExtendedProject;
 
   if (!projects) return { notFound: true };
 

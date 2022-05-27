@@ -1,10 +1,10 @@
-import NavBar from "../components/navbar";
+import NavBar from "@components/global/navbar.module";
 import Head from "next/head";
-import styles from "../styles/contact.module.scss";
+import styles from "@styles/contact.module.scss";
 import React, { ReactNode } from "react";
-import Footer from "../components/footer.module";
+import Footer from "@components/global/footer.module";
 import submit from "../components/submit";
-import MailingList from "../components/mailing.module";
+import MailingList from "@components/global/mailing.module";
 
 export default class contact extends React.Component<State> {
   state = {

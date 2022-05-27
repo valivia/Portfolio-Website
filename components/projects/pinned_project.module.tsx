@@ -1,6 +1,6 @@
 import { Component, ReactNode } from "react";
 import Link from "next/link";
-import { ProjectQuery } from "../types/types";
+import { ProjectQuery } from "@typeFiles/api_project.type";
 import styles from "./pinned_project.module.scss";
 import { motion } from "framer-motion";
 

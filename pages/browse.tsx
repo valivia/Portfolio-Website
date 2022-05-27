@@ -1,13 +1,13 @@
 import type { GetStaticProps } from "next";
 import { NextRouter, withRouter } from "next/router";
-import NavBar from "../components/navbar";
-import styles from "../styles/browse.module.scss";
+import NavBar from "@components/global/navbar.module";
+import styles from "@styles/browse.module.scss";
 import Head from "next/head";
-import ImageItem from "../components/imageItem";
+import ImageItem from "@components/browse/imageItem";
 import React from "react";
-import Footer from "../components/footer.module";
-import { GalleryImage } from "../types/types";
-import MailingList from "../components/mailing.module";
+import Footer from "@components/global/footer.module";
+import { GalleryImage } from "@typeFiles/gallery_image.type";
+import MailingList from "@components/global/mailing.module";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 

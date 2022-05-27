@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./imageItem.module.scss";
-import { GalleryImage } from "../types/types";
+import { GalleryImage } from "@typeFiles/gallery_image.type";
 
 
 export default function ImageItem(data: GalleryImage): JSX.Element {
