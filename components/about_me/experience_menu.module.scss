@@ -1,0 +1,126 @@
+@use "styles/vars" as *;
+
+.main {
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
+    min-height: 30vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.menu {
+    padding: 10px;
+    padding-left: 20vw;
+    display: flex;
+    flex-direction: column;
+    border-right: 5px $tetiary solid;
+}
+
+.category {
+    align-self: flex-end;
+    text-align: right;
+}
+
+.itemContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+
+    & * {
+        transform: scale(1);
+        transition: transform 200ms ease-in-out;
+        &:hover {
+            cursor: pointer;
+        }
+
+        &[data-active="true"] {
+            transform: scale(1.2);
+        }
+    }
+}
+
+.articleContainer {
+    background-color: $secondary;
+}
+
+.experience {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 2fr;
+
+    padding: 25px;
+    padding-right: 20vw;
+
+    & > header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        & > meter {
+            width: 100%;
+        }
+    }
+}
+
+.info {
+    & > table {
+        border-collapse: collapse;
+        font-size: 0.8rem;
+
+        & > tr {
+            border-bottom: 1px $text solid;
+        }
+
+        & > * > td {
+            padding: 6px 10px;
+
+            & > a {
+                color: rgb(67, 171, 255);
+            }
+
+            &:first-child {
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+@media (max-height: 480px) and (orientation: landscape), (min-width: 641px) {
+    .menu,
+    .experience {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 640px) {
+    .main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+
+    .menu {
+        padding: 10px;
+        justify-content: center;
+        flex-direction: column;
+        border: none;
+        border-bottom: 5px $tetiary solid;
+    }
+
+    .category {
+        align-self: center;
+        text-align: center;
+    }
+
+    .itemContainer {
+        display: flex;
+        justify-content: center;
+    }
+
+    .experience {
+        padding: 25px;
+        height: 25vh;
+    }
+}

@@ -29,16 +29,18 @@ export default class ProjectAdmin extends Component<Props> {
       >
         <tbody>
           {projects.map((project, index) => (
-            <Link href={`/admin/project/${project.uuid}`} key={project.uuid} passHref={true}>
-              <motion.tr
-                transition={{ type: "spring", stiffness: 260, damping: 20, delay: index * 0.05 }}
-                variants={item}
-              >
-                <td>{new Date(project.updated).toDateString()}</td>
-                <td>{project.name}</td>
-                <td>{project.status}</td>
-              </motion.tr>
-            </Link>
+            <motion.tr
+              transition={{ type: "spring", stiffness: 260, damping: 20, delay: index * 0.05 }}
+              variants={item}
+              key={project.uuid}
+            >
+              <td>{new Date(project.updated).toDateString()}</td>
+              <td>
+                <Link href={`/admin/project/${project.uuid}`} key={project.uuid} passHref={true}>
+                  <a>{project.name}</a>
+                </Link></td>
+              <td>{project.status}</td>
+            </motion.tr>
           )
           )}
         </tbody>

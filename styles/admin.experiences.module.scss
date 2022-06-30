@@ -1,0 +1,38 @@
+@use "./vars" as *;
+@use "./form" as formModule;
+
+.main {
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    background-color: $primary;
+    padding: 25px;
+
+    height: 100vh;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+}
+
+.form {
+    @include formModule.form;
+    padding: 20px;
+    padding-right: 50%;
+}
+
+@media (max-width: 480px) {
+    .main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 90px 10fr;
+    }
+
+    .list {
+        flex-direction: row;
+    }
+
+    .form {
+        padding: 20px;
+    }
+}

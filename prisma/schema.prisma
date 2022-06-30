@@ -24,8 +24,7 @@ model asset {
 
 
   // relations
-  project        project  @relation(name: "asset_FK", fields: [project_id], references: [uuid])
-  banner_project project? @relation("banner_FK")
+  project project @relation(fields: [project_id], references: [uuid])
 
   @@index([project_id], name: "Assets_FK")
 }
@@ -46,10 +45,39 @@ model project {
   pinned   Boolean        @default(false) @db.Boolean()
 
   // relations
-  assets asset[] @relation("asset_FK")
+  assets asset[]
   tags   tag[]
   links  link[]
-  banner asset?  @relation(name: "banner_FK", fields: [banner_id], references: [uuid])
+  tag    tag[]   @relation(name: "notable_project_FK")
+}
+
+model tag {
+  created DateTime @default(now()) @db.Timestamp(0)
+  uuid    String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+
+  name        String  @db.VarChar(32)
+  description String? @db.VarChar(1024)
+
+  website String? @db.VarChar(256)
+
+  score      Int?     @db.Integer
+  used_since DateTime @default(now()) @db.Timestamp(0)
+
+  project_uuid String? @db.Uuid
+
+  projects        project[]
+  notable_project project?  @relation(name: "notable_project_FK", fields: [project_uuid], references: [uuid])
+
+  category experience_category @default(other)
+  @@index([uuid])
+}
+
+model mailing_list {
+  created DateTime @default(now()) @db.Timestamp(0)
+  uuid    String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+
+  email    String  @unique @db.VarChar(256)
+  verified Boolean @default(false) @db.Boolean()
 }
 
 model link {
@@ -61,13 +89,6 @@ model link {
   url  String @db.VarChar(256)
 
   projects project @relation(fields: [project_id], references: [uuid])
-}
-
-model tag {
-  uuid String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name String @db.VarChar(16)
-
-  projects project[]
 }
 
 enum asset_type {
@@ -82,4 +103,12 @@ enum project_status {
   in_progress  @map("in Progress")
   abandoned
   unknown
+  on_hold      @map("On Hold")
+}
+
+enum experience_category {
+  software
+  language
+  framework
+  other
 }

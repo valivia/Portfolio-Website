@@ -66,7 +66,7 @@ class Admin extends React.Component<Props, State> {
         <main className={styles.main}>
           <h1>Admin Panel</h1>
           <section className={styles.menu}>
-            <Link href="/admin/experience">Experiences</Link>
+            <Link href="/admin/experience">Tags</Link>
             <Link href="/admin/markdown">Markdown</Link>
           </section>
           <section>
