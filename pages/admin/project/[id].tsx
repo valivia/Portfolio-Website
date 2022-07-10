@@ -16,6 +16,7 @@ import Image from "next/image";
 import AssetAdmin from "@components/admin_project/asset.module";
 import onChangeParser from "@components/onchange";
 import submit from "@components/submit";
+import Multiselector from "@components/admin_project/multiselector.module";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
@@ -41,6 +42,10 @@ class AdminProject extends React.Component<Props, State> {
     this.setState({ project: { ...this.state.project, [target.name]: value } });
   }
 
+  public multiselectorChange = (selected: { uuid: string, name: string }[]) => {
+    this.setState({ project: { ...this.state.project, tags: selected } });
+  }
+
   public updateMD = async () => {
     if (!this.state.project.markdown) return;
     const markdownParsed = await serialize(this.state.project.markdown);
@@ -50,18 +55,28 @@ class AdminProject extends React.Component<Props, State> {
   public onSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     this.setState({ sending: true });
-    const data = this.state.project;
+
+    const submitData = this.state.project as unknown as SubmitProject;
+    submitData.tags = this.state.project.tags.map(x => x.uuid);
+
     const method = this.state.new ? "POST" : "PATCH";
 
-    const response = await submit(data as unknown as Record<string, unknown>, "project", method, method == "POST" ? "multipart/form-data" : "application/json");
+    const response = await submit(
+      submitData as unknown as Record<string, unknown>,
+      "project",
+      method,
+      method == "POST" ? "multipart/form-data" : "application/json"
+    );
 
     if (response.ok) {
-      const project = (await response.json()).project as ProjectQuery | Project;
+      const responseJson = await response.json() as { project: Project };
+      const { project } = responseJson;
+
       if (this.state.new) await this.props.router.push(`/admin/${project.uuid}`);
       else {
-        project.tags = data.tags;
-        this.setState({ project: project as Project });
+        this.setState({ project });
         this.updateMD();
+        alert("Project updated");
       }
     } else alert((await response.json()).message || "Unknown error");
 
@@ -87,7 +102,6 @@ class AdminProject extends React.Component<Props, State> {
     event.preventDefault();
   }
 
-
   public stateChanger = (project: Project) => {
     this.setState({ project });
   }
@@ -100,7 +114,6 @@ class AdminProject extends React.Component<Props, State> {
     }
 
     const project = this.state.project;
-
 
     return (
       <>
@@ -171,17 +184,13 @@ class AdminProject extends React.Component<Props, State> {
                   {this.props.status.map(status => <option key={status} value={status}>{status}</option>)}
                 </select>
               </section>
-
               <section>
-                <label>tag:</label>
-                <select
-                  name="tags"
-                  onChange={this.onChange}
-                  value={project.tags}
-                  multiple
-                >
-                  {this.props.tags.map(x => <option key={x.uuid} value={x.uuid}>{x.name}</option>)}
-                </select>
+                <label>Tags:</label>
+                <Multiselector
+                  options={this.props.tags}
+                  selected={this.state.project.tags || []}
+                  onChange={this.multiselectorChange}
+                />
               </section>
 
               <section className={styles.checkbox}>
@@ -282,7 +291,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   if (projectData) {
     const data = await projectData.json() as ProjectQuery;
     project = data as unknown as Project;
-    project.tags = data.tags.map(x => x.uuid);
     if (data.markdown) project.markdownParsed = await serialize(data.markdown as string);
   }
 
@@ -312,13 +320,10 @@ interface State {
   sending: boolean;
 }
 
-interface link {
-  name: string;
-  url: string;
-}
-
 interface Project extends Omit<ProjectQuery, "tags" | "links"> {
   markdownParsed: MDXRemoteSerializeResult<Record<string, unknown>>
+  tags: { uuid: string, name: string }[];
+}
+interface SubmitProject extends Omit<Project, "tags"> {
   tags: string[];
-  links: link[];
 }

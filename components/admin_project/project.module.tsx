@@ -1,4 +1,4 @@
-import styles from "./projects.module.scss";
+import styles from "./project.module.scss";
 import Link from "next/link";
 import { Component } from "react";
 import { ExtendedProject } from "@typeFiles/extended_project.type";
