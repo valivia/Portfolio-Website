@@ -1,11 +1,15 @@
 @use "./vars" as *;
 @use "./form" as formModule;
+$text: #e6e6d7;
 
 .main {
     display: grid;
-    grid-template-columns: 1fr 8fr;
-    background-color: $primary;
-    padding: 25px;
+    grid-template-columns: 1fr 6fr;
+    background-color: $secondary;
+
+    &>* {
+        color: $text;
+    }
 
     height: 100vh;
 }
@@ -14,6 +18,10 @@
     display: flex;
     flex-direction: column;
     overflow: scroll;
+    padding: 25px 10px;
+    padding-right: 25px;
+
+    gap: 20px;
 }
 
 .form {
@@ -22,7 +30,7 @@
     padding-right: 50%;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     .main {
         grid-template-columns: 1fr;
         grid-template-rows: 90px 10fr;

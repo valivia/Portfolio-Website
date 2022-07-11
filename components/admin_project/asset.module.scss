@@ -3,47 +3,45 @@
 .main {
     background-color: $secondary;
     display: grid;
-    grid-template-columns: 65% 35%;
+    grid-template-columns: 6fr 3fr;
     grid-template-rows: 100%;
     border-radius: 10px;
 
     // border: 1px $text solid;
-
-    & > figure {
-        border-left: 1px $text solid;
-        background-size: cover;
-        background-position: center;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        grid-column: 2 / 3;
-        grid-row: 1 / 2;
-        border-radius: 0 10px 10px 0;
-    }
 }
 
-.main[x-new="true"] {
-    grid-template-columns: 100%;
+.image {
+    border-left: 1px $text solid;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    width: 100%;
+    border-radius: 0 10px 10px 0;
 }
 
 .form {
     padding: 15px;
 
-    & > h2 {
+    &>h2 {
         margin: 0;
         color: $text;
     }
 
-    & > section {
+    &>section {
         padding: 2px 0;
     }
-    & > section:not(.checkbox) {
-        & > label {
+
+    &>section:not(.checkbox) {
+        &>label {
             display: block;
             text-align: left;
         }
 
-        & > textarea {
+        &>textarea {
             border-radius: 0;
             border: none;
             background-color: transparent;
@@ -62,11 +60,12 @@
 
 .checkbox {
     margin: 10px 0;
-    & > input {
+
+    &>input {
         margin-right: 3px;
     }
 
-    & > label {
+    &>label {
         display: inline;
         text-align: initial;
     }
@@ -77,7 +76,7 @@
     gap: 10px;
     width: 100%;
 
-    & > input,
+    &>input,
     button {
         font-family: "abel";
         font-weight: 300;
@@ -102,6 +101,6 @@
 
 @media only screen and (orientation: portrait) {
     .main {
-        grid-template-columns: 75% 25%;
+        grid-template-columns: 3fr 1fr;
     }
 }

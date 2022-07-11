@@ -1,5 +1,5 @@
 import { Component, ReactNode } from "react";
-import styles from "./experience_item.module.scss";
+import styles from "./item.module.scss";
 import Image from "next/image";
 import { tag } from "@prisma/client";
 

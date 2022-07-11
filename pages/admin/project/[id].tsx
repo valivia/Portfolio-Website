@@ -225,8 +225,8 @@ class AdminProject extends React.Component<Props, State> {
             {!this.state.new ?
               <section className={styles.assets}>
                 <header><h2>Assets</h2></header>
-                {project.assets.map(x => <AssetAdmin key={x.uuid} asset={x} project={project as unknown as ProjectQuery} stateChanger={this.stateChanger} />)}
                 <AssetAdmin key="new" asset={undefined} project={project as unknown as ProjectQuery} stateChanger={this.stateChanger} />
+                {project.assets.map(x => <AssetAdmin key={x.uuid} asset={x} project={project as unknown as ProjectQuery} stateChanger={this.stateChanger} />)}
               </section>
               : ""
             }

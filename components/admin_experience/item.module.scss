@@ -3,23 +3,25 @@
 .main {
     width: 100%;
     min-width: 90px;
-    height: 90px;
+    height: 80px;
     padding: 5px;
 
-    border-bottom: 1px $text solid;
+    border: 2px $text solid;
+    border-radius: 10px;
 
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 10px;
 
-    &[data-active="true"], &:hover {
-        border-bottom: 1px beige solid;
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 59%, rgba(0, 0, 0, 0) 100%);
+    &[data-active="true"],
+    &:hover {
+        border: 2px $textHover solid;
+        background-color: $tetiary;
     }
 }
 
 .info {
-    & > h1 {
+    &>h1 {
         font-size: 1rem;
     }
 }
@@ -29,6 +31,7 @@
         padding: 15px;
         grid-template-columns: 1fr;
     }
+
     .info {
         display: none;
     }

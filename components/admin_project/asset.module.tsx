@@ -13,7 +13,7 @@ export default class AssetAdmin extends Component<Props, State> {
     const asset = this.props.asset;
 
     this.state = {
-      asset: asset || { uuid: this.props.project.uuid } as prisma.asset,
+      asset: asset || { uuid: this.props.project.uuid } as Asset,
       new: asset ? false : true,
       sending: false,
     };
@@ -37,28 +37,31 @@ export default class AssetAdmin extends Component<Props, State> {
 
   public updateAsset = async (): Promise<void> => {
     const asset = this.state.asset;
-    const response = await submitJson(asset as Record<string, unknown>, "content", "PATCH");
+    const response = await submitJson(asset as unknown as Record<string, unknown>, "content", "PATCH");
 
-    if (response.status !== 200) return;
+    if (response.status !== 200)
+      return alert(response.message || "Unknown error");
 
     const updatedAsset = await response.data.asset as prisma.asset;
     this.setState({ asset: updatedAsset });
     this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.map((a) => a.uuid === updatedAsset.uuid ? updatedAsset : a) });
+    alert("Asset updated");
     return;
   }
 
   public createAsset = async (): Promise<void> => {
     const asset = this.state.asset;
-    const response = await submitFormData(asset as Record<string, unknown>, "content", "POST");
+    const response = await submitFormData(asset as unknown as Record<string, unknown>, "content", "POST");
 
-    if (response.status !== 200) return;
+    if (response.status !== 200)
+      return alert(response.message || "Unknown error");
 
     const newAsset = await response.data.asset as prisma.asset;
     this.setState({ asset: newAsset });
-    this.props.stateChanger({ ...this.props.project, assets: [...this.props.project.assets, newAsset] });
+    this.props.stateChanger({ ...this.props.project, assets: [newAsset, ...this.props.project.assets] });
+    alert("Asset created");
     return;
   }
-
 
   public delete = async (): Promise<void> => {
     if (!confirm("Are you sure you want to delete this asset?")) return;
@@ -93,17 +96,14 @@ export default class AssetAdmin extends Component<Props, State> {
         <form className={styles.form}>
           <h2>{this.state.new ? "New" : "Edit"} asset</h2>
 
-          {this.state.new ?
-            <section>
-              <label htmlFor="image">Image</label>
-              <input
-                type="file"
-                name="image"
-                onChange={this.onChange}
-              />
-            </section>
-            : ""
-          }
+          {newAsset && (
+            <input
+              type="file"
+              name="image"
+              onChange={this.onChange}
+              style={{ display: "none" }}
+            />
+          )}
 
           <section>
             <label>Description:</label>
@@ -152,9 +152,17 @@ export default class AssetAdmin extends Component<Props, State> {
 
         </form>
         {!newAsset ?
-          <figure style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_MEDIA_SERVER}/content/${data.uuid}_medium.jpg)` }}>
+          <figure
+            className={styles.image}
+            style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_MEDIA_SERVER}/content/${data.uuid}_medium.jpg)` }}
+          >
           </figure>
-          : ""
+          :
+          <figure
+            onClick={() => document.getElementsByName("image")[0]?.click()}
+            className={styles.image}
+            style={asset.image ? { backgroundImage: `url(${URL.createObjectURL(asset.image)})` } : undefined}
+          />
         }
       </article>
     );
@@ -168,7 +176,11 @@ interface Props {
 }
 
 interface State {
-  asset: prisma.asset;
+  asset: Asset;
   new: boolean;
   sending: boolean;
+}
+
+interface Asset extends prisma.asset {
+  image?: MediaSource;
 }
