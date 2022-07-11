@@ -3,7 +3,7 @@ import { Component, ReactNode } from "react";
 import styles from "./asset.module.scss";
 import onChangeParser from "../onchange";
 import { ProjectQuery } from "@typeFiles/api_project.type";
-import submit from "../submit";
+import { submitFormData, submitJson } from "../submit";
 
 
 export default class AssetAdmin extends Component<Props, State> {
@@ -29,53 +29,58 @@ export default class AssetAdmin extends Component<Props, State> {
   public onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     this.setState({ sending: true });
-    const data = this.state.asset;
-    const method = this.state.new ? "POST" : "PATCH";
 
-    let response = null;
-
-    if (method === "POST") {
-      response = await submit(data as Record<string, unknown>, "content", method, "multipart/form-data").catch(null);
-    } else {
-      response = await submit(data as Record<string, unknown>, "content", method, "application/json").catch(null);
-    }
-
-    if (response.ok) {
-      const asset = (await response.json()).asset as prisma.asset;
-      this.setState({ asset, sending: false });
-
-      if (this.state.new) {
-        this.setState({ asset: { uuid: this.props.project.uuid } as prisma.asset });
-        this.props.stateChanger({ ...this.props.project, assets: [...this.props.project.assets, asset] });
-      } else {
-        this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.map((a) => a.uuid === asset.uuid ? asset : a) });
-      }
-
-      return;
-    }
+    this.state.new ? await this.createAsset() : await this.updateAsset();
 
     this.setState({ sending: false });
   }
 
+  public updateAsset = async (): Promise<void> => {
+    const asset = this.state.asset;
+    const response = await submitJson(asset as Record<string, unknown>, "content", "PATCH");
+
+    if (response.status !== 200) return;
+
+    const updatedAsset = await response.data.asset as prisma.asset;
+    this.setState({ asset: updatedAsset });
+    this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.map((a) => a.uuid === updatedAsset.uuid ? updatedAsset : a) });
+    return;
+  }
+
+  public createAsset = async (): Promise<void> => {
+    const asset = this.state.asset;
+    const response = await submitFormData(asset as Record<string, unknown>, "content", "POST");
+
+    if (response.status !== 200) return;
+
+    const newAsset = await response.data.asset as prisma.asset;
+    this.setState({ asset: newAsset });
+    this.props.stateChanger({ ...this.props.project, assets: [...this.props.project.assets, newAsset] });
+    return;
+  }
+
+
   public delete = async (): Promise<void> => {
     if (!confirm("Are you sure you want to delete this asset?")) return;
-    const response = await submit({ uuid: this.state.asset.uuid }, "content", "DELETE", "application/json").catch(null);
+    const response = await submitJson({ uuid: this.state.asset.uuid }, "content", "DELETE");
 
-    if (response.ok) {
-      await response.json();
-      this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.filter((a) => a.uuid !== (this.props.asset as prisma.asset).uuid) });
-    } else alert((await response.json()).message || "Unknown error");
+    if (response.status !== 200) {
+      alert(response.message || "Unknown error");
+      return;
+    }
 
+    this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.filter((a) => a.uuid !== (this.props.asset as prisma.asset).uuid) });
   }
 
   public makeBanner = async (): Promise<void> => {
-    const response = await submit({ asset: this.state.asset.uuid, project: this.props.project.uuid }, "banner", "PATCH", "application/json").catch(null);
+    const response = await submitJson({ asset: this.state.asset.uuid, project: this.props.project.uuid }, "banner", "PATCH");
 
-    if (response.ok) {
-      this.props.stateChanger({ ...this.props.project, banner_id: this.state.asset.uuid });
-    } else alert((await response.json()).message || "Unknown error");
+    if (response.status !== 200) {
+      alert(response.message || "Unknown error");
+      return;
+    }
 
-
+    this.props.stateChanger({ ...this.props.project, banner_id: this.state.asset.uuid });
   }
 
   render(): ReactNode {

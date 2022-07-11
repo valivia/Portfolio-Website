@@ -1,21 +1,17 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-
 import React, { AnchorHTMLAttributes, DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from "react";
-
 import { ProjectQuery } from "@typeFiles/api_project.type";
-
 import styles from "@styles/admin.project.module.scss";
-
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { NextRouter, withRouter } from "next/router";
-import { tag } from "@prisma/client";
+import { project_status, tag } from "@prisma/client";
 import { serialize } from "next-mdx-remote/serialize";
 import Link from "next/link";
 import Image from "next/image";
 import AssetAdmin from "@components/admin_project/asset.module";
 import onChangeParser from "@components/onchange";
-import submit from "@components/submit";
+import { submitJson } from "@components/submit";
 import Multiselector from "@components/admin_project/multiselector.module";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
@@ -26,10 +22,19 @@ class AdminProject extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
+    let project: Project | Record<string, unknown> = {
+      name: "",
+      tags: [],
+      assets: [],
+      status: this.props.status[0],
+    };
+
+    if (Object.keys(props.project).length !== 0) project = props.project;
+
     this.state = {
       loading: true,
       failed: false,
-      project: this.props.project,
+      project: project as Project,
       new: this.props.router.query.id == "new",
       sending: false,
     };
@@ -61,24 +66,27 @@ class AdminProject extends React.Component<Props, State> {
 
     const method = this.state.new ? "POST" : "PATCH";
 
-    const response = await submit(
+    const response = await submitJson(
       submitData as unknown as Record<string, unknown>,
       "project",
       method,
-      method == "POST" ? "multipart/form-data" : "application/json"
     );
 
-    if (response.ok) {
-      const responseJson = await response.json() as { project: Project };
-      const { project } = responseJson;
+    if (response.status !== 200) {
+      alert(response.message || "Unknown error");
+      this.setState({ sending: false });
+      return;
+    }
 
-      if (this.state.new) await this.props.router.push(`/admin/${project.uuid}`);
-      else {
-        this.setState({ project });
-        this.updateMD();
-        alert("Project updated");
-      }
-    } else alert((await response.json()).message || "Unknown error");
+    const { project } = response.data;
+
+    if (this.state.new) await this.props.router.push(`/admin/project/${project.uuid}`);
+    else {
+      this.setState({ project: response.data.project });
+      this.updateMD();
+      alert("Project updated");
+    }
+
 
     this.setState({ sending: false });
   }
@@ -89,8 +97,11 @@ class AdminProject extends React.Component<Props, State> {
       this.setState({ project: {} as Project });
       return;
     }
-    const response = await submit({ uuid: this.state.project.uuid }, "project", "DELETE", "application/json");
-    if (response.ok) await this.props.router.push("/admin");
+    const response = await submitJson({ uuid: this.state.project.uuid }, "project", "DELETE");
+
+    if (response.status !== 200) return;
+
+    await this.props.router.push("/admin");
   }
 
   public confirmProceed = (event: { preventDefault: () => void; }): void => {
@@ -161,24 +172,12 @@ class AdminProject extends React.Component<Props, State> {
                 ></input>
               </section>
 
-              {this.state.new ?
-                <section>
-                  <label>Banner</label>
-                  <input
-                    type="file"
-                    name="banner"
-                    onChange={this.onChange}
-                  />
-                </section>
-                : ""
-              }
-
               <section>
                 <label>Status:</label>
                 <select
                   name="status"
                   onChange={this.onChange}
-                  value={project.status || ""}
+                  value={project.status || this.props.status[0]}
                   required
                 >
                   {this.props.status.map(status => <option key={status} value={status}>{status}</option>)}
@@ -308,8 +307,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 interface Props {
   router: NextRouter;
   tags: tag[];
-  status: string[];
-  project: Project;
+  status: project_status[];
+  project: Project | Record<string, never>;
 }
 
 interface State {

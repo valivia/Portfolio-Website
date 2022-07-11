@@ -32,6 +32,10 @@ export default class Multiselector extends Component<Props, State> {
 
   public remove = (option: entry): void => {
     const selected = this.props.selected.filter((o) => o.uuid !== option.uuid);
+    const options = this.state.options;
+    options.push(option);
+
+    this.setState({ options });
     this.props.onChange(selected);
   }
 
@@ -53,12 +57,13 @@ export default class Multiselector extends Component<Props, State> {
     const selected = this.props.selected.map((option) =>
       this.selected(option)
     );
+
     const options = this.state.options.map(x =>
       <option key={x.uuid} value={x.uuid}>{x.name}</option>
     );
 
     return (
-      <section className={styles.main}>
+      <section className={styles.main} >
 
         <section className={styles.active}>
           {selected.length > 0 ? selected : <span>Empty</span>}

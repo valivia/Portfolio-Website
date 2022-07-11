@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import styles from "./mailing.module.scss";
-import submit from "@components/submit";
+import { submitJson } from "@components/submit";
 import Cookies from "js-cookie";
 
 export default class MailingList extends React.Component<Record<string, never>, State> {
@@ -8,19 +8,22 @@ export default class MailingList extends React.Component<Record<string, never>, 
 
   onsubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    const response = await submit(this.state, "mailing", "POST", "application/json");
+    const response = await submitJson(this.state, "mailing", "POST");
 
-    if (response.ok) {
+    if (response.status === 200) {
       Cookies.set("emailList", "true");
       this.setState({ email: "" });
       alert("Email with instructions successfully sent!");
+
     } else if (response.status === 409) {
       Cookies.set("emailList", "true");
       this.setState({ email: "" });
       alert("You are already subscribed to the mailing list!");
+
     } else {
       alert("An error occurred");
     }
+
   }
 
   onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {

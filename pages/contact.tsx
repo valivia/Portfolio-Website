@@ -3,7 +3,7 @@ import Head from "next/head";
 import styles from "@styles/contact.module.scss";
 import React, { ReactNode } from "react";
 import Footer from "@components/global/footer.module";
-import submit from "../components/submit";
+import { submitJson } from "../components/submit";
 import MailingList from "@components/global/mailing.module";
 
 export default class contact extends React.Component<State> {
@@ -22,13 +22,13 @@ export default class contact extends React.Component<State> {
     event.preventDefault();
     this.setState({ sending: true });
 
-    const response = await submit(this.state.form as unknown as Record<string, string>, "/contact", "POST", "application/json");
+    const response = await submitJson(this.state.form as unknown as Record<string, string>, "/contact", "POST");
 
-    if (response.ok) {
+    if (response.status === 200) {
       alert("Email successfully sent!");
       this.setState({ form: {} });
       return;
-    } else alert((await response.json()).message || "Unknown error");
+    } else alert(response.message || "Unknown error");
 
     this.setState({ sending: false });
   }

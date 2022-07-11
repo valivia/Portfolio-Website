@@ -6,7 +6,7 @@ import { GetServerSideProps } from "next";
 import { experience_category, project, tag } from "@prisma/client";
 import onChangeParser from "@components/onchange";
 import Item from "@components/admin_experience/experience_item.module";
-import submit from "@components/submit";
+import { submitFormData, submitJson } from "@components/submit";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
@@ -20,7 +20,11 @@ class AdminExperiences extends React.Component<Props, State> {
       failed: false,
       sending: false,
       new: true,
-      current: {} as tag,
+      current: {
+        category: this.props.categories[0],
+        used_since: new Date().toLocaleDateString("en-CA"),
+        score: 0,
+      } as currentTag,
       experiences: this.props.experiences,
     };
   }
@@ -35,22 +39,32 @@ class AdminExperiences extends React.Component<Props, State> {
     event.preventDefault();
     this.setState({ sending: true });
 
-    const data = this.state.current;
-    const method = this.state.new ? "POST" : "PATCH";
-    const dataType = method == "POST" ? "multipart/form-data" : "application/json";
-
-    const response = await submit(data as unknown as Record<string, unknown>, "experience", method, dataType);
-
-    if (response.ok) {
-      const current = (await response.json()).experience as tag;
-      console.log(current);
-      if (this.state.new) this.setState({ experiences: [...this.state.experiences, current], new: false });
-      else this.setState({ current });
-
-    } else
-      alert((await response.json()).message || "Unknown error");
+    this.state.new ? await this.createTag() : await this.updateTag();
 
     this.setState({ sending: false });
+  }
+
+  public createTag = async (): Promise<void> => {
+    const data = this.state.current;
+    const response = await submitFormData(data as unknown as Record<string, unknown>, "experience", "POST");
+
+    if (response.status !== 200)
+      return alert(response.message || "Unknown error");
+
+    const current = response.data.experience as tag;
+
+    this.setState({ experiences: [...this.state.experiences, current], new: false });
+  }
+
+  public updateTag = async (): Promise<void> => {
+    const data = this.state.current;
+    const response = await submitJson(data as unknown as Record<string, unknown>, "experience", "POST");
+
+    if (response.status !== 200)
+      return alert(response.message || "Unknown error");
+
+    const current = response.data.experience;
+    this.setState({ current });
   }
 
   public setActive = (id: string) => {
@@ -64,13 +78,17 @@ class AdminExperiences extends React.Component<Props, State> {
       return;
     }
     confirm("Are you sure you want to delete this item from the database?");
-    const response = await submit({ uuid: this.state.current.uuid }, "experience", "DELETE", "application/json");
-    if (response.ok) {
-      const experiences = this.state.experiences.filter(x => x.uuid !== this.state.current.uuid);
-      this.setState({ current: {} as tag, new: true, experiences });
-    } else {
-      alert((await response.json()).message || "Unknown error");
+    const response = await submitJson({ uuid: this.state.current.uuid }, "experience", "DELETE");
+
+    if (response.status !== 200) {
+      alert(response.message || "Unknown error");
+      return;
     }
+
+
+    const experiences = this.state.experiences.filter(x => x.uuid !== this.state.current.uuid);
+    this.setState({ current: {} as tag, new: true, experiences });
+
   }
 
   async componentDidMount() {
@@ -89,8 +107,8 @@ class AdminExperiences extends React.Component<Props, State> {
       this.props.router.replace("/login");
       return <></>;
     }
-    const current = this.state.current;
 
+    const current = this.state.current;
 
     return (
       <>
@@ -99,6 +117,7 @@ class AdminExperiences extends React.Component<Props, State> {
           <meta name="theme-color" content="#B5A691" />
           <meta name="description" content="Admin panel" />
         </Head>
+
         <main className={styles.main}>
           <section className={styles.list}>
             {this.state.experiences.map((exp) => <Item key={exp.uuid} data={exp} setActive={this.setActive} active={exp.uuid == current.uuid} />)}
@@ -181,9 +200,8 @@ class AdminExperiences extends React.Component<Props, State> {
                   onChange={this.onChange}
                   key={current.uuid}
                   defaultValue={
-                    current.used_since ?
-                      new Date(current.used_since).toLocaleDateString("en-CA") :
-                      new Date().toLocaleDateString("en-CA")}
+                    new Date(current.used_since).toLocaleDateString("en-CA")
+                  }
                   required
                 ></input>
               </section>
@@ -265,7 +283,11 @@ export interface State {
   loading: boolean;
   failed: boolean;
   experiences: tag[];
-  current: tag;
+  current: currentTag;
   sending: boolean;
   new: boolean;
+}
+
+interface currentTag extends Omit<tag, "used_since"> {
+  used_since: string | Date;
 }
