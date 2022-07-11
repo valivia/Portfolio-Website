@@ -1,19 +1,19 @@
-import NavBar from "../components/navbar";
-import styles from "../styles/about.module.scss";
+import NavBar from "@components/global/navbar.module";
+import styles from "@styles/about.module.scss";
 import Head from "next/head";
-import Image from "next/image";
 import React from "react";
 import { NextRouter, withRouter } from "next/router";
-import SkillList from "../components/skill.module";
-import skillData from "../public/skills.json";
-import { SkillCategory } from "../types/types";
 import { GetStaticProps } from "next";
-import Footer from "../components/footer.module";
-import MailingList from "../components/mailing.module";
+import Footer from "@components/global/footer.module";
+import MailingList from "@components/global/mailing.module";
 
 import { MDXProvider } from "@mdx-js/react";
-import AboutMarkdown from "../public/markdown/about.mdx";
-import SkillsetMarkdown from "../public/markdown/skillset.mdx";
+import SkillsetMarkdown from "@public/markdown/skillset.mdx";
+import { experience_category } from "@prisma/client";
+import ExperienceMenu from "@components/about_me/experience_menu.module";
+import experience from "@typeFiles/experience";
+
+const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
 class About extends React.Component<Props, State> {
   private scroll() {
@@ -42,31 +42,14 @@ class About extends React.Component<Props, State> {
             <header>About me</header>
             <section className={styles.markdown}>
               <MDXProvider>
-                <AboutMarkdown />
+                <SkillsetMarkdown />
               </MDXProvider>
             </section>
-            <figure className={styles.aboutPic}>
-              <Image
-                src={`${process.env.NEXT_PUBLIC_MEDIA_SERVER}/content/4d289bf5-e3ce-4f01-8628-14f2bbec5ac1_default.jpg`}
-                height={480}
-                width={240}
-                alt=""
-              ></Image>
-            </figure>
           </article>
 
-          <article id="skills" className={styles.skill}>
+          <article>
             <header>Skillset</header>
-            <section>
-              <section className={styles.skills}>
-                <SkillList skills={this.props.skills} />
-              </section>
-              <section className={styles.markdown}>
-                <MDXProvider>
-                  <SkillsetMarkdown />
-                </MDXProvider>
-              </section>
-            </section>
+            <ExperienceMenu experiences={this.props.experiences} sorted={this.props.sortedExperiences} />
           </article>
 
           <article className={styles.textbox}>
@@ -94,7 +77,7 @@ class About extends React.Component<Props, State> {
           </article>
 
           <Footer />
-        </main>
+        </main >
       </>
     );
   }
@@ -103,18 +86,42 @@ class About extends React.Component<Props, State> {
 export default withRouter(About);
 
 export const getStaticProps: GetStaticProps = async () => {
-  if (!skillData) return { notFound: true };
+  const rawData = await fetch(`${apiServer}/experience`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
+  const experiences = await rawData.json() as experience[];
+
+  if (!experiences) return { notFound: true };
+
+  let sortedExperiences: list[] = [];
+
+  const categories = new Set();
+  experiences.forEach(x => categories.add(x.category));
+
+  for (const category of Array.from(categories) as experience_category[]) {
+    sortedExperiences.push({
+      category,
+      experiences: experiences.filter(x => x.category === category).sort((a, b) => b.score - a.score),
+    });
+  }
+
+  sortedExperiences = sortedExperiences.sort((a, b) => b.experiences.length - a.experiences.length);
+
   return {
-    props: { skills: skillData },
+    props: { experiences, sortedExperiences },
   };
 };
 
 
 export interface Props {
   router: NextRouter;
-  skills: SkillCategory[]
+  experiences: experience[]
+  sortedExperiences: list[];
 }
 
 interface State {
   a: string;
+}
+
+interface list {
+  category: experience_category;
+  experiences: experience[]
 }

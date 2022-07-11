@@ -4,24 +4,24 @@
 .main {
     width: 100%;
 
-    & > article {
+    &>article {
         min-height: 30vh;
         background-color: $primary;
         display: flex;
         flex-direction: column;
 
-        & > section {
+        &>section {
             text-transform: none;
             letter-spacing: normal;
             min-width: 70%;
             padding: 0 30px;
         }
 
-        & > figure {
+        &>figure {
             display: none;
         }
 
-        & > header {
+        &>header {
             background-color: $tetiary;
             min-width: 100%;
             text-align: center;
@@ -35,11 +35,11 @@
     padding: 10px 50px;
 }
 
-.skill > section {
+.skill>section {
     display: flex;
     flex-direction: row;
 
-    & > .skills {
+    &>.skills {
         padding: 10px 40px;
         width: 30vw;
     }
@@ -47,21 +47,19 @@
 
 .subheader {
     @include subheaderTemplate;
-    background-image: url($media-server + "/server/crow_medium.jpg");
-    background-image: image-set(
-        url($media-server + "/server/crow_default.jpg") 2x,
-        url($media-server + "/server/crow_high.jpg") 1.5x,
-        url($media-server + "/server/crow_medium.jpg") 1x,
-        url($media-server + "/server/crow_low.jpg") 0.75x,
-        url($media-server + "/server/crow_lowest.jpg") 0.25x
-    );
-    background-image: -webkit-image-set(
-        url($media-server + "/server/crow_default.jpg") 2x,
-        url($media-server + "/server/crow_high.jpg") 1.5x,
-        url($media-server + "/server/crow_medium.jpg") 1x,
-        url($media-server + "/server/crow_low.jpg") 0.75x,
-        url($media-server + "/server/crow_lowest.jpg") 0.25x
-    );
+
+    @media (max-width: 480px) {
+        background-image: url($media-server + "/server/crow_low.jpg");
+    }
+
+    @media (min-width: 481px) and (max-width: 1024px) {
+        background-image: url($media-server + "/server/crow_high.jpg");
+    }
+
+    @media (min-width: 1025px) {
+        background-image: url($media-server + "/server/crow_default.jpg");
+    }
+
     height: 80vh;
 }
 
@@ -71,11 +69,11 @@
         padding: 0;
     }
 
-    .skill > section {
+    .skill>section {
         display: flex;
         flex-direction: column;
 
-        & > .skills {
+        &>.skills {
             padding: 10px 0px;
             width: 100%;
         }

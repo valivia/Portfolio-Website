@@ -1,4 +1,4 @@
-import styles from "./projects.module.scss";
+import styles from "./project.module.scss";
 import Link from "next/link";
 import { Component } from "react";
 import { ExtendedProject } from "@typeFiles/extended_project.type";
@@ -33,16 +33,19 @@ export default class ProjectAdmin extends Component<Props> {
               <motion.tr
                 transition={{ type: "spring", stiffness: 260, damping: 20, delay: index * 0.05 }}
                 variants={item}
+                key={project.uuid}
               >
                 <td>{new Date(project.updated).toDateString()}</td>
-                <td>{project.name}</td>
+                <td>
+                  {project.name}
+                </td>
                 <td>{project.status}</td>
               </motion.tr>
             </Link>
           )
           )}
         </tbody>
-      </motion.table>
+      </motion.table >
     );
   }
 }

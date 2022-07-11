@@ -1,6 +1,7 @@
 // $text: rgb(181, 166, 145);
 // $text: wheat;
 $text: #b5a691;
+$textHover: #d5caba;
 // $text: #cbb79c;
 $primary: rgb(17, 17, 17);
 $secondary: rgb(13, 13, 13);
@@ -43,7 +44,7 @@ $media-server: "https://portfolio.xayania.com/media";
     font-size: 5vh;
     text-align: center;
 
-    & > *:hover {
+    &>*:hover {
         cursor: pointer;
     }
 }
