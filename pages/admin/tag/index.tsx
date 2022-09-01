@@ -5,7 +5,7 @@ import styles from "@styles/admin.experiences.module.scss";
 import { GetServerSideProps } from "next";
 import { experience_category, project, tag } from "@prisma/client";
 import onChangeParser from "@components/onchange";
-import Item from "@components/admin_experience/item.module";
+import Item from "@components/admin_tag/item.module";
 import { submitFormData, submitJson } from "@components/submit";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;

@@ -1,0 +1,5 @@
+@use "styles/markdown" as md;
+
+.main {
+    @include md.markdown;
+}

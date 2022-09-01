@@ -97,8 +97,6 @@ $text: #e6e6d7;
 }
 
 .markdown {
-    @include md.markdown;
-
     grid-column: 2 / 3;
     grid-row: 3 / 4;
     padding: 0 20px;

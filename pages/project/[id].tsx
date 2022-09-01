@@ -2,18 +2,22 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 
-import React, { AnchorHTMLAttributes, DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from "react";
+import React, {
+  AnchorHTMLAttributes,
+  DetailedHTMLProps,
+  ImgHTMLAttributes,
+  ReactNode,
+} from "react";
 import NavBar from "@components/global/navbar.module";
 
 import styles from "../../styles/project.module.scss";
 import { ProjectQuery } from "@typeFiles/api_project.type";
 
-import { serialize } from "next-mdx-remote/serialize";
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import Footer from "@components/global/footer.module";
 import Tags from "@components/project/tags.module";
 import AssetGallery from "@components/project/assetGallery.module";
 import Link from "next/link";
+import Markdown from "@components/admin_project/markdown.module";
 
 const api = process.env.NEXT_PUBLIC_API_SERVER;
 const mediaServer = process.env.NEXT_PUBLIC_MEDIA_SERVER;
@@ -23,25 +27,56 @@ export default class Projects extends React.Component<ProjectQuery, never> {
     document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
   }
 
-  ResponsiveImage = (props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>): JSX.Element => {
+  ResponsiveImage = (
+    props: DetailedHTMLProps<
+      ImgHTMLAttributes<HTMLImageElement>,
+      HTMLImageElement
+    >
+  ): JSX.Element => {
     if (props.src?.endsWith(".mp4")) {
-      return (<video controls><source src={props.src} type="video/mp4" /></video>);
+      return (
+        <video controls>
+          <source src={props.src} type="video/mp4" />
+        </video>
+      );
     }
-    return (<Image alt={props.alt} layout="fill" src={props.src as string} />);
-  }
-  LinkElement = (props: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>): JSX.Element => (<Link href={props.href as string}><a target="_blank">{props.children}</a></Link>);
-
+    return <Image alt={props.alt} layout="fill" src={props.src as string} />;
+  };
+  LinkElement = (
+    props: DetailedHTMLProps<
+      AnchorHTMLAttributes<HTMLAnchorElement>,
+      HTMLAnchorElement
+    >
+  ): JSX.Element => (
+    <Link href={props.href as string}>
+      <a target="_blank">{props.children}</a>
+    </Link>
+  );
 
   components = {
     img: this.ResponsiveImage,
     a: this.LinkElement,
-  }
+  };
 
   render(): ReactNode {
-    const { assets, tags } = this.props;
+    const { assets, tags, markdown } = this.props;
     const project = this.props;
-    const banner = assets.find(asset => asset.uuid === project.banner_id);
-    const markdown = this.props.markdown as MDXRemoteSerializeResult<Record<string, unknown>> | null;
+    const banner = assets.find((asset) => asset.uuid === project.banner_id);
+
+    let BannerElement;
+
+    if (banner)
+      BannerElement = (
+        <header
+          className={styles.header}
+          style={{
+            backgroundImage: `url("${mediaServer}/content/${banner?.uuid}_high.jpg")`,
+          }}
+        >
+          <p onClick={this.scroll}>﹀</p>
+        </header>
+      );
+    else BannerElement = <header className={styles.spacer}></header>;
 
     return (
       <>
@@ -51,15 +86,11 @@ export default class Projects extends React.Component<ProjectQuery, never> {
           <meta name="description" content={project.description || ""}></meta>
         </Head>
         <NavBar />
-        {
-          banner ?
-            <header className={styles.header} style={{ backgroundImage: `url("${mediaServer}/content/${banner?.uuid}_high.jpg")` }}>
-              <p onClick={this.scroll}>﹀</p>
-            </header>
-            : <header className={styles.spacer}></header>
-        }
+        {BannerElement}
         <article className={styles.content} id="main">
-          <header><h1>{project.name}</h1></header>
+          <header>
+            <h1>{project.name}</h1>
+          </header>
           <section className={styles.info}>
             <Tags tags={tags} />
             <table>
@@ -82,37 +113,44 @@ export default class Projects extends React.Component<ProjectQuery, never> {
             </table>
           </section>
 
-
-          {(markdown || project.description) ?
+          {markdown || project.description ? (
             <section className={styles.markdown}>
-              {markdown ? <MDXRemote {...markdown} components={this.components} /> : project.description}
+              {markdown ? (
+                <Markdown value={project.markdown} />
+              ) : (
+                project.description
+              )}
             </section>
+          ) : (
+            ""
+          )}
 
-            : ""
-          }
-
-          {assets.length > 0 ?
+          {assets.length > 0 ? (
             <section className={styles.assets}>
-              <header><h2>Gallery</h2></header>
+              <header>
+                <h2>Gallery</h2>
+              </header>
               <AssetGallery assets={assets} />
             </section>
-            : <></>
-          }
-
+          ) : (
+            <></>
+          )}
         </article>
         <Footer />
       </>
     );
   }
-
 }
 
-
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${api}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
-  const data = await res.json() as ProjectQuery[];
+  const res = await fetch(`${api}/project`, {
+    headers: { authorization: process.env.CLIENT_SECRET as string },
+  });
+  const data = (await res.json()) as ProjectQuery[];
 
-  const paths = data.map((project) => { return { params: { id: project.uuid } }; });
+  const paths = data.map((project) => {
+    return { params: { id: project.uuid } };
+  });
 
   return {
     paths: paths,
@@ -121,11 +159,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const res = await fetch(`${api}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
-    .then(x => {
-      if (x.ok) return x;
-      else return false;
-    });
+  const res = await fetch(`${api}/project/${params?.id}`, {
+    headers: { authorization: process.env.CLIENT_SECRET as string },
+  }).then((x) => {
+    if (x.ok) return x;
+    else return false;
+  });
 
   if (!res) {
     return {
@@ -133,8 +172,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     };
   }
 
-  const data = await res.json() as ProjectQuery;
-  data.markdown ? data.markdown = await serialize(data.markdown as string) as unknown as string : null;
+  const data = (await res.json()) as ProjectQuery;
 
   return {
     props: data,

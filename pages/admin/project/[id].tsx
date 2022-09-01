@@ -1,29 +1,23 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import React, {
-  AnchorHTMLAttributes,
-  DetailedHTMLProps,
-  ImgHTMLAttributes,
-  ReactNode,
-} from "react";
+import React, { ReactNode } from "react";
 import { ProjectQuery } from "@typeFiles/api_project.type";
 import styles from "@styles/admin.project.module.scss";
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { NextRouter, withRouter } from "next/router";
 import { project_status, tag } from "@prisma/client";
-import { serialize } from "next-mdx-remote/serialize";
 import Link from "next/link";
-import Image from "next/image";
 import AssetAdmin from "@components/admin_project/asset.module";
 import onChangeParser from "@components/onchange";
 import { submitJson } from "@components/submit";
 import Multiselector from "@components/admin_project/multiselector.module";
+import TextInput from "@components/form/text_input.module";
+import TextArea from "@components/form/textarea.module";
+import Checkbox from "@components/form/checkbox.module";
+import Markdown from "@components/admin_project/markdown.module";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
 class AdminProject extends React.Component<Props, State> {
-  private update: NodeJS.Timeout | undefined;
-
   constructor(props: Props) {
     super(props);
 
@@ -37,8 +31,6 @@ class AdminProject extends React.Component<Props, State> {
     if (Object.keys(props.project).length !== 0) project = props.project;
 
     this.state = {
-      loading: true,
-      failed: false,
       project: project as Project,
       new: this.props.router.query.id == "new",
       sending: false,
@@ -52,19 +44,11 @@ class AdminProject extends React.Component<Props, State> {
   ) => {
     const target = e.target;
     const value = onChangeParser(target);
-    if (target.name === "markdown")
-      this.update = setTimeout(this.updateMD, 200);
     this.setState({ project: { ...this.state.project, [target.name]: value } });
   };
 
   public multiselectorChange = (selected: { uuid: string; name: string }[]) => {
     this.setState({ project: { ...this.state.project, tags: selected } });
-  };
-
-  public updateMD = async () => {
-    if (!this.state.project.markdown) return;
-    const markdownParsed = await serialize(this.state.project.markdown);
-    this.setState({ project: { ...this.state.project, markdownParsed } });
   };
 
   public onSubmit = async (
@@ -96,7 +80,6 @@ class AdminProject extends React.Component<Props, State> {
       await this.props.router.push(`/admin/project/${project.uuid}`);
     else {
       this.setState({ project: response.data.project });
-      this.updateMD();
       alert("Project updated");
     }
 
@@ -138,18 +121,12 @@ class AdminProject extends React.Component<Props, State> {
   };
 
   public render = (): ReactNode => {
-    if (this.state.loading) return <> </>;
-    if (this.state.failed) {
-      this.props.router.replace("/login");
-      return <></>;
-    }
-
     const project = this.state.project;
 
     return (
       <>
         <Head>
-          <title>{this.state.new ? "New Project" : project.name}</title>
+          <title>{project.name === "" ? "New Project" : project.name}</title>
           <meta name="theme-color" content="#B5A691" />
         </Head>
         <main className={styles.main}>
@@ -161,31 +138,24 @@ class AdminProject extends React.Component<Props, State> {
               <a onClick={this.confirmProceed}>Project</a>
             </Link>
           </header>
+
           <section className={styles.mainInput}>
             <header>
               <h2>Project</h2>
             </header>
             <form className={styles.form} onSubmit={(x) => this.onSubmit(x)}>
-              <section>
-                <label>Name:</label>
-                <input
-                  type="text"
-                  name="name"
-                  onChange={this.onChange}
-                  value={project.name || ""}
-                  required
-                />
-              </section>
+              <TextInput
+                name={"name"}
+                value={project.name}
+                onChange={this.onChange}
+              />
 
-              <section>
-                <label>Description:</label>
-                <textarea
-                  name="description"
-                  maxLength={1024}
-                  onChange={this.onChange}
-                  value={project.description || ""}
-                ></textarea>
-              </section>
+              <TextArea
+                name={"description"}
+                value={project.description}
+                onChange={this.onChange}
+                maxLength={1024}
+              />
 
               <section>
                 <label>Date</label>
@@ -216,6 +186,7 @@ class AdminProject extends React.Component<Props, State> {
                   ))}
                 </select>
               </section>
+
               <section>
                 <label>Tags:</label>
                 <Multiselector
@@ -226,27 +197,19 @@ class AdminProject extends React.Component<Props, State> {
               </section>
 
               <section className={styles.checkbox}>
-                <section>
-                  <input
-                    type="checkbox"
-                    name="projects"
-                    id="projects"
-                    onChange={this.onChange}
-                    defaultChecked={project.projects}
-                  />
-                  <label htmlFor="projects">Display on projects page?</label>
-                </section>
+                <Checkbox
+                  name={"projects"}
+                  text={"Display on projects page?"}
+                  value={project.projects}
+                  onChange={this.onChange}
+                />
 
-                <section>
-                  <input
-                    type="checkbox"
-                    name="pinned"
-                    id="pinned"
-                    onChange={this.onChange}
-                    defaultChecked={project.pinned}
-                  />
-                  <label htmlFor="pinned">Display as pinned?</label>
-                </section>
+                <Checkbox
+                  name={"pinned"}
+                  text={"Display as pinned?"}
+                  value={project.pinned}
+                  onChange={this.onChange}
+                />
               </section>
 
               <section className={styles.buttons}>
@@ -288,9 +251,7 @@ class AdminProject extends React.Component<Props, State> {
           </section>
 
           <section className={styles.markdownInput}>
-            <header>
-              <h2>Markdown</h2>
-            </header>
+            <h2>Markdown</h2>
             <textarea
               name="markdown"
               value={project.markdown || ""}
@@ -299,74 +260,31 @@ class AdminProject extends React.Component<Props, State> {
           </section>
 
           <section className={styles.markdown}>
-            <header>
-              <h2>Rendered Markdown</h2>
-            </header>
-            {project.markdownParsed ? (
-              <MDXRemote
-                {...project.markdownParsed}
-                components={this.components}
-              />
-            ) : (
-              ""
-            )}
+            <h2>Rendered Markdown</h2>
+            <Markdown value={project.markdown} />
           </section>
         </main>
       </>
     );
   };
-
-  async componentDidMount(): Promise<void> {
-    const result = await fetch(`${apiServer}/auth`, {
-      credentials: "include",
-      mode: "cors",
-      method: "POST",
-    })
-      .then((x) => {
-        if (x.ok) return true;
-      })
-      .catch(() => false);
-
-    this.updateMD();
-    if (result) this.setState({ loading: false });
-    else this.setState({ loading: false, failed: true });
-  }
-
-  ResponsiveImage = (
-    props: DetailedHTMLProps<
-      ImgHTMLAttributes<HTMLImageElement>,
-      HTMLImageElement
-    >
-  ): JSX.Element => {
-    if (props.src?.endsWith(".mp4")) {
-      return (
-        <video controls>
-          <source src={props.src} type="video/mp4" />
-        </video>
-      );
-    }
-    return <Image alt={props.alt} layout="fill" src={props.src as string} />;
-  };
-  LinkElement = (
-    props: DetailedHTMLProps<
-      AnchorHTMLAttributes<HTMLAnchorElement>,
-      HTMLAnchorElement
-    >
-  ): JSX.Element => (
-    <Link href={props.href as string}>
-      <a target="_blank">{props.children}</a>
-    </Link>
-  );
-
-  components = {
-    img: this.ResponsiveImage,
-    a: this.LinkElement,
-  };
 }
 
 export default withRouter(AdminProject);
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+}) => {
+  // Check auth. (this is fine i promiseeeeee (the actual api POST endpoints have proper auth))
+  if (req.cookies.session === undefined) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: true,
+      },
+    };
+  }
+
   const headers = {
     headers: { authorization: process.env.CLIENT_SECRET as string },
   };
@@ -392,8 +310,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   if (projectData) {
     const data = (await projectData.json()) as ProjectQuery;
     project = data as unknown as Project;
-    if (data.markdown)
-      project.markdownParsed = await serialize(data.markdown as string);
   }
 
   if (!project) {
@@ -414,15 +330,12 @@ interface Props {
 }
 
 interface State {
-  loading: boolean;
-  failed: boolean;
   project: Project;
   new: boolean;
   sending: boolean;
 }
 
 interface Project extends Omit<ProjectQuery, "tags" | "links"> {
-  markdownParsed: MDXRemoteSerializeResult<Record<string, unknown>>;
   tags: { uuid: string; name: string }[];
 }
 interface SubmitProject extends Omit<Project, "tags"> {
