@@ -30,6 +30,15 @@ a {
   text-decoration: none;
 }
 
+button {
+  color: $text;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: lighter;
+  background-color: transparent;
+  border: none;
+}
+
 * {
   box-sizing: border-box;
   font-family: "abel", Helvetica, sans-serif;

@@ -1,6 +1,11 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import React, { AnchorHTMLAttributes, DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from "react";
+import React, {
+  AnchorHTMLAttributes,
+  DetailedHTMLProps,
+  ImgHTMLAttributes,
+  ReactNode,
+} from "react";
 import { ProjectQuery } from "@typeFiles/api_project.type";
 import styles from "@styles/admin.project.module.scss";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
@@ -40,36 +45,43 @@ class AdminProject extends React.Component<Props, State> {
     };
   }
 
-  public onChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  public onChange = async (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const target = e.target;
     const value = onChangeParser(target);
-    if (target.name === "markdown") this.update = setTimeout(this.updateMD, 200);
+    if (target.name === "markdown")
+      this.update = setTimeout(this.updateMD, 200);
     this.setState({ project: { ...this.state.project, [target.name]: value } });
-  }
+  };
 
-  public multiselectorChange = (selected: { uuid: string, name: string }[]) => {
+  public multiselectorChange = (selected: { uuid: string; name: string }[]) => {
     this.setState({ project: { ...this.state.project, tags: selected } });
-  }
+  };
 
   public updateMD = async () => {
     if (!this.state.project.markdown) return;
     const markdownParsed = await serialize(this.state.project.markdown);
     this.setState({ project: { ...this.state.project, markdownParsed } });
-  }
+  };
 
-  public onSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  public onSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
     this.setState({ sending: true });
 
     const submitData = this.state.project as unknown as SubmitProject;
-    submitData.tags = this.state.project.tags.map(x => x.uuid);
+    submitData.tags = this.state.project.tags.map((x) => x.uuid);
 
     const method = this.state.new ? "POST" : "PATCH";
 
     const response = await submitJson(
       submitData as unknown as Record<string, unknown>,
       "project",
-      method,
+      method
     );
 
     if (response.status !== 200) {
@@ -80,16 +92,16 @@ class AdminProject extends React.Component<Props, State> {
 
     const { project } = response.data;
 
-    if (this.state.new) await this.props.router.push(`/admin/project/${project.uuid}`);
+    if (this.state.new)
+      await this.props.router.push(`/admin/project/${project.uuid}`);
     else {
       this.setState({ project: response.data.project });
       this.updateMD();
       alert("Project updated");
     }
 
-
     this.setState({ sending: false });
-  }
+  };
 
   public delete = async (): Promise<void> => {
     if (!confirm("Are you sure you want to delete this project?")) return;
@@ -97,25 +109,33 @@ class AdminProject extends React.Component<Props, State> {
       this.setState({ project: {} as Project });
       return;
     }
-    const response = await submitJson({ uuid: this.state.project.uuid }, "project", "DELETE");
+    const response = await submitJson(
+      { uuid: this.state.project.uuid },
+      "project",
+      "DELETE"
+    );
 
     if (response.status !== 200) return;
 
     await this.props.router.push("/admin");
-  }
+  };
 
-  public confirmProceed = (event: { preventDefault: () => void; }): void => {
+  public confirmProceed = (event: { preventDefault: () => void }): void => {
     const current = this.state.project;
     // const original = this.props.project;
-    if (this.state.new && Object.entries(current).find(x => x[1] !== "") == undefined) return;
+    if (
+      this.state.new &&
+      Object.entries(current).find((x) => x[1] !== "") == undefined
+    )
+      return;
 
     if (confirm("Are you sure you want to proceed?")) return;
     event.preventDefault();
-  }
+  };
 
   public stateChanger = (project: Project) => {
     this.setState({ project });
-  }
+  };
 
   public render = (): ReactNode => {
     if (this.state.loading) return <> </>;
@@ -134,12 +154,18 @@ class AdminProject extends React.Component<Props, State> {
         </Head>
         <main className={styles.main}>
           <header>
-            <Link href="/admin"><a onClick={this.confirmProceed}>〈</a></Link>
-            <Link href={`/project/${project.uuid}`}><a onClick={this.confirmProceed}>Project</a></Link>
+            <Link href="/admin">
+              <a onClick={this.confirmProceed}>〈</a>
+            </Link>
+            <Link href={`/project/${project.uuid}`}>
+              <a onClick={this.confirmProceed}>Project</a>
+            </Link>
           </header>
           <section className={styles.mainInput}>
-            <header><h2>Project</h2></header>
-            <form className={styles.form} onSubmit={x => this.onSubmit(x)}>
+            <header>
+              <h2>Project</h2>
+            </header>
+            <form className={styles.form} onSubmit={(x) => this.onSubmit(x)}>
               <section>
                 <label>Name:</label>
                 <input
@@ -167,7 +193,10 @@ class AdminProject extends React.Component<Props, State> {
                   type="date"
                   name="created"
                   onChange={this.onChange}
-                  defaultValue={new Date(project.created).toLocaleDateString("en-CA") || new Date().toLocaleDateString("en-CA")}
+                  defaultValue={
+                    new Date(project.created).toLocaleDateString("en-CA") ||
+                    new Date().toLocaleDateString("en-CA")
+                  }
                   required
                 ></input>
               </section>
@@ -180,7 +209,11 @@ class AdminProject extends React.Component<Props, State> {
                   value={project.status || this.props.status[0]}
                   required
                 >
-                  {this.props.status.map(status => <option key={status} value={status}>{status}</option>)}
+                  {this.props.status.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
                 </select>
               </section>
               <section>
@@ -217,38 +250,81 @@ class AdminProject extends React.Component<Props, State> {
               </section>
 
               <section className={styles.buttons}>
-                <input className={styles.submit} type="submit" value="Submit" disabled={this.state.sending} />
-                <button type="button" onClick={this.delete}>Delete</button>
+                <input
+                  className={styles.submit}
+                  type="submit"
+                  value="Submit"
+                  disabled={this.state.sending}
+                />
+                <button type="button" onClick={this.delete}>
+                  Delete
+                </button>
               </section>
             </form>
 
-            {!this.state.new ?
+            {!this.state.new ? (
               <section className={styles.assets}>
-                <header><h2>Assets</h2></header>
-                <AssetAdmin key="new" asset={undefined} project={project as unknown as ProjectQuery} stateChanger={this.stateChanger} />
-                {project.assets.map(x => <AssetAdmin key={x.uuid} asset={x} project={project as unknown as ProjectQuery} stateChanger={this.stateChanger} />)}
+                <header>
+                  <h2>Assets</h2>
+                </header>
+                <AssetAdmin
+                  key="new"
+                  asset={undefined}
+                  project={project as unknown as ProjectQuery}
+                  stateChanger={this.stateChanger}
+                />
+                {project.assets.map((x) => (
+                  <AssetAdmin
+                    key={x.uuid}
+                    asset={x}
+                    project={project as unknown as ProjectQuery}
+                    stateChanger={this.stateChanger}
+                  />
+                ))}
               </section>
-              : ""
-            }
+            ) : (
+              ""
+            )}
           </section>
 
           <section className={styles.markdownInput}>
-            <header><h2>Markdown</h2></header>
-            <textarea name="markdown" value={project.markdown || ""} onChange={this.onChange}></textarea>
+            <header>
+              <h2>Markdown</h2>
+            </header>
+            <textarea
+              name="markdown"
+              value={project.markdown || ""}
+              onChange={this.onChange}
+            ></textarea>
           </section>
 
           <section className={styles.markdown}>
-            <header><h2>Rendered Markdown</h2></header>
-            {project.markdownParsed ? <MDXRemote {...project.markdownParsed} components={this.components} /> : ""}
+            <header>
+              <h2>Rendered Markdown</h2>
+            </header>
+            {project.markdownParsed ? (
+              <MDXRemote
+                {...project.markdownParsed}
+                components={this.components}
+              />
+            ) : (
+              ""
+            )}
           </section>
         </main>
       </>
     );
-  }
+  };
 
   async componentDidMount(): Promise<void> {
-    const result = await fetch(`${apiServer}/auth`, { credentials: "include", mode: "cors", method: "POST" })
-      .then(x => { if (x.ok) return true; })
+    const result = await fetch(`${apiServer}/auth`, {
+      credentials: "include",
+      mode: "cors",
+      method: "POST",
+    })
+      .then((x) => {
+        if (x.ok) return true;
+      })
       .catch(() => false);
 
     this.updateMD();
@@ -256,41 +332,68 @@ class AdminProject extends React.Component<Props, State> {
     else this.setState({ loading: false, failed: true });
   }
 
-  ResponsiveImage = (props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>): JSX.Element => {
+  ResponsiveImage = (
+    props: DetailedHTMLProps<
+      ImgHTMLAttributes<HTMLImageElement>,
+      HTMLImageElement
+    >
+  ): JSX.Element => {
     if (props.src?.endsWith(".mp4")) {
-      return (<video controls><source src={props.src} type="video/mp4" /></video>);
+      return (
+        <video controls>
+          <source src={props.src} type="video/mp4" />
+        </video>
+      );
     }
-    return (<Image alt={props.alt} layout="fill" src={props.src as string} />);
-  }
-  LinkElement = (props: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>): JSX.Element => (<Link href={props.href as string}><a target="_blank">{props.children}</a></Link>);
+    return <Image alt={props.alt} layout="fill" src={props.src as string} />;
+  };
+  LinkElement = (
+    props: DetailedHTMLProps<
+      AnchorHTMLAttributes<HTMLAnchorElement>,
+      HTMLAnchorElement
+    >
+  ): JSX.Element => (
+    <Link href={props.href as string}>
+      <a target="_blank">{props.children}</a>
+    </Link>
+  );
 
   components = {
     img: this.ResponsiveImage,
     a: this.LinkElement,
-  }
-
+  };
 }
 
 export default withRouter(AdminProject);
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const projectData = await fetch(`${apiServer}/project/${params?.id}`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
-    .then(x => x.ok ? x : false);
+  const headers = {
+    headers: { authorization: process.env.CLIENT_SECRET as string },
+  };
 
-  const tagData = await fetch(`${apiServer}/tags`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
-    .then(x => x.ok ? x : false);
+  const projectData = await fetch(
+    `${apiServer}/project/${params?.id}`,
+    headers
+  ).then((x) => (x.ok ? x : false));
 
-  const statusData = await fetch(`${apiServer}/enum/project/status`, { headers: { authorization: process.env.CLIENT_SECRET as string } })
-    .then(x => x.ok ? x : false);
+  const tagData = await fetch(`${apiServer}/tags`, headers).then((x) =>
+    x.ok ? x : false
+  );
 
-  const tags = tagData ? await tagData.json() as tag[] : [];
-  const status = statusData ? await statusData.json() as string[] : [];
+  const statusData = await fetch(
+    `${apiServer}/enum/project/status`,
+    headers
+  ).then((x) => (x.ok ? x : false));
+
+  const tags = tagData ? ((await tagData.json()) as tag[]) : [];
+  const status = statusData ? ((await statusData.json()) as string[]) : [];
   let project: Project | Record<string, unknown> | undefined;
 
   if (projectData) {
-    const data = await projectData.json() as ProjectQuery;
+    const data = (await projectData.json()) as ProjectQuery;
     project = data as unknown as Project;
-    if (data.markdown) project.markdownParsed = await serialize(data.markdown as string);
+    if (data.markdown)
+      project.markdownParsed = await serialize(data.markdown as string);
   }
 
   if (!project) {
@@ -302,7 +405,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     props: { tags, project, status },
   };
 };
-
 
 interface Props {
   router: NextRouter;
@@ -320,8 +422,8 @@ interface State {
 }
 
 interface Project extends Omit<ProjectQuery, "tags" | "links"> {
-  markdownParsed: MDXRemoteSerializeResult<Record<string, unknown>>
-  tags: { uuid: string, name: string }[];
+  markdownParsed: MDXRemoteSerializeResult<Record<string, unknown>>;
+  tags: { uuid: string; name: string }[];
 }
 interface SubmitProject extends Omit<Project, "tags"> {
   tags: string[];
