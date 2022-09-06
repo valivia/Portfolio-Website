@@ -1,0 +1,10 @@
+[global]
+limits = {file = "50 Mib", data-form = "50 Mib"}
+port = 9302
+
+[debug]
+log = "normal"
+
+[release]
+log = "critical"
+port = 9301
