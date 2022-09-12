@@ -1,66 +1,67 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import React, { ReactNode } from "react";
+import React, { useState } from "react";
 import { ProjectQuery } from "@typeFiles/api_project.type";
-import styles from "@styles/admin.project.module.scss";
-import { NextRouter, withRouter } from "next/router";
-import { project_status, tag } from "@prisma/client";
+import styles from "./project.module.scss";
+import { NextRouter, useRouter } from "next/router";
+import prisma, { project_status, tag } from "@prisma/client";
 import Link from "next/link";
-import AssetAdmin from "@components/admin_project/asset.module";
 import onChangeParser from "@components/onchange";
 import { submitJson } from "@components/submit";
 import Multiselector from "@components/admin_project/multiselector.module";
-import TextInput from "@components/form/text_input.module";
-import TextArea from "@components/form/textarea.module";
-import Checkbox from "@components/form/checkbox.module";
+import TextInput from "@components/input/text_input.module";
+import TextArea from "@components/input/textarea.module";
+import Checkbox from "@components/input/checkbox.module";
 import Markdown from "@components/admin_project/markdown.module";
+import Asset from "@components/admin_project/asset.module";
+import DateInput from "@components/input/date.module";
+import Select from "@components/input/select.module";
 
-const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
+const API = process.env.NEXT_PUBLIC_API_SERVER;
+const EMPTYPROJECT: Project = {
+  name: "",
+  tags: [],
+  assets: [],
+  status: "",
+  banner_id: null,
+  created: new Date().toISOString(),
+  description: null,
+  markdown: null,
+  pinned: false,
+  projects: false,
+  updated: new Date().toISOString(),
+  uuid: "",
+};
 
-class AdminProject extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+export default function AdminProject(props: Props): JSX.Element {
+  const router = useRouter();
+  const [project, setProject] = useState(props.project);
+  const [sending, setSending] = useState(false);
 
-    let project: Project | Record<string, unknown> = {
-      name: "",
-      tags: [],
-      assets: [],
-      status: this.props.status[0],
-    };
+  const isNew = project.uuid === "";
+  const hasChanged = JSON.stringify(project) !== JSON.stringify(props.project);
 
-    if (Object.keys(props.project).length !== 0) project = props.project;
-
-    this.state = {
-      project: project as Project,
-      new: this.props.router.query.id == "new",
-      sending: false,
-    };
-  }
-
-  public onChange = async (
+  async function onChange(
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
-  ) => {
+  ) {
     const target = e.target;
     const value = onChangeParser(target);
-    this.setState({ project: { ...this.state.project, [target.name]: value } });
+    setProject({ ...project, [target.name]: value });
+  }
+
+  const multiselectorChange = (selected: { uuid: string; name: string }[]) => {
+    setProject({ ...project, tags: selected });
   };
 
-  public multiselectorChange = (selected: { uuid: string; name: string }[]) => {
-    this.setState({ project: { ...this.state.project, tags: selected } });
-  };
+  const submit = async (): Promise<void> => {
+    setSending(true);
 
-  public onSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    event.preventDefault();
-    this.setState({ sending: true });
+    const submitData = project as unknown as SubmitProject;
+    submitData.tags = project.tags.map((x) => x.uuid);
 
-    const submitData = this.state.project as unknown as SubmitProject;
-    submitData.tags = this.state.project.tags.map((x) => x.uuid);
-
-    const method = this.state.new ? "POST" : "PATCH";
+    const method = isNew ? "POST" : "PATCH";
 
     const response = await submitJson(
       submitData as unknown as Record<string, unknown>,
@@ -70,192 +71,176 @@ class AdminProject extends React.Component<Props, State> {
 
     if (response.status !== 200) {
       alert(response.message || "Unknown error");
-      this.setState({ sending: false });
+      setSending(false);
       return;
     }
 
-    const { project } = response.data;
-
-    if (this.state.new)
-      await this.props.router.push(`/admin/project/${project.uuid}`);
+    if (isNew) await router.push(`/admin/project/${project.uuid}`);
     else {
-      this.setState({ project: response.data.project });
+      setProject(response.data.project);
       alert("Project updated");
     }
 
-    this.setState({ sending: false });
+    setSending(false);
   };
 
-  public delete = async (): Promise<void> => {
+  const deleteProject = async (): Promise<void> => {
+    setSending(true);
     if (!confirm("Are you sure you want to delete this project?")) return;
-    if (this.state.new) {
-      this.setState({ project: {} as Project });
+    if (isNew) {
+      setProject(EMPTYPROJECT);
       return;
     }
     const response = await submitJson(
-      { uuid: this.state.project.uuid },
+      { uuid: project.uuid },
       "project",
       "DELETE"
     );
 
-    if (response.status !== 200) return;
+    if (response.status !== 200) {
+      alert(response.message || "Unknown error");
+      setSending(false);
+      return;
+    }
 
-    await this.props.router.push("/admin");
+    await router.push("/admin");
   };
 
-  public confirmProceed = (event: { preventDefault: () => void }): void => {
-    const current = this.state.project;
-    // const original = this.props.project;
-    if (
-      this.state.new &&
-      Object.entries(current).find((x) => x[1] !== "") == undefined
-    )
-      return;
+  const confirmProceed = (event: { preventDefault: () => void }): void => {
+    if (!hasChanged) return;
 
     if (confirm("Are you sure you want to proceed?")) return;
     event.preventDefault();
   };
 
-  public stateChanger = (project: Project) => {
-    this.setState({ project });
+  const upsertAsset = (asset: temp) => {
+    const assets = project.assets.filter((x) => x.uuid !== asset.uuid);
+    assets.unshift(asset);
+    setProject({ ...project, assets });
   };
 
-  public render = (): ReactNode => {
-    const project = this.state.project;
+  const setBanner = (banner_id: string) => {
+    setProject({ ...project, banner_id });
+  };
 
+  const deleteAsset = (id: string) => {
+    const assets = project.assets.filter((x) => x.uuid !== id);
+    setProject({ ...project, assets });
+  };
+
+  const render = (): JSX.Element => {
     return (
-      <>
+      <div className={styles.container}>
         <Head>
           <title>{project.name === "" ? "New Project" : project.name}</title>
           <meta name="theme-color" content="#B5A691" />
         </Head>
+
+        <header className={styles.header}>
+          <Link href="/admin">
+            <a onClick={confirmProceed}>〈</a>
+          </Link>
+          <Link href={`/project/${project.uuid}`}>
+            <a onClick={confirmProceed}>Project</a>
+          </Link>
+        </header>
+
         <main className={styles.main}>
-          <header>
-            <Link href="/admin">
-              <a onClick={this.confirmProceed}>〈</a>
-            </Link>
-            <Link href={`/project/${project.uuid}`}>
-              <a onClick={this.confirmProceed}>Project</a>
-            </Link>
-          </header>
+          <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+            <h2>Project</h2>
 
-          <section className={styles.mainInput}>
-            <header>
-              <h2>Project</h2>
-            </header>
-            <form className={styles.form} onSubmit={(x) => this.onSubmit(x)}>
-              <TextInput
-                name={"name"}
-                value={project.name}
-                onChange={this.onChange}
+            <TextInput name={"name"} value={project.name} onChange={onChange} />
+
+            <TextArea
+              name={"description"}
+              value={project.description}
+              onChange={onChange}
+              maxLength={1024}
+            />
+
+            <DateInput
+              name="created"
+              onChange={onChange}
+              value={new Date(project.created)}
+            />
+
+            <Select
+              name="status"
+              onChange={onChange}
+              value={project.status || props.status[0]}
+              list={props.status}
+            />
+
+            <section>
+              <label>Tags:</label>
+              <Multiselector
+                options={props.tags}
+                selected={project.tags || []}
+                onChange={multiselectorChange}
+              />
+            </section>
+
+            <section className={styles.checkbox}>
+              <Checkbox
+                name={"projects"}
+                text={"Display on projects page?"}
+                value={project.projects}
+                onChange={onChange}
               />
 
-              <TextArea
-                name={"description"}
-                value={project.description}
-                onChange={this.onChange}
-                maxLength={1024}
+              <Checkbox
+                name={"pinned"}
+                text={"Display as pinned?"}
+                value={project.pinned}
+                onChange={onChange}
               />
+            </section>
 
-              <section>
-                <label>Date</label>
-                <input
-                  type="date"
-                  name="created"
-                  onChange={this.onChange}
-                  defaultValue={
-                    new Date(project.created).toLocaleDateString("en-CA") ||
-                    new Date().toLocaleDateString("en-CA")
-                  }
-                  required
-                ></input>
-              </section>
-
-              <section>
-                <label>Status:</label>
-                <select
-                  name="status"
-                  onChange={this.onChange}
-                  value={project.status || this.props.status[0]}
-                  required
-                >
-                  {this.props.status.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-              </section>
-
-              <section>
-                <label>Tags:</label>
-                <Multiselector
-                  options={this.props.tags}
-                  selected={this.state.project.tags || []}
-                  onChange={this.multiselectorChange}
-                />
-              </section>
-
-              <section className={styles.checkbox}>
-                <Checkbox
-                  name={"projects"}
-                  text={"Display on projects page?"}
-                  value={project.projects}
-                  onChange={this.onChange}
-                />
-
-                <Checkbox
-                  name={"pinned"}
-                  text={"Display as pinned?"}
-                  value={project.pinned}
-                  onChange={this.onChange}
-                />
-              </section>
-
-              <section className={styles.buttons}>
-                <input
-                  className={styles.submit}
-                  type="submit"
-                  value="Submit"
-                  disabled={this.state.sending}
-                />
-                <button type="button" onClick={this.delete}>
+            <section className={styles.buttons}>
+              {hasChanged && (
+                <button disabled={sending} onClick={submit}>
+                  Submit
+                </button>
+              )}
+              {(hasChanged || !isNew) && (
+                <button onClick={deleteProject} disabled={sending}>
                   Delete
                 </button>
-              </section>
-            </form>
+              )}
+            </section>
+          </form>
 
-            {!this.state.new ? (
-              <section className={styles.assets}>
-                <header>
-                  <h2>Assets</h2>
-                </header>
-                <AssetAdmin
-                  key="new"
-                  asset={undefined}
+          {!isNew && (
+            <section className={styles.assets}>
+              <header>
+                <h2>Assets</h2>
+              </header>
+              <Asset
+                key="new"
+                project={project as unknown as ProjectQuery}
+                upsertAsset={upsertAsset}
+                deleteAsset={deleteAsset}
+                setBanner={setBanner}
+              />
+              {project.assets.map((x) => (
+                <Asset
+                  key={x.uuid}
+                  asset={x}
                   project={project as unknown as ProjectQuery}
-                  stateChanger={this.stateChanger}
+                  upsertAsset={upsertAsset}
+                  deleteAsset={deleteAsset}
+                  setBanner={setBanner}
                 />
-                {project.assets.map((x) => (
-                  <AssetAdmin
-                    key={x.uuid}
-                    asset={x}
-                    project={project as unknown as ProjectQuery}
-                    stateChanger={this.stateChanger}
-                  />
-                ))}
-              </section>
-            ) : (
-              ""
-            )}
-          </section>
+              ))}
+            </section>
+          )}
 
           <section className={styles.markdownInput}>
             <h2>Markdown</h2>
             <textarea
               name="markdown"
               value={project.markdown || ""}
-              onChange={this.onChange}
+              onChange={onChange}
             ></textarea>
           </section>
 
@@ -264,12 +249,12 @@ class AdminProject extends React.Component<Props, State> {
             <Markdown value={project.markdown} />
           </section>
         </main>
-      </>
+      </div>
     );
   };
-}
 
-export default withRouter(AdminProject);
+  return render();
+}
 
 export const getServerSideProps: GetServerSideProps = async ({
   params,
@@ -289,33 +274,31 @@ export const getServerSideProps: GetServerSideProps = async ({
     headers: { authorization: process.env.CLIENT_SECRET as string },
   };
 
-  const projectData = await fetch(
-    `${apiServer}/project/${params?.id}`,
-    headers
-  ).then((x) => (x.ok ? x : false));
+  const project =
+    (await fetch(`${API}/project/${params?.id}`, headers)
+      .then(async (data) => {
+        if (!data.ok) return null;
+        return (await data.json()) as Project;
+      })
+      .catch(() => null)) ?? EMPTYPROJECT;
 
-  const tagData = await fetch(`${apiServer}/tags`, headers).then((x) =>
-    x.ok ? x : false
-  );
+  const status = await fetch(`${API}/enum/project/status`, headers)
+    .then(async (data) => {
+      if (!data.ok) return [];
+      return (await data.json()) as string[];
+    })
+    .catch(() => []);
 
-  const statusData = await fetch(
-    `${apiServer}/enum/project/status`,
-    headers
-  ).then((x) => (x.ok ? x : false));
+  const tags = await fetch(`${API}/tag`, headers)
+    .then(async (data) => {
+      if (!data.ok) return [];
+      return (await data.json()) as tag[];
+    })
+    .catch(() => []);
 
-  const tags = tagData ? ((await tagData.json()) as tag[]) : [];
-  const status = statusData ? ((await statusData.json()) as string[]) : [];
-  let project: Project | Record<string, unknown> | undefined;
+  if (project.status === "" && status.length !== 0) project.status = status[0];
 
-  if (projectData) {
-    const data = (await projectData.json()) as ProjectQuery;
-    project = data as unknown as Project;
-  }
-
-  if (!project) {
-    if (params?.id !== "new") return { notFound: true };
-    else project = {};
-  }
+  if (project.uuid === "" && params?.id !== "new") return { notFound: true };
 
   return {
     props: { tags, project, status },
@@ -326,18 +309,24 @@ interface Props {
   router: NextRouter;
   tags: tag[];
   status: project_status[];
-  project: Project | Record<string, never>;
-}
-
-interface State {
   project: Project;
-  new: boolean;
-  sending: boolean;
 }
 
-interface Project extends Omit<ProjectQuery, "tags" | "links"> {
+interface Project
+  extends Omit<
+    ProjectQuery,
+    "tags" | "status" | "created" | "updated" | "assets"
+  > {
+  status: string;
+  created: string;
+  updated: string;
+  assets: temp[];
   tags: { uuid: string; name: string }[];
 }
 interface SubmitProject extends Omit<Project, "tags"> {
   tags: string[];
+}
+
+interface temp extends Omit<prisma.asset, "created"> {
+  created: string;
 }

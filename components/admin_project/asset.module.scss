@@ -1,16 +1,19 @@
 @use "styles/vars" as *;
+@use "styles/vars" as var;
+
 
 .main {
-    background-color: $secondary;
+    outline: 2px $text solid;
     display: grid;
     grid-template-columns: 6fr 3fr;
     grid-template-rows: 100%;
-    border-radius: 10px;
+    border-radius: $borderRadius;
 
     // border: 1px $text solid;
 }
 
 .image {
+    @include var.noselect;
     border-left: 1px $text solid;
     background-size: cover;
     background-position: center;
@@ -21,6 +24,11 @@
     grid-row: 1 / 2;
     width: 100%;
     border-radius: 0 10px 10px 0;
+
+    display: flex;
+    font-size: 6rem;
+    justify-content: center;
+    align-items: center;
 }
 
 .form {
@@ -34,41 +42,6 @@
     &>section {
         padding: 2px 0;
     }
-
-    &>section:not(.checkbox) {
-        &>label {
-            display: block;
-            text-align: left;
-        }
-
-        &>textarea {
-            border-radius: 0;
-            border: none;
-            background-color: transparent;
-            border-bottom: 2px $text solid;
-            color: $text;
-            padding: 1px;
-            resize: none;
-            width: 100%;
-
-            &:hover {
-                border-bottom: 2px rgb(212, 173, 100) solid;
-            }
-        }
-    }
-}
-
-.checkbox {
-    margin: 10px 0;
-
-    &>input {
-        margin-right: 3px;
-    }
-
-    &>label {
-        display: inline;
-        text-align: initial;
-    }
 }
 
 .buttons {
@@ -78,24 +51,7 @@
 
     &>input,
     button {
-        font-family: "abel";
-        font-weight: 300;
-        text-transform: capitalize;
-        background-color: rgb(7, 7, 7);
-        color: $text;
-        border: none;
         flex-grow: 1;
-        padding: 10px;
-
-        &:hover {
-            background-color: rgb(15, 15, 15);
-            cursor: pointer;
-        }
-
-        &:disabled {
-            background-color: rgb(102, 18, 18);
-            cursor: not-allowed;
-        }
     }
 }
 

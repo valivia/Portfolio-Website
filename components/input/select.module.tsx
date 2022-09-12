@@ -1,4 +1,4 @@
-import styles from "./text_input.module.scss";
+import styles from "./input.module.scss";
 import { Component } from "react";
 
 export default class Select extends Component<Props> {
@@ -9,7 +9,7 @@ export default class Select extends Component<Props> {
   public render(): React.ReactNode {
     const { name, list, datalist, onChange } = this.props;
     const text = this.props.text ?? name;
-    const value = this.props.value === null ? undefined : this.props.value;
+    const value = this.props.value === null ? "" : this.props.value;
 
     const options = list.map((entry) => {
       if (typeof entry === "string")
@@ -27,7 +27,7 @@ export default class Select extends Component<Props> {
     });
 
     return (
-      <section className={styles.main}>
+      <section className={styles.container}>
         <label htmlFor={name}>{text}</label>
         {datalist ? (
           <>

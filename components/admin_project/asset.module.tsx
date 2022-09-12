@@ -1,186 +1,204 @@
 import prisma from "@prisma/client";
-import { Component, ReactNode } from "react";
+import { useEffect, useState } from "react";
 import styles from "./asset.module.scss";
 import onChangeParser from "../onchange";
 import { ProjectQuery } from "@typeFiles/api_project.type";
 import { submitFormData, submitJson } from "../submit";
+import TextArea from "@components/input/textarea.module";
+import Checkbox from "@components/input/checkbox.module";
 
+const EMPTYASSET: Asset = {
+  uuid: "",
+  project_id: "",
+  created: Date.now().toString(),
+  alt: "",
+  description: "",
+  width: 0,
+  height: 0,
+  display: false,
+  pinned: false,
+  type: "audio",
+};
 
-export default class AssetAdmin extends Component<Props, State> {
+export default function Asset(props: Props): JSX.Element {
+  const [asset, setAsset] = useState(props.asset ?? EMPTYASSET);
+  const [sending, setSending] = useState(false);
 
-  constructor(props: Props) {
-    super(props);
-    const asset = this.props.asset;
+  const isNew = asset.uuid === "";
+  const hasChanged = JSON.stringify(asset) !== JSON.stringify(props.asset);
 
-    this.state = {
-      asset: asset || { uuid: this.props.project.uuid } as Asset,
-      new: asset ? false : true,
-      sending: false,
-    };
+  useEffect(() => {
+    if (props.asset !== undefined) return;
+    setAsset({ ...EMPTYASSET, project_id: props.project.uuid });
+  }, [props.asset, props.project.uuid]);
 
-  }
-
-  public onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
+  const onChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ): void => {
     const target = e.target;
     const value = onChangeParser(target);
-    this.setState({ asset: { ...this.state.asset, [target.name]: value } });
-  }
+    setAsset({ ...asset, [target.name]: value });
+  };
 
-  public onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-    this.setState({ sending: true });
+  const submit = async (): Promise<void> => {
+    setSending(true);
 
-    this.state.new ? await this.createAsset() : await this.updateAsset();
+    isNew ? await createAsset() : await updateAsset();
 
-    this.setState({ sending: false });
-  }
+    setSending(false);
+  };
 
-  public updateAsset = async (): Promise<void> => {
-    const asset = this.state.asset;
-    const response = await submitJson(asset as unknown as Record<string, unknown>, "content", "PATCH");
+  const updateAsset = async (): Promise<void> => {
+    const response = await submitJson(
+      asset as unknown as Record<string, unknown>,
+      "content",
+      "PATCH"
+    );
 
     if (response.status !== 200)
       return alert(response.message || "Unknown error");
 
-    const updatedAsset = await response.data.asset as prisma.asset;
-    this.setState({ asset: updatedAsset });
-    this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.map((a) => a.uuid === updatedAsset.uuid ? updatedAsset : a) });
+    const updatedAsset = (await response.data.asset) as Asset;
+    setAsset(updatedAsset);
+    props.upsertAsset(updatedAsset);
     alert("Asset updated");
     return;
-  }
+  };
 
-  public createAsset = async (): Promise<void> => {
-    const asset = this.state.asset;
-    const response = await submitFormData(asset as unknown as Record<string, unknown>, "content", "POST");
+  const createAsset = async (): Promise<void> => {
+    const response = await submitFormData(
+      asset as unknown as Record<string, unknown>,
+      "content",
+      "POST"
+    );
 
     if (response.status !== 200)
       return alert(response.message || "Unknown error");
 
-    const newAsset = await response.data.asset as prisma.asset;
-    this.setState({ asset: newAsset });
-    this.props.stateChanger({ ...this.props.project, assets: [newAsset, ...this.props.project.assets] });
+    const newAsset = (await response.data.asset) as Asset;
+    setAsset(newAsset);
+    props.upsertAsset(newAsset);
     alert("Asset created");
     return;
-  }
+  };
 
-  public delete = async (): Promise<void> => {
+  const deleteAsset = async (): Promise<void> => {
     if (!confirm("Are you sure you want to delete this asset?")) return;
-    const response = await submitJson({ uuid: this.state.asset.uuid }, "content", "DELETE");
+    const response = await submitJson(
+      { uuid: asset.uuid },
+      "content",
+      "DELETE"
+    );
 
     if (response.status !== 200) {
       alert(response.message || "Unknown error");
       return;
     }
 
-    this.props.stateChanger({ ...this.props.project, assets: this.props.project.assets.filter((a) => a.uuid !== (this.props.asset as prisma.asset).uuid) });
-  }
+    props.deleteAsset(asset.uuid);
+  };
 
-  public makeBanner = async (): Promise<void> => {
-    const response = await submitJson({ asset: this.state.asset.uuid, project: this.props.project.uuid }, "banner", "PATCH");
+  const makeBanner = async (): Promise<void> => {
+    const response = await submitJson(
+      { asset: asset.uuid, project: props.project.uuid },
+      "banner",
+      "PATCH"
+    );
 
     if (response.status !== 200) {
       alert(response.message || "Unknown error");
       return;
     }
 
-    this.props.stateChanger({ ...this.props.project, banner_id: this.state.asset.uuid });
-  }
+    props.setBanner(asset.uuid);
+  };
 
-  render(): ReactNode {
-    const newAsset = this.state.new;
-    const asset = this.state.asset;
-    const data = this.props.asset as prisma.asset;
+  function render(): JSX.Element {
+    let iconSrc = undefined;
+    if (!isNew)
+      iconSrc = `url(${process.env.NEXT_PUBLIC_MEDIA_SERVER}/content/${asset.uuid}_medium.jpg)`;
+    else if (asset.image !== undefined)
+      iconSrc = `url(${URL.createObjectURL(asset.image)})`;
 
     return (
-      <article className={styles.main} x-new={String(newAsset)} onSubmit={this.onSubmit}>
-        <form className={styles.form}>
-          <h2>{this.state.new ? "New" : "Edit"} asset</h2>
+      <article className={styles.main} data-new={String(isNew)}>
+        <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+          <h2>{isNew ? "New" : "Edit"} asset</h2>
 
-          {newAsset && (
+          {isNew && (
             <input
               type="file"
               name="image"
-              onChange={this.onChange}
+              onChange={onChange}
               style={{ display: "none" }}
             />
           )}
 
-          <section>
-            <label>Description:</label>
-            <textarea
-              name="description"
-              maxLength={128}
-              rows={1}
-              onChange={this.onChange}
-              value={asset?.description || ""}
-            ></textarea>
-          </section>
+          <TextArea
+            name="description"
+            maxLength={128}
+            rows={1}
+            onChange={onChange}
+            value={asset.description}
+          />
 
-          <section>
-            <label>Alt-text:</label>
-            <textarea
-              name="alt"
-              maxLength={128}
-              rows={1}
-              onChange={this.onChange}
-              value={asset?.alt || ""}
-            ></textarea>
-          </section>
+          <TextArea
+            name="alt"
+            maxLength={128}
+            rows={1}
+            onChange={onChange}
+            value={asset.alt}
+          />
 
-          <section className={styles.checkbox}>
-            <input
-              type="checkbox"
-              name="display"
-              id={`display${data?.uuid || "new"}`}
-              onChange={this.onChange}
-              defaultChecked={asset?.display}
-            />
-            <label htmlFor={`display${data?.uuid || "new"}`}>Display in gallery?</label>
-          </section>
+          <Checkbox name="display" onChange={onChange} value={asset.display} />
+
+          <Checkbox name="pinned" onChange={onChange} value={asset.pinned} />
 
           <section className={styles.buttons}>
-            <input className={styles.submit} type="submit" value="submit" disabled={this.state.sending} />
-            {!newAsset ?
-              <button type="button" onClick={this.delete}>Delete</button>
-              : ""
-            }
-            {!newAsset && this.props.project.banner_id !== asset.uuid ?
-              <button type="button" onClick={this.makeBanner}>Set banner</button>
-              : ""
-            }
+            {hasChanged && (
+              <button onClick={submit}>{isNew ? "Create" : "Update"}</button>
+            )}
+            {!isNew && (
+              <button onClick={deleteAsset} disabled={sending}>
+                Delete
+              </button>
+            )}
+            {!isNew && props.project.banner_id !== asset.uuid && (
+              <button onClick={makeBanner} disabled={sending}>
+                Set banner
+              </button>
+            )}
           </section>
-
         </form>
-        {!newAsset ?
-          <figure
-            className={styles.image}
-            style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_MEDIA_SERVER}/content/${data.uuid}_medium.jpg)` }}
-          >
-          </figure>
-          :
-          <figure
-            onClick={() => document.getElementsByName("image")[0]?.click()}
-            className={styles.image}
-            style={asset.image ? { backgroundImage: `url(${URL.createObjectURL(asset.image)})` } : undefined}
-          />
-        }
+        <figure
+          className={styles.image}
+          style={{ backgroundImage: iconSrc }}
+          onClick={
+            isNew
+              ? () => document.getElementsByName("image")[0]?.click()
+              : () => null
+          }
+        >
+          {isNew && asset.image === undefined && "+"}
+        </figure>
       </article>
     );
   }
+
+  return render();
 }
 
 interface Props {
-  asset: prisma.asset | undefined;
+  asset?: Asset;
   project: ProjectQuery;
-  stateChanger: any;
+  upsertAsset: (asset: Asset) => void;
+  deleteAsset: (id: string) => void;
+  setBanner: (id: string) => void;
 }
 
-interface State {
-  asset: Asset;
-  new: boolean;
-  sending: boolean;
-}
-
-interface Asset extends prisma.asset {
+interface Asset extends Omit<prisma.asset, "created"> {
   image?: MediaSource;
+  created: string;
 }

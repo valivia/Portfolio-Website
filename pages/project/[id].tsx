@@ -1,11 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
-import Image from "next/image";
 
 import React, {
-  AnchorHTMLAttributes,
-  DetailedHTMLProps,
-  ImgHTMLAttributes,
   ReactNode,
 } from "react";
 import NavBar from "@components/global/navbar.module";
@@ -16,7 +12,6 @@ import { ProjectQuery } from "@typeFiles/api_project.type";
 import Footer from "@components/global/footer.module";
 import Tags from "@components/project/tags.module";
 import AssetGallery from "@components/project/assetGallery.module";
-import Link from "next/link";
 import Markdown from "@components/admin_project/markdown.module";
 
 const api = process.env.NEXT_PUBLIC_API_SERVER;
@@ -26,37 +21,6 @@ export default class Projects extends React.Component<ProjectQuery, never> {
   private scroll() {
     document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
   }
-
-  ResponsiveImage = (
-    props: DetailedHTMLProps<
-      ImgHTMLAttributes<HTMLImageElement>,
-      HTMLImageElement
-    >
-  ): JSX.Element => {
-    if (props.src?.endsWith(".mp4")) {
-      return (
-        <video controls>
-          <source src={props.src} type="video/mp4" />
-        </video>
-      );
-    }
-    return <Image alt={props.alt} layout="fill" src={props.src as string} />;
-  };
-  LinkElement = (
-    props: DetailedHTMLProps<
-      AnchorHTMLAttributes<HTMLAnchorElement>,
-      HTMLAnchorElement
-    >
-  ): JSX.Element => (
-    <Link href={props.href as string}>
-      <a target="_blank">{props.children}</a>
-    </Link>
-  );
-
-  components = {
-    img: this.ResponsiveImage,
-    a: this.LinkElement,
-  };
 
   render(): ReactNode {
     const { assets, tags, markdown } = this.props;
@@ -113,7 +77,7 @@ export default class Projects extends React.Component<ProjectQuery, never> {
             </table>
           </section>
 
-          {markdown || project.description ? (
+          {(markdown || project.description) && (
             <section className={styles.markdown}>
               {markdown ? (
                 <Markdown value={project.markdown} />
@@ -121,19 +85,15 @@ export default class Projects extends React.Component<ProjectQuery, never> {
                 project.description
               )}
             </section>
-          ) : (
-            ""
           )}
 
-          {assets.length > 0 ? (
+          {assets.length > 0 && (
             <section className={styles.assets}>
               <header>
                 <h2>Gallery</h2>
               </header>
               <AssetGallery assets={assets} />
             </section>
-          ) : (
-            <></>
           )}
         </article>
         <Footer />
@@ -159,20 +119,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const res = await fetch(`${api}/project/${params?.id}`, {
+  const data = await fetch(`${api}/project/${params?.id}`, {
     headers: { authorization: process.env.CLIENT_SECRET as string },
-  }).then((x) => {
-    if (x.ok) return x;
-    else return false;
-  });
+  })
+    .then(async (x) => {
+      if (x.ok) return (await x.json()) as ProjectQuery;
+      else return null;
+    })
+    .catch(() => null);
 
-  if (!res) {
+  if (!data) {
     return {
       notFound: true,
     };
   }
-
-  const data = (await res.json()) as ProjectQuery;
 
   return {
     props: data,

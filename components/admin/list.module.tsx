@@ -2,14 +2,30 @@ import styles from "./list.module.scss";
 import Link from "next/link";
 import { Component } from "react";
 import { motion } from "framer-motion";
+import { tag } from "@prisma/client";
 
 export default class List extends Component<Props> {
   constructor(props: Props) {
     super(props);
   }
 
+  filter = (value: string) => {
+    value = value.toLowerCase();
+    if (this.props.entries.length === 0) return [];
+
+    const result = this.props.entries.filter((entry) => {
+      if (entry.name.toLowerCase().includes(value)) return true;
+      if (entry.description?.toLowerCase().includes(value)) return true;
+      if (entry.markdown?.toLowerCase().includes(value)) return true;
+      if (entry.tags?.find((x: tag) => x.name.toLowerCase().includes(value)))
+        return true;
+    });
+
+    return result;
+  };
+
   public render(): React.ReactNode {
-    const { entries, path } = this.props;
+    const { path, query } = this.props;
     const item = {
       visible: { opacity: 1, x: 0 },
       hidden: { opacity: 0, x: -10 },
@@ -19,6 +35,8 @@ export default class List extends Component<Props> {
       hidden: { opacity: 0 },
     };
 
+    const entries = this.filter(query);
+    if (entries.length === 0) return <p>No results</p>;
     return (
       <motion.table
         initial="hidden"
@@ -73,6 +91,7 @@ export default class List extends Component<Props> {
 interface Props {
   entries: Entry[];
   path: string;
+  query: string;
 }
 
 interface Entry extends Record<string, any> {

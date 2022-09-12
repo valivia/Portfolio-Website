@@ -10,22 +10,22 @@ export default class Selector extends Component<Props> {
     const { path, setSearchSettings } = this.props;
 
     return (
-      <section className={styles.main}>
+      <section className={`${styles.main} exclude`}>
         <button
-          className={path === "project" ? styles.active : undefined}
+          className={(path === "project" ? styles.active : "") + " exclude"}
           onClick={() => setSearchSettings("project")}
         >
           Projects
         </button>
 
         <button
-          className={path === "tag" ? styles.active : undefined}
+          className={(path === "tag" ? styles.active : "") + " exclude"}
           onClick={() => setSearchSettings("tag")}
         >
           Tags
         </button>
         <button
-          className={path === "markdown" ? styles.active : undefined}
+          className={(path === "markdown" ? styles.active : "") + " exclude"}
           onClick={() => setSearchSettings("markdown")}
         >
           Markdown

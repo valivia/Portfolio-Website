@@ -1,4 +1,4 @@
-import styles from "./text_input.module.scss";
+import styles from "./input.module.scss";
 import { Component } from "react";
 
 export default class Checkbox extends Component<Props> {
@@ -11,8 +11,9 @@ export default class Checkbox extends Component<Props> {
     const text = this.props.text ?? name;
 
     return (
-      <section className={styles.main}>
+      <section className={styles.container}>
         <input
+          className={styles.input}
           type="checkbox"
           id={name}
           name={name}

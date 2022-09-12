@@ -1,4 +1,6 @@
 import "@styles/globals.scss";
+import "@styles/button.scss";
+import "@styles/input.scss";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { ReactNode } from "react";

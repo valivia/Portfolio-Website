@@ -4,8 +4,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import timeSince from "@components/functions/time_since.module";
-import { experience_category } from "@prisma/client";
 import experience from "@typeFiles/experience";
+import { tag_category } from "@prisma/client";
 
 const mediaServer = process.env.NEXT_PUBLIC_MEDIA_SERVER;
 
@@ -148,7 +148,7 @@ interface Props {
 }
 
 interface list {
-  category: experience_category;
+  category: tag_category;
   experiences: experience[]
 }
 

@@ -1,7 +1,7 @@
-import styles from "./text_input.module.scss";
+import styles from "./input.module.scss";
 import { Component } from "react";
 
-export default class TextInput extends Component<Props> {
+export default class DateInput extends Component<Props> {
   constructor(props: Props) {
     super(props);
   }
@@ -9,17 +9,18 @@ export default class TextInput extends Component<Props> {
   public render(): React.ReactNode {
     const { name, onChange } = this.props;
     const text = this.props.text ?? name;
-    const value = this.props.value ?? "";
+    const value = this.props.value ?? new Date();
 
     return (
-      <section className={styles.main}>
+      <section className={styles.container}>
         <label htmlFor={name}>{text}</label>
         <input
+          className={styles.input}
           id={name}
           name={name}
-          type="text"
+          type="date"
           onChange={onChange}
-          value={value}
+          defaultValue={value.toLocaleDateString("en-CA")}
           required
         />
       </section>
@@ -30,6 +31,6 @@ export default class TextInput extends Component<Props> {
 interface Props {
   name: string;
   text?: string;
-  value: string | null;
+  value: Date | null;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }

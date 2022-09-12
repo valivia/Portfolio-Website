@@ -12,8 +12,9 @@ export default class Search extends Component<Props, State> {
   }
 
   search = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ value: e.target.value });
-    this.props.search(this.state.value);
+    const value = e.target.value;
+    this.setState({ value: value });
+    this.props.search(value);
   };
 
   public render(): React.ReactNode {
@@ -22,7 +23,7 @@ export default class Search extends Component<Props, State> {
     return (
       <section>
         <input
-          className={styles.main}
+          className={`${styles.main} exclude`}
           onInput={this.search}
           value={this.state.value}
           type="text"

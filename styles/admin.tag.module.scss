@@ -1,9 +1,0 @@
-@use "./vars" as *;
-@use "./form" as formModule;
-
-.form {
-    @include formModule.form;
-    background-color: $secondary;
-    border-radius: 10px;
-    padding: 15px;
-}

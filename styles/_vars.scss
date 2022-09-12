@@ -1,16 +1,23 @@
-// $text: rgb(181, 166, 145);
-// $text: wheat;
 $text: #b5a691;
 $textHover: #d5caba;
+
+$disabled: rgb(170, 0, 0);
+$disabledHover: rgb(80, 20, 20);
+
+$borderRadius: 4px;
+
 // $text: #cbb79c;
+// $text: rgb(181, 166, 145);
+// $text: wheat;
 $primary: rgb(17, 17, 17);
 $secondary: rgb(13, 13, 13);
+
 // $secondary: rgb(14, 14, 14);
 $tetiary: rgb(8, 8, 8);
 $quaternary: black;
 $media-server: "https://portfolio.xayania.com/media";
 
-.noselect {
+@mixin noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -44,7 +51,7 @@ $media-server: "https://portfolio.xayania.com/media";
     font-size: 5vh;
     text-align: center;
 
-    &>*:hover {
+    & > *:hover {
         cursor: pointer;
     }
 }

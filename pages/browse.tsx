@@ -8,7 +8,7 @@ import Footer from "@components/global/footer.module";
 import { GalleryImage } from "@typeFiles/gallery_image.type";
 import MailingList from "@components/global/mailing.module";
 
-const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
+const API = process.env.NEXT_PUBLIC_API_SERVER;
 
 class Browse extends React.Component<Props> {
   constructor(props: Props) {
@@ -56,12 +56,22 @@ export interface Props {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const projectData = await fetch(`${apiServer}/gallery`, {
+  const headers = {
     headers: { authorization: process.env.CLIENT_SECRET as string },
-  });
-  const projects = (await projectData.json()) as GalleryImage[];
+  };
 
-  if (!projects) return { notFound: true };
+  let projects = await fetch(`${API}/gallery`, headers)
+    .then(async (data) => {
+      if (!data.ok) return null;
+      return (await data.json()) as GalleryImage[];
+    })
+    .catch(() => null);
+
+  if (projects === null) return { notFound: true };
+
+  const pinned = projects.filter((project) => project.pinned);
+  const normal = projects.filter((project) => !project.pinned);
+  projects = pinned.concat(normal);
 
   return {
     props: { projects },

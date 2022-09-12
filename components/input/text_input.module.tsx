@@ -1,26 +1,28 @@
-import styles from "./text_input.module.scss";
+import styles from "./input.module.scss";
 import { Component } from "react";
 
-export default class TextArea extends Component<Props> {
+export default class TextInput extends Component<Props> {
   constructor(props: Props) {
     super(props);
   }
 
   public render(): React.ReactNode {
-    const { name, maxLength, onChange } = this.props;
+    const { name, onChange } = this.props;
     const text = this.props.text ?? name;
     const value = this.props.value ?? "";
 
     return (
-      <section className={styles.main}>
+      <section className={styles.container}>
         <label htmlFor={name}>{text}</label>
-        <textarea
+        <input
+          className={styles.input}
           id={name}
           name={name}
-          maxLength={maxLength}
+          type="text"
           onChange={onChange}
           value={value}
-        ></textarea>
+          required
+        />
       </section>
     );
   }
@@ -30,6 +32,5 @@ interface Props {
   name: string;
   text?: string;
   value: string | null;
-  maxLength?: number;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
