@@ -1,6 +1,6 @@
-use bson::{uuid, DateTime};
+use bson::DateTime;
 use mongodb::bson::oid::ObjectId;
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 use super::{asset_model::Asset, tag_model::Tag};
 
