@@ -1,10 +1,16 @@
-use rocket::{Build, Rocket};
+use rocket::serde::json::Json;
+use rocket_okapi::openapi;
 
-mod asset;
-mod project;
+use crate::models::response::MessageResponse;
 
-pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
-    rocket
-        .mount("/project", project::routes())
-        .mount("/asset", asset::routes())
+pub mod customer;
+pub mod project;
+
+/// This is a description. <br />You can do simple html <br /> like <b>this<b/>
+#[openapi(tag = "Hello World")]
+#[get("/")]
+pub fn index() -> Json<MessageResponse> {
+    Json(MessageResponse {
+        message: "Hello World!".to_string(),
+    })
 }

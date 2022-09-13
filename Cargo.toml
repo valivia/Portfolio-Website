@@ -1,20 +1,17 @@
 [package]
-edition = "2021"
 name = "portfolio-server"
+description = "API for my portfolio server"
+edition = "2021"
 version = "0.1.0"
 
-[profile.release]
-lto = "thin"
-strip = true
-
 [dependencies]
-mongodb = {version = "2.2.0"}
-rocket = {version = "0.5.0-rc.2", features = ["json"]}
-serde = "1.0.144"
-
-bson = {version = "2", features = ["chrono-0_4"]}
-chrono = "0.4"
+rocket =  { version = "0.5.0-rc.2", default-features = false, features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+schemars = "0.8"
+okapi = { version = "0.6.0-alpha-1" }
+rocket_okapi = { version = "0.8.0-rc.2", features = ["swagger", "secrets"] }
 dotenv = "0.15.0"
-tokio = "1"
-image = "0.24.3"
-jsonwebtoken = "8.1.1"
+mongodb = "2.1.0"
+futures = "0.3"
+chrono = "0.4"
