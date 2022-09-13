@@ -28,7 +28,7 @@ impl<'r> FromRequest<'r> for ApiKey {
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         fn is_valid(key: &str) -> bool {
             let api_key = env::var("API_KEY").expect("env.API_KEY is not found.");
-            return key == api_key;
+            key == api_key
         }
 
         match req.headers().get_one("x-api-key") {

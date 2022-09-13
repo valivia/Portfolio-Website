@@ -7,13 +7,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AssetDocument {
     pub _id: ObjectId,
-    pub createdAt: DateTime,
-    pub projectId: ObjectId,
+    pub created_at: DateTime,
+    pub project_id: ObjectId,
 
     pub alt: Option<String>,
     pub description: Option<String>,
 
-    pub display: bool,
+    pub is_displayed: bool,
 
     pub width: Option<u64>,
     pub height: Option<u64>,
@@ -25,25 +25,40 @@ pub struct Asset {
     #[serde(rename = "id")]
     pub _id: String,
 
-    pub createdAt: String,
-    pub projectId: String,
+    pub created_at: String,
+    pub project_id: String,
 
     pub alt: Option<String>,
     pub description: Option<String>,
 
-    pub display: bool,
+    pub is_displayed: bool,
 
-    pub width: Option<u8>,
-    pub height: Option<u8>,
+    pub width: Option<u64>,
+    pub height: Option<u64>,
+}
+
+impl From<AssetDocument> for Asset {
+    fn from(x: AssetDocument) -> Self {
+        Asset {
+            _id: x._id.to_string(),
+            created_at: x.created_at.try_to_rfc3339_string().unwrap(),
+            project_id: x.project_id.to_string(),
+            alt: x.alt,
+            description: x.description,
+            is_displayed: x.is_displayed,
+            width: x.width,
+            height: x.height,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct AssetInput {
-    pub createdAt: String,
-    pub projectId: String,
+    pub created_at: String,
+    pub project_id: String,
 
     pub alt: Option<String>,
     pub description: Option<String>,
 
-    pub display: bool,
+    pub is_displayed: bool,
 }

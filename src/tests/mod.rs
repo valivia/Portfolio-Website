@@ -2,7 +2,6 @@ use super::rocket;
 use crate::models::response::MessageResponse;
 use rocket::http::Status;
 use rocket::local::blocking::Client;
-use serde_json;
 
 #[test]
 fn hello_world() {

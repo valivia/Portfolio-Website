@@ -8,15 +8,14 @@ use serde::{Deserialize, Serialize};
 pub struct TagDocument {
     pub _id: ObjectId,
 
-    pub createdAt: DateTime,
-    pub usedSince: DateTime,
+    pub used_since: DateTime,
+    pub notable_project: Option<ObjectId>,
 
     pub name: String,
     pub description: Option<String>,
     pub website: Option<String>,
 
     pub score: Option<u8>,
-    pub notableProject: Option<ObjectId>,
 }
 
 #[allow(non_snake_case)]
@@ -25,25 +24,24 @@ pub struct Tag {
     #[serde(rename = "id")]
     pub _id: String,
 
-    pub createdAt: String,
-    pub usedSince: String,
+    pub used_since: String,
+    pub notable_project: Option<String>,
 
     pub name: String,
     pub description: Option<String>,
     pub website: Option<String>,
 
     pub score: Option<u8>,
-    pub notableProject: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct TagInput {
-    pub usedSince: String,
+    pub used_since: String,
+    pub notable_project: Option<String>,
 
     pub name: String,
     pub description: Option<String>,
     pub website: Option<String>,
 
     pub score: Option<u8>,
-    pub notableProject: Option<String>,
 }

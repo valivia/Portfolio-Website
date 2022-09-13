@@ -12,6 +12,8 @@ use mongodb::options::ReturnDocument;
 use mongodb::Database;
 use rocket::serde::json::Json;
 
+use anyhow::Result;
+
 pub async fn find_project(
     db: &Database,
     limit: i64,
@@ -30,17 +32,22 @@ pub async fn find_project(
     while let Some(result) = cursor.try_next().await? {
         // transform ObjectId to String
         let project_json = Project {
-            _id: result._id.to_string(),
+            id: result.id.to_string(),
+
+            created_at: result.created_at.try_to_rfc3339_string().unwrap(),
+            updated_at: result.updated_at.try_to_rfc3339_string().unwrap(),
+
             name: result.name.to_string(),
-            createdAt: result.createdAt.to_string(),
-            description: result.description.into(),
-            markdown: result.markdown.into(),
-            status: result.status.into(),
-            isPinned: result.isPinned.into(),
-            isProject: result.isProject.into(),
+            description: result.description,
+            markdown: result.markdown,
+
+            status: result.status,
+
+            is_pinned: result.is_pinned,
+            is_project: result.is_project,
+
             tags: vec![],
             assets: vec![],
-            updatedAt: todo!(),
         };
         projects.push(project_json);
     }
@@ -59,38 +66,33 @@ pub async fn find_project_by_id(
         return Ok(None);
     }
     let unwrapped_doc = project_doc.unwrap();
-    // transform ObjectId to String
-    let project_json = Project {
-        _id: unwrapped_doc._id.to_string(),
-        name: unwrapped_doc.name.to_string(),
-        createdAt: unwrapped_doc.createdAt.to_string(),
-        description: todo!(),
-        markdown: todo!(),
-        status: todo!(),
-        isPinned: todo!(),
-        isProject: todo!(),
-        tags: todo!(),
-        assets: todo!(),
-        updatedAt: todo!(),
-    };
+
+    let project_json = Project::from(unwrapped_doc);
 
     Ok(Some(project_json))
 }
 
-pub async fn insert_project(
-    db: &Database,
-    input: Json<ProjectInput>,
-) -> mongodb::error::Result<String> {
+pub async fn insert_project(db: &Database, input: Json<ProjectInput>) -> Result<String> {
     let collection = db.collection::<Document>("project");
-    let createdAt = if let Ok(date) = DateTime::parse_rfc3339_str(input.createdAt.clone()) {
-        date
-    } else {
-        return Err(????);
-    };
-
+    let created_at = DateTime::parse_rfc3339_str(input.created_at.clone())?;
     let insert_one_result = collection
         .insert_one(
-            doc! {"name": input.name.clone(), "createdAt": createdAt, "description": input.description.clone(), "markdown": input.markdown.clone(), "isPinned": input.isPinned, "isProject": input.isProject},
+            doc! {
+                "created_at": created_at,
+                "updated_at": created_at,
+
+                "name": input.name.clone(),
+                "description": input.description.clone(),
+                "markdown": input.markdown.clone(),
+
+                "status": input.status.to_string(),
+
+                "is_pinned": input.is_pinned,
+                "is_project": input.is_project,
+
+                "assets": [],
+                "tags": []
+            },
             None,
         )
         .await?;
@@ -122,20 +124,8 @@ pub async fn update_project_by_id(
         return Ok(None);
     }
     let unwrapped_doc = project_doc.unwrap();
-    // transform ObjectId to String
-    let project_json = Project {
-        _id: unwrapped_doc._id.to_string(),
-        name: unwrapped_doc.name.to_string(),
-        createdAt: unwrapped_doc.createdAt.to_string(),
-        updatedAt: todo!(),
-        description: todo!(),
-        markdown: todo!(),
-        status: todo!(),
-        isPinned: todo!(),
-        isProject: todo!(),
-        tags: todo!(),
-        assets: todo!(),
-    };
+
+    let project_json = Project::from(unwrapped_doc);
 
     Ok(Some(project_json))
 }
@@ -155,20 +145,8 @@ pub async fn delete_project_by_id(
     }
 
     let unwrapped_doc = project_doc.unwrap();
-    // transform ObjectId to String
-    let project_json = Project {
-        _id: unwrapped_doc._id.to_string(),
-        name: unwrapped_doc.name.to_string(),
-        createdAt: unwrapped_doc.createdAt.to_string(),
-        updatedAt: todo!(),
-        description: todo!(),
-        markdown: todo!(),
-        status: todo!(),
-        isPinned: todo!(),
-        isProject: todo!(),
-        tags: todo!(),
-        assets: todo!(),
-    };
+
+    let project_json = Project::from(unwrapped_doc);
 
     Ok(Some(project_json))
 }

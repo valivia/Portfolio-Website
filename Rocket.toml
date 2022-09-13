@@ -3,8 +3,8 @@ limits = {file = "50 Mib", data-form = "50 Mib"}
 port = 9302
 
 [debug]
-log = "normal"
+log_level = "normal"
 
 [release]
-log = "critical"
+log_level = "critical"
 port = 9301
