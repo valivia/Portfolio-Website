@@ -7,6 +7,12 @@
 }
 
 @font-face {
+  font-family: "raleway";
+  src: url("/raleway.ttf");
+  font-display: swap;
+}
+
+@font-face {
   font-family: "tbhc";
   src: url("/tbhc.ttf");
   font-display: swap;
@@ -31,7 +37,7 @@ a {
 }
 * {
   box-sizing: border-box;
-  font-family: "abel", Helvetica, sans-serif;
+  font-family: $font;
 }
 
 /* Scrollbar */

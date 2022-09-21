@@ -17,6 +17,8 @@ $tetiary: rgb(8, 8, 8);
 $quaternary: black;
 $media-server: "https://portfolio.xayania.com/media";
 
+$font: "abel", Helvetica, sans-serif;
+
 @mixin noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
