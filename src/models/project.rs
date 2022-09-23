@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter};
 
-use mongodb::bson::oid::ObjectId;
-use mongodb::bson::DateTime;
+use mongodb::bson::{datetime, DateTime, Document};
+use mongodb::bson::{doc, oid::ObjectId};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -49,7 +49,11 @@ pub struct ProjectDocument {
 impl ProjectDocument {
     pub fn get_asset_by_id(self, id: String) -> Option<Asset> {
         let project: Project = self.into();
-        project.assets.iter().find(|entry| entry._id == id).map(|data| data.to_owned())
+        project
+            .assets
+            .iter()
+            .find(|entry| entry._id == id)
+            .map(|data| data.to_owned())
     }
 }
 
@@ -75,7 +79,10 @@ pub struct Project {
 
 impl Project {
     pub fn get_asset_by_id(self, id: String) -> Option<Asset> {
-        self.assets.iter().find(|entry| entry._id == id).map(|data| data.to_owned())
+        self.assets
+            .iter()
+            .find(|entry| entry._id == id)
+            .map(|data| data.to_owned())
     }
 }
 
@@ -112,4 +119,42 @@ pub struct ProjectInput {
     pub is_project: bool,
 
     pub tags: Option<Vec<Tag>>,
+}
+
+impl ProjectInput {
+    pub fn into_doc(self) -> Result<Document, datetime::Error> {
+        let created_at = DateTime::parse_rfc3339_str(self.created_at)?;
+
+        Ok(doc! {
+            "created_at": created_at,
+            "updated_at": created_at,
+
+            "name": self.name,
+            "description": self.description,
+            "markdown": self.markdown,
+
+            "status": self.status.to_string(),
+
+            "is_pinned": self.is_pinned,
+            "is_project": self.is_project,
+
+            "assets": [],
+            "tags": []
+        })
+    }
+
+    pub fn validate(&self) -> Result<(), String> {
+        DateTime::parse_rfc3339_str(&self.created_at).map_err(|_| "Invalid date format.")?;
+
+        // Name.
+        let name_overflow: i64 = 32 - self.name.chars().count() as i64;
+        if name_overflow < 0 {
+            return Err(format!(
+                "Project name is {} characters too long.",
+                name_overflow as u64
+            ));
+        }
+
+        Ok(())
+    }
 }

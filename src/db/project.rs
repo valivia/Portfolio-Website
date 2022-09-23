@@ -14,11 +14,9 @@ use rocket::serde::json::Json;
 
 use anyhow::Result;
 
-pub async fn find(
-    db: &Database,
-    limit: i64,
-    page: i64,
-) -> mongodb::error::Result<Vec<Project>> {
+use super::asset::InsertError;
+
+pub async fn find(db: &Database, limit: i64, page: i64) -> mongodb::error::Result<Vec<Project>> {
     let collection = db.collection::<ProjectDocument>("project");
 
     let find_options = FindOptions::builder()
@@ -37,10 +35,7 @@ pub async fn find(
     Ok(projects)
 }
 
-pub async fn find_by_id(
-    db: &Database,
-    oid: ObjectId,
-) -> mongodb::error::Result<Option<Project>> {
+pub async fn find_by_id(db: &Database, oid: ObjectId) -> mongodb::error::Result<Option<Project>> {
     let collection = db.collection::<ProjectDocument>("project");
 
     let project_doc = collection.find_one(doc! {"_id":oid }, None).await?;
@@ -54,32 +49,17 @@ pub async fn find_by_id(
     Ok(Some(project_json))
 }
 
-pub async fn insert(db: &Database, input: Json<ProjectInput>) -> Result<String> {
+pub async fn insert(db: &Database, input: Json<ProjectInput>) -> Result<ObjectId, InsertError> {
     let collection = db.collection::<Document>("project");
-    let created_at = DateTime::parse_rfc3339_str(input.created_at.clone())?;
+
+    let doc = input.into_inner().into_doc().map_err(|_| InsertError::Input)?;
+
     let insert_one_result = collection
-        .insert_one(
-            doc! {
-                "created_at": created_at,
-                "updated_at": created_at,
+        .insert_one(doc, None)
+        .await
+        .map_err(|_| InsertError::Database)?;
 
-                "name": input.name.clone(),
-                "description": input.description.clone(),
-                "markdown": input.markdown.clone(),
-
-                "status": input.status.to_string(),
-
-                "is_pinned": input.is_pinned,
-                "is_project": input.is_project,
-
-                "assets": [],
-                "tags": []
-            },
-            None,
-        )
-        .await?;
-
-    Ok(insert_one_result.inserted_id.to_string())
+    Ok(insert_one_result.inserted_id.as_object_id().unwrap())
 }
 
 pub async fn update(
@@ -112,10 +92,7 @@ pub async fn update(
     Ok(Some(project_json))
 }
 
-pub async fn delete(
-    db: &Database,
-    oid: ObjectId,
-) -> mongodb::error::Result<Option<Project>> {
+pub async fn delete(db: &Database, oid: ObjectId) -> mongodb::error::Result<Option<Project>> {
     let collection = db.collection::<ProjectDocument>("project");
 
     // if you just unwrap,, when there is no document it results in 500 error.
