@@ -1,9 +1,11 @@
 use std::fmt::{Display, Formatter};
 
-use mongodb::bson::{datetime, DateTime, Document};
+use mongodb::bson::{datetime, Document};
 use mongodb::bson::{doc, oid::ObjectId};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+
+use chrono::{DateTime, NaiveDateTime, Utc};
 
 use super::{
     asset::{Asset, AssetDocument},
@@ -31,8 +33,8 @@ pub struct ProjectDocument {
     #[serde(rename = "_id")]
     pub id: ObjectId,
 
-    pub created_at: DateTime,
-    pub updated_at: DateTime,
+    pub created_at: mongodb::bson::DateTime,
+    pub updated_at: mongodb::bson::DateTime,
 
     pub name: String,
     pub description: Option<String>,
@@ -106,9 +108,9 @@ impl From<ProjectDocument> for Project {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ProjectInput {
-    pub created_at: String,
+    pub created_at: DateTime<Utc>,
 
     pub name: String,
     pub description: Option<String>,
@@ -123,7 +125,7 @@ pub struct ProjectInput {
 
 impl ProjectInput {
     pub fn into_doc(self) -> Result<Document, datetime::Error> {
-        let created_at = DateTime::parse_rfc3339_str(self.created_at)?;
+        let created_at = mongodb::bson::DateTime::from_millis(self.created_at.timestamp_millis());
 
         Ok(doc! {
             "created_at": created_at,
@@ -144,8 +146,6 @@ impl ProjectInput {
     }
 
     pub fn validate(&self) -> Result<(), String> {
-        DateTime::parse_rfc3339_str(&self.created_at).map_err(|_| "Invalid date format.")?;
-
         // Name.
         let name_overflow: i64 = 32 - self.name.chars().count() as i64;
         if name_overflow < 0 {

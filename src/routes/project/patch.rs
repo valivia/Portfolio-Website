@@ -6,11 +6,9 @@ use mongodb::Database;
 use mongodb::bson::oid::ObjectId;
 use rocket::serde::json::Json;
 use rocket::State;
-use rocket_okapi::openapi;
 
 use crate::db::project;
 
-#[openapi(tag = "Project")]
 #[patch("/project/<_id>", data = "<input>")]
 pub async fn patch(
     db: &State<Database>,
@@ -36,10 +34,10 @@ pub async fn patch(
         }
         Err(_error) => {
             println!("{:?}", _error);
-            return Err(CustomError::build(
+            Err(CustomError::build(
                 400,
                 Some(format!("Project not found with _id {}", &_id)),
-            ));
+            ))
         }
     }
 }

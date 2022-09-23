@@ -11,9 +11,7 @@ pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
             "/",
             openapi_get_routes![
                 // Project
-                project::post::post,
                 project::get::get_all,
-                project::patch::patch,
                 project::get::get_by_id,
                 project::delete::delete,
                 // Tag
@@ -28,5 +26,12 @@ pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
                 asset::patch::patch,
             ],
         )
-        .mount("/", routes![asset::post::post,])
+        .mount(
+            "/",
+            routes![
+                asset::post::post,
+                project::post::post,
+                project::patch::patch,
+            ],
+        )
 }
