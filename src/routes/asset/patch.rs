@@ -5,7 +5,7 @@ use rocket::serde::json::Json;
 use rocket::State;
 
 use crate::db::asset;
-use crate::db::asset::InsertError;
+use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::models::asset::{AssetUpdate, Asset};
 use crate::HTTPErr;
@@ -23,9 +23,9 @@ pub async fn patch(
     let result = asset::patch(db, oid, input.into_inner())
         .await
         .map_err(|error| match error {
-            InsertError::NotFound => CustomError::build(404, Some("No asset with this ID exists")),
-            InsertError::Input => CustomError::build(400, Some("Invalid date format")),
-            InsertError::Database => {
+            DatabaseError::NotFound => CustomError::build(404, Some("No asset with this ID exists")),
+            DatabaseError::Input => CustomError::build(400, Some("Invalid date format")),
+            DatabaseError::Database => {
                 CustomError::build(500, Some("Failed to update asset in the database"))
             }
         })?;

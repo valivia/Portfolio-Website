@@ -1,21 +1,21 @@
-use std::thread;
-
+use chrono::DateTime;
 use image as Image;
 use image::io::Reader as ImageReader;
-use mongodb::bson::DateTime;
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
 use std::path::PathBuf;
+use std::thread;
 use std::time::Instant;
 use tokio::fs::remove_file;
 
 use mongodb::bson::oid::ObjectId;
 use rocket::form::Form;
 
-use crate::db::asset::{insert, InsertError};
+use crate::db::asset::{insert};
+use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
-use crate::models::asset::{AssetInsert, AssetPost, Asset};
+use crate::models::asset::{Asset, AssetInsert, AssetPost};
 use crate::{HTTPErr, HTTPOption};
 
 #[post("/asset", data = "<input>")]
@@ -27,7 +27,7 @@ pub async fn post(
 
     // input validation.
     let created_parsed = HTTPErr!(
-        DateTime::parse_rfc3339_str(&input.created_at),
+        DateTime::parse_from_rfc3339(&input.created_at),
         400,
         "Invalid created_at"
     );
@@ -87,7 +87,7 @@ pub async fn post(
 
     let asset_input = AssetInsert {
         id,
-        created_at: created_parsed,
+        created_at: created_parsed.into(),
         project_id: project_id_parsed,
         alt: input.alt.to_owned(),
         description: input.description.to_owned(),
@@ -103,13 +103,13 @@ pub async fn post(
         Err(error) => {
             let _ = remove_file(archive_path).await; // can't do anything if this fails.
             match error {
-                InsertError::NotFound => {
+                DatabaseError::NotFound => {
                     return Err(CustomError::build(
                         400,
                         Some("No project with this ID exists"),
                     ))
                 }
-                InsertError::Database => {
+                DatabaseError::Database => {
                     return Err(CustomError::build(500, Some("Failed to create db entry.")))
                 }
                 _ => return Err(CustomError::build(500, Some("Unexpected server error."))),

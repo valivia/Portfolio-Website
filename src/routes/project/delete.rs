@@ -4,36 +4,31 @@ use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
 
-use crate::HTTPErr;
 use crate::db::project;
+use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::models::project::Project;
 use crate::request_guards::basic::ApiKey;
+use crate::HTTPErr;
 
 #[delete("/project/<_id>")]
 pub async fn delete(
     db: &State<Database>,
     _id: String,
-    _key: ApiKey,
 ) -> Result<Json<Project>, CustomError> {
     let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
-    match project::delete(db, oid).await {
-        Ok(_project_doc) => {
-            if _project_doc.is_none() {
-                return Err(CustomError::build(
-                    400,
-                    Some(format!("Project not found with _id {}", &_id)),
-                ));
+    let result = project::delete(db, oid)
+        .await
+        .map_err(|error| match error {
+            DatabaseError::NotFound => {
+                CustomError::build(404, Some("No project with this ID exists"))
             }
-            Ok(Json(_project_doc.unwrap()))
-        }
-        Err(_error) => {
-            println!("{:?}", _error);
-            Err(CustomError::build(
-                400,
-                Some(format!("Project not found with _id {}", &_id)),
-            ))
-        }
-    }
+            DatabaseError::Database => {
+                CustomError::build(500, Some("Failed to delete project from the database"))
+            }
+            _ => CustomError::build(500, Some("Unexpected server error.")),
+        })?;
+
+    Ok(Json(result))
 }

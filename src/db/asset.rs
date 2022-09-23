@@ -1,23 +1,18 @@
+use crate::errors::database::DatabaseError;
 use crate::models::asset::{Asset, AssetInsert, AssetUpdate};
-use crate::models::project::ProjectDocument;
+use crate::models::project::{ProjectDocument, Project};
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::{doc, DateTime};
 use mongodb::options::{FindOneAndUpdateOptions, ReturnDocument};
 use mongodb::Database;
 
-pub enum InsertError {
-    NotFound,
-    Database,
-    Input,
-}
-
-pub async fn insert(db: &Database, input: AssetInsert) -> Result<Asset, InsertError> {
+pub async fn insert(db: &Database, input: AssetInsert) -> Result<Asset, DatabaseError> {
     let projects = db.collection::<ProjectDocument>("project");
     let id = input.id.clone().to_string();
 
     let query_options = FindOneAndUpdateOptions::builder()
-    .return_document(ReturnDocument::After)
-    .build();
+        .return_document(ReturnDocument::After)
+        .build();
 
     let update_result = match projects
         .find_one_and_update(
@@ -34,55 +29,55 @@ pub async fn insert(db: &Database, input: AssetInsert) -> Result<Asset, InsertEr
         Ok(data) => data,
         Err(error) => {
             eprintln!("{error}");
-            return Err(InsertError::Database);
+            return Err(DatabaseError::Database);
         }
     };
 
     match update_result {
-        None => Err(InsertError::NotFound),
+        None => Err(DatabaseError::NotFound),
         Some(data) => match data.get_asset_by_id(id) {
             Some(data) => Ok(data),
-            None => Err(InsertError::Database),
+            None => Err(DatabaseError::Database),
         },
     }
 }
 
-pub async fn delete(db: &Database, oid: ObjectId) -> Result<(), InsertError> {
+pub async fn delete(db: &Database, oid: ObjectId) -> Result<Asset, DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
 
-    let update_result = match collection
-        .update_one(
+    let query_options = FindOneAndUpdateOptions::builder()
+        .return_document(ReturnDocument::Before)
+        .build();
+
+    let project_doc = collection
+        .find_one_and_update(
             doc! {"assets._id": oid},
             doc! {"$pull": { "assets": { "_id": oid }}},
-            None,
+            query_options,
         )
         .await
-    {
-        Ok(data) => data,
-        Err(error) => {
+        .map_err(|error| {
             eprintln!("{error}");
-            return Err(InsertError::Database);
-        }
-    };
+            DatabaseError::Database
+        })?
+        .ok_or(DatabaseError::NotFound)?;
 
-    match update_result.modified_count {
-        0 => Err(InsertError::NotFound),
-        1 => Ok(()),
-        _ => unreachable!("delete_one should only delete one document"),
-    }
+    let project = Project::from(project_doc);
+
+    let asset = project.assets.iter().find(|entry| entry._id == oid.to_string()).ok_or(DatabaseError::Database)?.to_owned();
+
+    Ok(asset)
 }
 
-pub async fn patch(db: &Database, oid: ObjectId, input: AssetUpdate) -> Result<Asset, InsertError> {
+pub async fn patch(db: &Database, oid: ObjectId, input: AssetUpdate) -> Result<Asset, DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
-    let created_at =
-        DateTime::parse_rfc3339_str(&input.created_at).map_err(|_| InsertError::Input)?;
 
     let query_options = FindOneAndUpdateOptions::builder()
         .return_document(ReturnDocument::After)
         .build();
 
     let update_doc = doc! {
-        "assets.$.created_at": created_at,
+        "assets.$.created_at": DateTime::from(input.created_at),
 
         "assets.$.alt": input.alt,
         "assets.$.description": input.description,
@@ -102,15 +97,15 @@ pub async fn patch(db: &Database, oid: ObjectId, input: AssetUpdate) -> Result<A
         Ok(data) => data,
         Err(error) => {
             eprintln!("{error}");
-            return Err(InsertError::Database);
+            return Err(DatabaseError::Database);
         }
     };
 
     match update_result {
-        None => Err(InsertError::NotFound),
+        None => Err(DatabaseError::NotFound),
         Some(data) => match data.get_asset_by_id(oid.to_string()) {
             Some(data) => Ok(data),
-            None => Err(InsertError::Database),
+            None => Err(DatabaseError::Database),
         },
     }
 }

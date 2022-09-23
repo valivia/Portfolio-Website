@@ -11,6 +11,7 @@ strip = true
 
 [dependencies]
 anyhow = "1.0.64"
+bson = {version = "2.3.0", features = ["chrono-0_4"]}
 chrono = {version = "0.4", features = ["serde"]}
 dotenv = "0.15.0"
 futures = "0.3"

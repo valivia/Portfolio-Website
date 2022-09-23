@@ -1,3 +1,6 @@
+use std::thread;
+
+use crate::errors::database::DatabaseError;
 use crate::models::project::Project;
 use crate::models::project::ProjectDocument;
 use crate::models::project::ProjectInput;
@@ -13,8 +16,6 @@ use mongodb::Database;
 use rocket::serde::json::Json;
 
 use anyhow::Result;
-
-use super::asset::InsertError;
 
 pub async fn find(db: &Database, limit: i64, page: i64) -> mongodb::error::Result<Vec<Project>> {
     let collection = db.collection::<ProjectDocument>("project");
@@ -49,15 +50,18 @@ pub async fn find_by_id(db: &Database, oid: ObjectId) -> mongodb::error::Result<
     Ok(Some(project_json))
 }
 
-pub async fn insert(db: &Database, input: Json<ProjectInput>) -> Result<ObjectId, InsertError> {
+pub async fn insert(db: &Database, input: Json<ProjectInput>) -> Result<ObjectId, DatabaseError> {
     let collection = db.collection::<Document>("project");
 
-    let doc = input.into_inner().into_doc().map_err(|_| InsertError::Input)?;
+    let doc = input
+        .into_inner()
+        .into_doc()
+        .map_err(|_| DatabaseError::Input)?;
 
     let insert_one_result = collection
         .insert_one(doc, None)
         .await
-        .map_err(|_| InsertError::Database)?;
+        .map_err(|_| DatabaseError::Database)?;
 
     Ok(insert_one_result.inserted_id.as_object_id().unwrap())
 }
@@ -92,20 +96,23 @@ pub async fn update(
     Ok(Some(project_json))
 }
 
-pub async fn delete(db: &Database, oid: ObjectId) -> mongodb::error::Result<Option<Project>> {
+pub async fn delete(db: &Database, oid: ObjectId) -> Result<Project, DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
 
-    // if you just unwrap,, when there is no document it results in 500 error.
-    let project_doc = collection
-        .find_one_and_delete(doc! {"_id":oid }, None)
-        .await?;
-    if project_doc.is_none() {
-        return Ok(None);
-    }
+    let project = Project::from(
+        collection
+            .find_one_and_delete(doc! {"_id":oid }, None)
+            .await
+            .map_err(|error| {
+                eprintln!("{error}");
+                DatabaseError::Database
+            })?
+            .ok_or(DatabaseError::NotFound)?,
+    );
 
-    let unwrapped_doc = project_doc.unwrap();
+    project.assets.iter().for_each(|asset| {
+        asset.delete_files();
+    });
 
-    let project_json = Project::from(unwrapped_doc);
-
-    Ok(Some(project_json))
+    Ok(project)
 }

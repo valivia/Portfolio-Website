@@ -1,4 +1,4 @@
-use crate::db::asset::InsertError;
+use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::models::project::{ProjectInput};
 use mongodb::bson::doc;
@@ -13,7 +13,7 @@ pub async fn post(db: &State<Database>, input: Json<ProjectInput>) -> Result<(),
     project::insert(db, input)
         .await
         .map_err(|error| match error {
-            InsertError::Database => CustomError::build(500, Some("Failed to create db entry.")),
+            DatabaseError::Database => CustomError::build(500, Some("Failed to create db entry.")),
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
