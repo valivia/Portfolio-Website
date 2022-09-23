@@ -1,5 +1,5 @@
 use crate::errors::response::CustomError;
-use crate::models::project::{ProjectInput, Project};
+use crate::models::tag::{TagInput, Tag};
 use crate::request_guards::basic::ApiKey;
 use mongodb::bson::doc;
 use mongodb::Database;
@@ -8,37 +8,37 @@ use rocket::serde::json::Json;
 use rocket::State;
 use rocket_okapi::openapi;
 
-use crate::db::project;
+use crate::db::tag;
 
-#[openapi(tag = "Project")]
-#[patch("/project/<_id>", data = "<input>")]
+#[openapi(tag = "Tag")]
+#[patch("/tag/<_id>", data = "<input>")]
 pub async fn patch(
     db: &State<Database>,
     _key: ApiKey,
     _id: String,
-    input: Json<ProjectInput>,
-) -> Result<Json<Project>, CustomError> {
+    input: Json<TagInput>,
+) -> Result<Json<Tag>, CustomError> {
     let oid = ObjectId::parse_str(&_id);
 
     if oid.is_err() {
         return Err(CustomError::build(400, Some("Invalid _id format.".to_string())));
     }
 
-    match project::update(db, oid.unwrap(), input).await {
-        Ok(_project_doc) => {
-            if _project_doc.is_none() {
+    match tag::update(db, oid.unwrap(), input).await {
+        Ok(_tag_doc) => {
+            if _tag_doc.is_none() {
                 return Err(CustomError::build(
                     400,
-                    Some(format!("Project not found with _id {}", &_id)),
+                    Some(format!("Tag not found with _id {}", &_id)),
                 ));
             }
-            Ok(Json(_project_doc.unwrap()))
+            Ok(Json(_tag_doc.unwrap()))
         }
         Err(_error) => {
             println!("{:?}", _error);
             return Err(CustomError::build(
                 400,
-                Some(format!("Project not found with _id {}", &_id)),
+                Some(format!("Tag not found with _id {}", &_id)),
             ));
         }
     }

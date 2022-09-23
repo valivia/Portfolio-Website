@@ -7,34 +7,55 @@ use rocket_okapi::OpenApiError;
 /// error type
 #[derive(Debug, serde::Serialize, schemars::JsonSchema)]
 pub struct ErrorContent {
-    // HTTP Status Code returned
+    /// HTTP Status Code returned
     code: u16,
-    // Reason for an error
+    /// Reason for an error
     reason: String,
-    // Description for an error if any
+    /// Description for an error if any
     description: Option<String>,
+}
+
+/// Returns HTTP error if functions returns a result error.
+#[macro_export]
+macro_rules! HTTPErr {
+    ($e:expr, $code:expr, $msg:expr) => {
+        match $e {
+            Ok(x) => x,
+            Err(_) => return Err(CustomError::build($code, Some($msg))),
+        }
+    };
+}
+
+/// Returns HTTP error if functions returns None.
+#[macro_export]
+macro_rules! HTTPOption {
+    ($e:expr, $code:expr, $msg:expr) => {
+        match $e {
+            Some(x) => x,
+            None => return Err(CustomError::build($code, Some($msg))),
+        }
+    };
 }
 
 /// Error messages returned to user
 #[derive(Debug, serde::Serialize, schemars::JsonSchema)]
-pub struct MyError {
+pub struct CustomError {
     pub error: ErrorContent,
 }
 
-impl MyError {
-    // building a custom error.
-    pub fn build(code: u16, description: Option<String>) -> MyError {
-        let reason: String;
-        match code {
-            400 => reason = "Bad Request".to_string(),
-            401 => reason = "Unauthorized".to_string(),
-            _ => reason = "Error".to_string(),
-        }
-        MyError {
+impl CustomError {
+    /// building a custom error.
+    pub fn build<S: Into<String>>(code: u16, description: Option<S>) -> CustomError {
+        let reason = match code {
+            400 => "Bad Request".to_string(),
+            401 => "Unauthorized".to_string(),
+            _ => "Error".to_string(),
+        };
+        CustomError {
             error: ErrorContent {
                 code,
                 reason,
-                description,
+                description: description.map(S::into),
             },
         }
     }
@@ -42,7 +63,7 @@ impl MyError {
 
 /// Create my custom response
 pub fn bad_request_response(gen: &mut OpenApiGenerator) -> okapi::openapi3::Response {
-    let schema = gen.json_schema::<MyError>();
+    let schema = gen.json_schema::<CustomError>();
     okapi::openapi3::Response {
         description: "\
         # 400 Bad Request\n\
@@ -60,7 +81,7 @@ pub fn bad_request_response(gen: &mut OpenApiGenerator) -> okapi::openapi3::Resp
 }
 
 pub fn unauthorized_response(gen: &mut OpenApiGenerator) -> okapi::openapi3::Response {
-    let schema = gen.json_schema::<MyError>();
+    let schema = gen.json_schema::<CustomError>();
     okapi::openapi3::Response {
         description: "\
         # 401 Unauthorized\n\
@@ -77,7 +98,7 @@ pub fn unauthorized_response(gen: &mut OpenApiGenerator) -> okapi::openapi3::Res
     }
 }
 
-impl<'r> rocket::response::Responder<'r, 'static> for MyError {
+impl<'r> rocket::response::Responder<'r, 'static> for CustomError {
     fn respond_to(self, _: &'r rocket::Request<'_>) -> rocket::response::Result<'static> {
         // Convert object to json
         let body = serde_json::to_string(&self).unwrap();
@@ -89,7 +110,7 @@ impl<'r> rocket::response::Responder<'r, 'static> for MyError {
     }
 }
 
-impl OpenApiResponderInner for MyError {
+impl OpenApiResponderInner for CustomError {
     fn responses(gen: &mut OpenApiGenerator) -> Result<Responses, OpenApiError> {
         use rocket_okapi::okapi::openapi3::RefOr;
         Ok(Responses {

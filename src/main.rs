@@ -2,6 +2,7 @@
 extern crate rocket;
 
 use dotenv::dotenv;
+use rocket::serde::json::{Value, json};
 use rocket_okapi::swagger_ui::{make_swagger_ui, SwaggerUIConfig};
 
 mod db;
@@ -11,12 +12,21 @@ mod models;
 mod request_guards;
 mod routes;
 
+#[catch(404)]
+fn not_found() -> Value {
+    json!({
+        "status": "error",
+        "reason": "Resource was not found."
+    })
+}
+
 #[launch]
 fn rocket() -> _ {
     dotenv().ok();
     let r = rocket::build()
+        .register("/", catchers![not_found])
         .attach(db::init())
-        .attach(fairings::cors::CORS)
+        .attach(fairings::cors::Cors)
         .mount(
             "/api-docs",
             make_swagger_ui(&SwaggerUIConfig {

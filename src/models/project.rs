@@ -46,6 +46,13 @@ pub struct ProjectDocument {
     pub tags: Vec<TagDocument>,
 }
 
+impl ProjectDocument {
+    pub fn get_asset_by_id(self, id: String) -> Option<Asset> {
+        let project: Project = self.into();
+        project.assets.iter().find(|entry| entry._id == id).map(|data| data.to_owned())
+    }
+}
+
 #[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct Project {
@@ -66,9 +73,16 @@ pub struct Project {
     pub assets: Vec<Asset>,
 }
 
+impl Project {
+    pub fn get_asset_by_id(self, id: String) -> Option<Asset> {
+        self.assets.iter().find(|entry| entry._id == id).map(|data| data.to_owned())
+    }
+}
+
 impl From<ProjectDocument> for Project {
     fn from(x: ProjectDocument) -> Self {
-        let assets_parsed: Vec<Asset> = x.assets.iter().map(|x| Asset::from(x.clone())).collect();
+        let assets_parsed: Vec<Asset> = x.assets.iter().map(|y| Asset::from(y.clone())).collect();
+        let tags_parsed: Vec<Tag> = x.tags.iter().map(|y| Tag::from(y.clone())).collect();
         Project {
             id: x.id.to_string(),
             created_at: x.created_at.try_to_rfc3339_string().unwrap(),
@@ -79,7 +93,7 @@ impl From<ProjectDocument> for Project {
             status: x.status,
             is_pinned: x.is_pinned,
             is_project: x.is_project,
-            tags: vec![],
+            tags: tags_parsed,
             assets: assets_parsed,
         }
     }
@@ -96,4 +110,6 @@ pub struct ProjectInput {
     pub status: String,
     pub is_pinned: bool,
     pub is_project: bool,
+
+    pub tags: Option<Vec<Tag>>,
 }

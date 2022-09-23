@@ -34,6 +34,20 @@ pub struct Tag {
     pub score: Option<u8>,
 }
 
+impl From<TagDocument> for Tag {
+    fn from(x: TagDocument) -> Self {
+        Tag {
+            _id: x._id.to_string(),
+            used_since: x.used_since.try_to_rfc3339_string().unwrap(),
+            notable_project: x.notable_project.map(|id| id.to_string()),
+            name: x.name,
+            description: x.description,
+            website: x.website,
+            score: x.score,
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
 pub struct TagInput {
     pub used_since: String,

@@ -14,7 +14,7 @@ use rocket::serde::json::Json;
 
 use anyhow::Result;
 
-pub async fn find_project(
+pub async fn find(
     db: &Database,
     limit: i64,
     page: i64,
@@ -30,32 +30,14 @@ pub async fn find_project(
 
     let mut projects: Vec<Project> = vec![];
     while let Some(result) = cursor.try_next().await? {
-        // transform ObjectId to String
-        let project_json = Project {
-            id: result.id.to_string(),
-
-            created_at: result.created_at.try_to_rfc3339_string().unwrap(),
-            updated_at: result.updated_at.try_to_rfc3339_string().unwrap(),
-
-            name: result.name.to_string(),
-            description: result.description,
-            markdown: result.markdown,
-
-            status: result.status,
-
-            is_pinned: result.is_pinned,
-            is_project: result.is_project,
-
-            tags: vec![],
-            assets: vec![],
-        };
+        let project_json = Project::from(result);
         projects.push(project_json);
     }
 
     Ok(projects)
 }
 
-pub async fn find_project_by_id(
+pub async fn find_by_id(
     db: &Database,
     oid: ObjectId,
 ) -> mongodb::error::Result<Option<Project>> {
@@ -72,7 +54,7 @@ pub async fn find_project_by_id(
     Ok(Some(project_json))
 }
 
-pub async fn insert_project(db: &Database, input: Json<ProjectInput>) -> Result<String> {
+pub async fn insert(db: &Database, input: Json<ProjectInput>) -> Result<String> {
     let collection = db.collection::<Document>("project");
     let created_at = DateTime::parse_rfc3339_str(input.created_at.clone())?;
     let insert_one_result = collection
@@ -100,7 +82,7 @@ pub async fn insert_project(db: &Database, input: Json<ProjectInput>) -> Result<
     Ok(insert_one_result.inserted_id.to_string())
 }
 
-pub async fn update_project_by_id(
+pub async fn update(
     db: &Database,
     oid: ObjectId,
     input: Json<ProjectInput>,
@@ -130,7 +112,7 @@ pub async fn update_project_by_id(
     Ok(Some(project_json))
 }
 
-pub async fn delete_project_by_id(
+pub async fn delete(
     db: &Database,
     oid: ObjectId,
 ) -> mongodb::error::Result<Option<Project>> {

@@ -11,13 +11,13 @@ use crate::models::response::MessageResponse;
 use crate::db::project;
 
 #[openapi(tag = "Project")]
-#[post("/", data = "<input>")]
-pub async fn post_project(
+#[post("/project", data = "<input>")]
+pub async fn post(
     db: &State<Database>,
     input: Json<ProjectInput>,
 ) -> Result<Json<String>, BadRequest<Json<MessageResponse>>> {
     // can set with a single error like this.
-    match project::insert_project(db, input).await {
+    match project::insert(db, input).await {
         Ok(_project_doc_id) => Ok(Json(_project_doc_id)),
         Err(_error) => {
             println!("{:?}", _error);
