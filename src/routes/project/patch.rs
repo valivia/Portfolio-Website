@@ -1,7 +1,6 @@
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::models::project::{Project, ProjectInput};
-use crate::request_guards::basic::ApiKey;
 use crate::HTTPErr;
 use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;

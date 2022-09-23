@@ -4,6 +4,7 @@ use mongodb::bson::oid::ObjectId;
 use rocket::serde::json::Json;
 use rocket::State;
 
+use crate::HTTPErr;
 use crate::models::tag::Tag;
 use crate::db::tag;
 use crate::errors::response::CustomError;
@@ -50,13 +51,9 @@ pub async fn get_by_id(
     db: &State<Database>,
     _id: String,
 ) -> Result<Json<Tag>, CustomError> {
-    let oid = ObjectId::parse_str(&_id);
+    let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
-    if oid.is_err() {
-        return Err(CustomError::build(400, Some("Invalid _id format.".to_string())));
-    }
-
-    match tag::find_by_id(db, oid.unwrap()).await {
+    match tag::find_by_id(db, oid).await {
         Ok(_tag_doc) => {
             if _tag_doc.is_none() {
                 return Err(CustomError::build(
@@ -68,10 +65,10 @@ pub async fn get_by_id(
         }
         Err(_error) => {
             println!("{:?}", _error);
-            return Err(CustomError::build(
+            Err(CustomError::build(
                 400,
                 Some(format!("Tag not found with _id {}", &_id)),
-            ));
+            ))
         }
     }
 }

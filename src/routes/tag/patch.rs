@@ -1,3 +1,4 @@
+use crate::HTTPErr;
 use crate::errors::response::CustomError;
 use crate::models::tag::{TagInput, Tag};
 use crate::request_guards::basic::ApiKey;
@@ -16,13 +17,9 @@ pub async fn patch(
     _id: String,
     input: Json<TagInput>,
 ) -> Result<Json<Tag>, CustomError> {
-    let oid = ObjectId::parse_str(&_id);
+    let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
-    if oid.is_err() {
-        return Err(CustomError::build(400, Some("Invalid _id format.".to_string())));
-    }
-
-    match tag::update(db, oid.unwrap(), input).await {
+    match tag::update(db, oid, input).await {
         Ok(_tag_doc) => {
             if _tag_doc.is_none() {
                 return Err(CustomError::build(
@@ -34,10 +31,10 @@ pub async fn patch(
         }
         Err(_error) => {
             println!("{:?}", _error);
-            return Err(CustomError::build(
+            Err(CustomError::build(
                 400,
                 Some(format!("Tag not found with _id {}", &_id)),
-            ));
+            ))
         }
     }
 }
