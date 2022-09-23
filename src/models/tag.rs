@@ -1,6 +1,5 @@
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::DateTime;
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[allow(non_snake_case)]
@@ -19,7 +18,7 @@ pub struct TagDocument {
 }
 
 #[allow(non_snake_case)]
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Tag {
     #[serde(rename = "id")]
     pub _id: String,
@@ -48,7 +47,7 @@ impl From<TagDocument> for Tag {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TagInput {
     pub used_since: String,
     pub notable_project: Option<String>,

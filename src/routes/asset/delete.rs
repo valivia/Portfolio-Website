@@ -4,7 +4,6 @@ use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
 use mongodb::Database;
 use rocket::State;
-use rocket_okapi::openapi;
 use tokio::fs::remove_file;
 
 use crate::db::asset;
@@ -12,7 +11,6 @@ use crate::db::asset::InsertError;
 use crate::errors::response::CustomError;
 use crate::HTTPErr;
 
-#[openapi(tag = "asset")]
 #[delete("/asset/<id>")]
 pub async fn delete(db: &State<Database>, id: String) -> Result<(), CustomError> {
     dbg!(&id);

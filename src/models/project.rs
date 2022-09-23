@@ -2,17 +2,16 @@ use std::fmt::{Display, Formatter};
 
 use mongodb::bson::{datetime, Document};
 use mongodb::bson::{doc, oid::ObjectId};
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::{DateTime, Utc};
 
 use super::{
     asset::{Asset, AssetDocument},
     tag::{Tag, TagDocument},
 };
 
-#[derive(Debug, Serialize, Deserialize, Clone, JsonSchema, Copy)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum Status {
     Finished,
     InProgress,
@@ -60,7 +59,7 @@ impl ProjectDocument {
 }
 
 #[allow(non_snake_case)]
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Project {
     // #[serde(rename = "id")]
     pub id: String,

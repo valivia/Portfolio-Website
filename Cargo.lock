@@ -228,6 +228,7 @@ dependencies = [
  "js-sys",
  "num-integer",
  "num-traits",
+ "serde",
  "time 0.1.44",
  "wasm-bindgen",
  "winapi",
@@ -455,12 +456,6 @@ name = "dotenv"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
-
-[[package]]
-name = "dyn-clone"
-version = "1.0.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f94fa09c2aeea5b8839e414b7b841bf429fd25b9c522116ac97ee87856d88b2"
 
 [[package]]
 name = "either"
@@ -1162,29 +1157,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "okapi"
-version = "0.6.0-alpha-1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb085e00daf8d75b9dbf0ffdb4738e69503e28898d9641fa8bdc6ad536c7bcf4"
-dependencies = [
- "schemars",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "okapi"
-version = "0.7.0-rc.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce66b6366e049880a35c378123fddb630b1a1a3c37fa1ca70caaf4a09f6e2893"
-dependencies = [
- "log",
- "schemars",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1313,10 +1285,7 @@ dependencies = [
  "futures",
  "image",
  "mongodb",
- "okapi 0.6.0-alpha-1",
  "rocket",
- "rocket_okapi",
- "schemars",
  "serde",
  "serde_json",
  "tokio",
@@ -1589,35 +1558,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rocket_okapi"
-version = "0.8.0-rc.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "489f4f5b120762f7974e65b919fc462d0660fd8b839026d8985b850fe5acccb0"
-dependencies = [
- "either",
- "log",
- "okapi 0.7.0-rc.1",
- "rocket",
- "rocket_okapi_codegen",
- "schemars",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "rocket_okapi_codegen"
-version = "0.8.0-rc.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54f94d1ffe41472e08463d7a2674f1db04dc4df745285e8369b33d3cfd6b0308"
-dependencies = [
- "darling",
- "proc-macro2",
- "quote",
- "rocket_http",
- "syn",
-]
-
-[[package]]
 name = "rustc_version"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1668,31 +1608,6 @@ name = "ryu"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4501abdff3ae82a1c1b477a17252eb69cee9e66eb915c1abaa4f44d873df9f09"
-
-[[package]]
-name = "schemars"
-version = "0.8.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1847b767a3d62d95cbf3d8a9f0e421cf57a0d8aa4f411d4b16525afb0284d4ed"
-dependencies = [
- "dyn-clone",
- "indexmap",
- "schemars_derive",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "schemars_derive"
-version = "0.8.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af4d7e1b012cb3d9129567661a63755ea4b8a7386d339dc945ae187e403c6743"
-dependencies = [
- "proc-macro2",
- "quote",
- "serde_derive_internals",
- "syn",
-]
 
 [[package]]
 name = "scoped-tls"
@@ -1754,17 +1669,6 @@ name = "serde_derive"
 version = "1.0.144"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "94ed3a816fb1d101812f83e789f888322c34e291f894f19590dc310963e87a00"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "serde_derive_internals"
-version = "0.26.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85bf8229e7920a9f636479437026331ce11aa132b4dde37d121944a44d6e5f3c"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -1,7 +1,6 @@
 use mongodb::bson::{oid::ObjectId, doc};
 use mongodb::bson::{DateTime, Document};
 use rocket::fs::TempFile;
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[allow(non_snake_case)]
@@ -22,7 +21,7 @@ pub struct AssetDocument {
 }
 
 #[allow(non_snake_case)]
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Asset {
     #[serde(rename = "id")]
     pub _id: String,
@@ -58,7 +57,7 @@ impl From<AssetDocument> for Asset {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AssetUpdate {
     pub created_at: String,
 

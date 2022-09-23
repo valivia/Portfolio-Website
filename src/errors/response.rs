@@ -1,11 +1,5 @@
-use rocket_okapi::gen::OpenApiGenerator;
-use rocket_okapi::okapi;
-use rocket_okapi::okapi::openapi3::{MediaType, Responses};
-use rocket_okapi::response::OpenApiResponderInner;
-use rocket_okapi::OpenApiError;
-
 /// error type
-#[derive(Debug, serde::Serialize, schemars::JsonSchema)]
+#[derive(Debug, serde::Serialize)]
 pub struct ErrorContent {
     /// HTTP Status Code returned
     code: u16,
@@ -38,7 +32,7 @@ macro_rules! HTTPOption {
 }
 
 /// Error messages returned to user
-#[derive(Debug, serde::Serialize, schemars::JsonSchema)]
+#[derive(Debug, serde::Serialize)]
 pub struct CustomError {
     pub error: ErrorContent,
 }
@@ -61,43 +55,6 @@ impl CustomError {
     }
 }
 
-/// Create my custom response
-pub fn bad_request_response(gen: &mut OpenApiGenerator) -> okapi::openapi3::Response {
-    let schema = gen.json_schema::<CustomError>();
-    okapi::openapi3::Response {
-        description: "\
-        # 400 Bad Request\n\
-        The request given is wrongly formatted or data was missing. \
-        "
-        .to_owned(),
-        content: okapi::map! {
-            "application/json".to_owned() => MediaType {
-                schema: Some(schema),
-                ..Default::default()
-            }
-        },
-        ..Default::default()
-    }
-}
-
-pub fn unauthorized_response(gen: &mut OpenApiGenerator) -> okapi::openapi3::Response {
-    let schema = gen.json_schema::<CustomError>();
-    okapi::openapi3::Response {
-        description: "\
-        # 401 Unauthorized\n\
-        The authentication given was incorrect or insufficient. \
-        "
-        .to_owned(),
-        content: okapi::map! {
-            "application/json".to_owned() => MediaType {
-                schema: Some(schema),
-                ..Default::default()
-            }
-        },
-        ..Default::default()
-    }
-}
-
 impl<'r> rocket::response::Responder<'r, 'static> for CustomError {
     fn respond_to(self, _: &'r rocket::Request<'_>) -> rocket::response::Result<'static> {
         // Convert object to json
@@ -107,19 +64,5 @@ impl<'r> rocket::response::Responder<'r, 'static> for CustomError {
             .header(rocket::http::ContentType::JSON)
             .status(rocket::http::Status::new(self.error.code))
             .ok()
-    }
-}
-
-impl OpenApiResponderInner for CustomError {
-    fn responses(gen: &mut OpenApiGenerator) -> Result<Responses, OpenApiError> {
-        use rocket_okapi::okapi::openapi3::RefOr;
-        Ok(Responses {
-            responses: okapi::map! {
-                "400".to_owned() => RefOr::Object(bad_request_response(gen)),
-                // Note: 401 is already declared for ApiKey. so this is not essential.
-                // "401".to_owned() => RefOr::Object(unauthorized_response(gen)),
-            },
-            ..Default::default()
-        })
     }
 }

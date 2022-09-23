@@ -3,13 +3,11 @@ use mongodb::Database;
 use mongodb::bson::oid::ObjectId;
 use rocket::serde::json::Json;
 use rocket::State;
-use rocket_okapi::openapi;
 
 use crate::models::project::Project;
 use crate::db::project;
 use crate::errors::response::CustomError;
 
-#[openapi(tag = "Project")]
 #[get("/project?<limit>&<page>")]
 pub async fn get_all(
     db: &State<Database>,
@@ -47,7 +45,6 @@ pub async fn get_all(
     }
 }
 
-#[openapi(tag = "Project")]
 #[get("/project/<_id>")]
 pub async fn get_by_id(
     db: &State<Database>,

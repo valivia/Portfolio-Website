@@ -7,13 +7,10 @@ use rocket::fs::TempFile;
 use rocket::response::status::BadRequest;
 use rocket::serde::json::Json;
 use rocket::State;
-use rocket_okapi::openapi;
 
 use crate::models::response::MessageResponse;
-
 use crate::db::tag;
 
-#[openapi(tag = "Tag")]
 #[post("/tag", data = "<input>")]
 pub async fn post(
     db: &State<Database>,
@@ -30,7 +27,6 @@ pub async fn post(
     }
 }
 
-#[openapi(tag = "Tag")]
 #[post("/tag/<_id>", data = "<file>")]
 pub async fn post_icon(
     db: &State<Database>,

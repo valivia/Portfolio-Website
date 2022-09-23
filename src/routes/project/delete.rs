@@ -3,7 +3,6 @@ use mongodb::bson::oid::ObjectId;
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
-use rocket_okapi::openapi;
 
 use crate::HTTPErr;
 use crate::db::project;
@@ -11,7 +10,6 @@ use crate::errors::response::CustomError;
 use crate::models::project::Project;
 use crate::request_guards::basic::ApiKey;
 
-#[openapi(tag = "Project")]
 #[delete("/project/<_id>")]
 pub async fn delete(
     db: &State<Database>,

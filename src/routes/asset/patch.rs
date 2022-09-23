@@ -3,7 +3,6 @@ use mongodb::bson::oid::ObjectId;
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
-use rocket_okapi::openapi;
 
 use crate::db::asset;
 use crate::db::asset::InsertError;
@@ -11,7 +10,6 @@ use crate::errors::response::CustomError;
 use crate::models::asset::{AssetUpdate, Asset};
 use crate::HTTPErr;
 
-#[openapi(tag = "asset")]
 #[patch("/asset/<id>", data = "<input>")]
 pub async fn patch(
     db: &State<Database>,

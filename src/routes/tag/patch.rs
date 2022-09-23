@@ -6,11 +6,9 @@ use mongodb::Database;
 use mongodb::bson::oid::ObjectId;
 use rocket::serde::json::Json;
 use rocket::State;
-use rocket_okapi::openapi;
 
 use crate::db::tag;
 
-#[openapi(tag = "Tag")]
 #[patch("/tag/<_id>", data = "<input>")]
 pub async fn patch(
     db: &State<Database>,
