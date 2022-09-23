@@ -1,6 +1,6 @@
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
-use crate::models::project::{ProjectInput};
+use crate::models::project::ProjectInput;
 use mongodb::bson::doc;
 use mongodb::Database;
 use rocket::serde::json::Json;

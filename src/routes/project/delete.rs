@@ -8,7 +8,6 @@ use crate::db::project;
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::models::project::Project;
-use crate::request_guards::basic::ApiKey;
 use crate::HTTPErr;
 
 #[delete("/project/<_id>")]

@@ -115,7 +115,7 @@ pub struct ProjectInput {
     pub description: Option<String>,
     pub markdown: Option<String>,
 
-    pub status: String,
+    pub status: Status,
     pub is_pinned: bool,
     pub is_project: bool,
 
@@ -123,8 +123,8 @@ pub struct ProjectInput {
 }
 
 impl ProjectInput {
-    pub fn into_doc(self) -> Result<Document, datetime::Error> {
-        let created_at = mongodb::bson::DateTime::from_millis(self.created_at.timestamp_millis());
+    pub fn into_insert_doc(self) -> Result<Document, datetime::Error> {
+        let created_at: bson::DateTime = self.created_at.into();
 
         Ok(doc! {
             "created_at": created_at,
@@ -141,6 +141,24 @@ impl ProjectInput {
 
             "assets": [],
             "tags": []
+        })
+    }
+
+    pub fn into_update_doc(self) -> Result<Document, datetime::Error> {
+        let created_at: bson::DateTime = self.created_at.into();
+
+        Ok(doc! {
+            "created_at": created_at,
+            "updated_at": bson::DateTime::now(),
+
+            "name": self.name,
+            "description": self.description,
+            "markdown": self.markdown,
+
+            "status": self.status.to_string(),
+
+            "is_pinned": self.is_pinned,
+            "is_project": self.is_project,
         })
     }
 

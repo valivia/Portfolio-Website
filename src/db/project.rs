@@ -1,5 +1,3 @@
-use std::thread;
-
 use crate::errors::database::DatabaseError;
 use crate::models::project::Project;
 use crate::models::project::ProjectDocument;
@@ -8,7 +6,7 @@ use crate::models::project::ProjectInput;
 // use chrono::prelude::*;
 use futures::stream::TryStreamExt;
 use mongodb::bson::oid::ObjectId;
-use mongodb::bson::{doc, DateTime, Document};
+use mongodb::bson::{doc, Document};
 use mongodb::options::FindOneAndUpdateOptions;
 use mongodb::options::FindOptions;
 use mongodb::options::ReturnDocument;
@@ -17,7 +15,7 @@ use rocket::serde::json::Json;
 
 use anyhow::Result;
 
-pub async fn find(db: &Database, limit: i64, page: i64) -> mongodb::error::Result<Vec<Project>> {
+pub async fn find(db: &Database, limit: i64, page: i64) -> Result<Vec<Project>, DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
 
     let find_options = FindOptions::builder()
@@ -25,10 +23,17 @@ pub async fn find(db: &Database, limit: i64, page: i64) -> mongodb::error::Resul
         .skip(u64::try_from((page - 1) * limit).unwrap())
         .build();
 
-    let mut cursor = collection.find(None, find_options).await?;
+    let mut cursor = collection.find(None, find_options).await.map_err(|error| {
+        eprintln!("{error}");
+        DatabaseError::Database
+    })?;
 
     let mut projects: Vec<Project> = vec![];
-    while let Some(result) = cursor.try_next().await? {
+
+    while let Some(result) = cursor.try_next().await.map_err(|error| {
+        eprintln!("{error}");
+        DatabaseError::Database
+    })? {
         let project_json = Project::from(result);
         projects.push(project_json);
     }
@@ -36,18 +41,21 @@ pub async fn find(db: &Database, limit: i64, page: i64) -> mongodb::error::Resul
     Ok(projects)
 }
 
-pub async fn find_by_id(db: &Database, oid: ObjectId) -> mongodb::error::Result<Option<Project>> {
+pub async fn find_by_id(db: &Database, oid: ObjectId) -> Result<Project, DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
 
-    let project_doc = collection.find_one(doc! {"_id":oid }, None).await?;
-    if project_doc.is_none() {
-        return Ok(None);
-    }
-    let unwrapped_doc = project_doc.unwrap();
+    let project = Project::from(
+        collection
+            .find_one(doc! {"_id":oid }, None)
+            .await
+            .map_err(|error| {
+                eprintln!("{error}");
+                DatabaseError::Database
+            })?
+            .ok_or(DatabaseError::NotFound)?,
+    );
 
-    let project_json = Project::from(unwrapped_doc);
-
-    Ok(Some(project_json))
+    Ok(project)
 }
 
 pub async fn insert(db: &Database, input: Json<ProjectInput>) -> Result<ObjectId, DatabaseError> {
@@ -55,7 +63,7 @@ pub async fn insert(db: &Database, input: Json<ProjectInput>) -> Result<ObjectId
 
     let doc = input
         .into_inner()
-        .into_doc()
+        .into_insert_doc()
         .map_err(|_| DatabaseError::Input)?;
 
     let insert_one_result = collection
@@ -70,30 +78,31 @@ pub async fn update(
     db: &Database,
     oid: ObjectId,
     input: Json<ProjectInput>,
-) -> mongodb::error::Result<Option<Project>> {
+) -> Result<Project, DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
-    let find_one_and_update_options = FindOneAndUpdateOptions::builder()
+
+    let query_options = FindOneAndUpdateOptions::builder()
         .return_document(ReturnDocument::After)
         .build();
 
-    let created_at: DateTime = DateTime::now();
+    let update_doc = input
+        .into_inner()
+        .into_update_doc()
+        .map_err(|_| DatabaseError::Input)?;
 
-    let project_doc = collection
+    Ok(collection
         .find_one_and_update(
-            doc! {"_id":oid },
-            doc! {"$set": {"name": input.name.clone(), "createdAt": created_at}},
-            find_one_and_update_options,
+            doc! {"_id": oid},
+            doc! {"$set": update_doc},
+            query_options,
         )
-        .await?;
-
-    if project_doc.is_none() {
-        return Ok(None);
-    }
-    let unwrapped_doc = project_doc.unwrap();
-
-    let project_json = Project::from(unwrapped_doc);
-
-    Ok(Some(project_json))
+        .await
+        .map_err(|error| {
+            eprintln!("{error}");
+            DatabaseError::Database
+        })?
+        .ok_or(DatabaseError::NotFound)?
+        .into())
 }
 
 pub async fn delete(db: &Database, oid: ObjectId) -> Result<Project, DatabaseError> {
@@ -110,9 +119,7 @@ pub async fn delete(db: &Database, oid: ObjectId) -> Result<Project, DatabaseErr
             .ok_or(DatabaseError::NotFound)?,
     );
 
-    project.assets.iter().for_each(|asset| {
-        asset.delete_files();
-    });
+    project.assets.iter().for_each(|asset| asset.delete_files());
 
     Ok(project)
 }

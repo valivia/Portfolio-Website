@@ -1,12 +1,14 @@
 use mongodb::bson::doc;
-use mongodb::Database;
 use mongodb::bson::oid::ObjectId;
+use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
 
-use crate::models::project::Project;
 use crate::db::project;
+use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
+use crate::models::project::Project;
+use crate::HTTPErr;
 
 #[get("/project?<limit>&<page>")]
 pub async fn get_all(
@@ -36,42 +38,33 @@ pub async fn get_all(
     let limit: i64 = limit.unwrap_or(12);
     let page: i64 = page.unwrap_or(1);
 
-    match project::find(db, limit, page).await {
-        Ok(_project_docs) => Ok(Json(_project_docs)),
-        Err(_error) => {
-            println!("{:?}", _error);
-            Err(CustomError::build(400, Some(_error.to_string())))
-        }
-    }
+    let projects = project::find(db, limit, page)
+        .await
+        .map_err(|error| match error {
+            DatabaseError::Database => {
+                CustomError::build(500, Some("Failed to fetch this data from the database"))
+            }
+            _ => CustomError::build(500, Some("Unexpected server error.")),
+        })?;
+
+    Ok(Json(projects))
 }
 
 #[get("/project/<_id>")]
-pub async fn get_by_id(
-    db: &State<Database>,
-    _id: String,
-) -> Result<Json<Project>, CustomError> {
-    let oid = ObjectId::parse_str(&_id);
+pub async fn get_by_id(db: &State<Database>, _id: String) -> Result<Json<Project>, CustomError> {
+    let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
-    if oid.is_err() {
-        return Err(CustomError::build(400, Some("Invalid _id format.".to_string())));
-    }
-
-    match project::find_by_id(db, oid.unwrap()).await {
-        Ok(_project_doc) => {
-            if _project_doc.is_none() {
-                return Err(CustomError::build(
-                    400,
-                    Some(format!("Project not found with _id {}", &_id)),
-                ));
+    let project = project::find_by_id(db, oid)
+        .await
+        .map_err(|error| match error {
+            DatabaseError::NotFound => {
+                CustomError::build(404, Some("No project with this ID exists"))
             }
-            Ok(Json(_project_doc.unwrap()))
-        }
-        Err(_error) => {
-            println!("{:?}", _error);
-            return Err(CustomError::build(
-                400,
-                Some(format!("Project not found with _id {}", &_id)),
-            ));
-        }
-    }
+            DatabaseError::Database => {
+                CustomError::build(500, Some("Failed to fetch this data from the database"))
+            }
+            _ => CustomError::build(500, Some("Unexpected server error.")),
+        })?;
+
+    Ok(Json(project))
 }

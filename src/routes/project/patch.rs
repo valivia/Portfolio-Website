@@ -1,9 +1,11 @@
+use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
-use crate::models::project::{ProjectInput, Project};
+use crate::models::project::{Project, ProjectInput};
 use crate::request_guards::basic::ApiKey;
+use crate::HTTPErr;
 use mongodb::bson::doc;
-use mongodb::Database;
 use mongodb::bson::oid::ObjectId;
+use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
 
@@ -12,32 +14,22 @@ use crate::db::project;
 #[patch("/project/<_id>", data = "<input>")]
 pub async fn patch(
     db: &State<Database>,
-    _key: ApiKey,
     _id: String,
     input: Json<ProjectInput>,
 ) -> Result<Json<Project>, CustomError> {
-    let oid = ObjectId::parse_str(&_id);
+    let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
-    if oid.is_err() {
-        return Err(CustomError::build(400, Some("Invalid _id format.".to_string())));
-    }
-
-    match project::update(db, oid.unwrap(), input).await {
-        Ok(_project_doc) => {
-            if _project_doc.is_none() {
-                return Err(CustomError::build(
-                    400,
-                    Some(format!("Project not found with _id {}", &_id)),
-                ));
+    let project = project::update(db, oid, input)
+        .await
+        .map_err(|error| match error {
+            DatabaseError::NotFound => {
+                CustomError::build(404, Some("No project with this ID exists"))
             }
-            Ok(Json(_project_doc.unwrap()))
-        }
-        Err(_error) => {
-            println!("{:?}", _error);
-            Err(CustomError::build(
-                400,
-                Some(format!("Project not found with _id {}", &_id)),
-            ))
-        }
-    }
+            DatabaseError::Database => {
+                CustomError::build(500, Some("Failed to update this data in the database"))
+            }
+            _ => CustomError::build(500, Some("Unexpected server error.")),
+        })?;
+
+    Ok(Json(project))
 }

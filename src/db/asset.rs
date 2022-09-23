@@ -1,6 +1,6 @@
 use crate::errors::database::DatabaseError;
 use crate::models::asset::{Asset, AssetInsert, AssetUpdate};
-use crate::models::project::{ProjectDocument, Project};
+use crate::models::project::{Project, ProjectDocument};
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::{doc, DateTime};
 use mongodb::options::{FindOneAndUpdateOptions, ReturnDocument};
@@ -64,12 +64,21 @@ pub async fn delete(db: &Database, oid: ObjectId) -> Result<Asset, DatabaseError
 
     let project = Project::from(project_doc);
 
-    let asset = project.assets.iter().find(|entry| entry._id == oid.to_string()).ok_or(DatabaseError::Database)?.to_owned();
+    let asset = project
+        .assets
+        .iter()
+        .find(|entry| entry._id == oid.to_string())
+        .ok_or(DatabaseError::Database)?
+        .to_owned();
 
     Ok(asset)
 }
 
-pub async fn patch(db: &Database, oid: ObjectId, input: AssetUpdate) -> Result<Asset, DatabaseError> {
+pub async fn patch(
+    db: &Database,
+    oid: ObjectId,
+    input: AssetUpdate,
+) -> Result<Asset, DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
 
     let query_options = FindOneAndUpdateOptions::builder()
@@ -86,26 +95,18 @@ pub async fn patch(db: &Database, oid: ObjectId, input: AssetUpdate) -> Result<A
         "assets.$.is_pinned": input.is_pinned,
     };
 
-    let update_result = match collection
+    collection
         .find_one_and_update(
             doc! {"assets._id": oid},
             doc! {"$set": update_doc},
             query_options,
         )
         .await
-    {
-        Ok(data) => data,
-        Err(error) => {
+        .map_err(|error| {
             eprintln!("{error}");
-            return Err(DatabaseError::Database);
-        }
-    };
-
-    match update_result {
-        None => Err(DatabaseError::NotFound),
-        Some(data) => match data.get_asset_by_id(oid.to_string()) {
-            Some(data) => Ok(data),
-            None => Err(DatabaseError::Database),
-        },
-    }
+            DatabaseError::Database
+        })?
+        .ok_or(DatabaseError::NotFound)?
+        .get_asset_by_id(oid.to_string())
+        .ok_or(DatabaseError::Database)
 }
