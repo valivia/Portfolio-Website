@@ -1,6 +1,6 @@
 use chrono::DateTime;
-use image as Image;
 use image::io::Reader as ImageReader;
+use image::{self as Image, DynamicImage};
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
@@ -12,7 +12,7 @@ use tokio::fs::remove_file;
 use mongodb::bson::oid::ObjectId;
 use rocket::form::Form;
 
-use crate::db::asset::{insert};
+use crate::db::asset::{self, insert};
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::models::asset::{Asset, AssetInsert, AssetPost};
@@ -68,7 +68,7 @@ pub async fn post(
         })?;
 
     // open image for editing
-    let mut img = ImageReader::open(&archive_path)
+    let img = ImageReader::open(&archive_path)
         .map_err(|error| {
             eprintln!("{error}");
             CustomError::build(500, Some("Failed to read image.".to_string()))
@@ -98,60 +98,67 @@ pub async fn post(
     };
 
     // insert into db.
-    let result = match insert(db, asset_input).await {
-        Ok(data) => data,
-        Err(error) => {
-            let _ = remove_file(archive_path).await; // can't do anything if this fails.
-            match error {
-                DatabaseError::NotFound => {
-                    return Err(CustomError::build(
-                        400,
-                        Some("No project with this ID exists"),
-                    ))
-                }
-                DatabaseError::Database => {
-                    return Err(CustomError::build(500, Some("Failed to create db entry.")))
-                }
-                _ => return Err(CustomError::build(500, Some("Unexpected server error."))),
-            }
+    let result = insert(db, asset_input).await.map_err(|error| {
+        let _ = remove_file(archive_path); // can't do anything if this fails.
+        match error {
+            DatabaseError::Database => CustomError::build(500, Some("Failed to create db entry.")),
+            _ => CustomError::build(500, Some("Unexpected server error.")),
         }
-    };
+    })?;
 
     println!("insert into db: {:?}", now.elapsed());
     let now = Instant::now();
 
-    let mut content_path = media_path.clone();
-    content_path.push("content");
-
     // Save images.
-    thread::scope(|s| {
-        // Normal image.
-        let mut normal_path = content_path.clone();
-        normal_path.push(format!("{id}.jpg"));
-        let img_clone = img.clone();
+    save_images(id, img, width, height).await.map_err(|error| {
+        dbg!(error);
 
-        s.spawn(move || {
-            img_clone
-                .save_with_format(normal_path, Image::ImageFormat::Jpeg)
-                .unwrap();
-        });
+        let _ = asset::delete(db, id);
+        result.delete_files();
 
-        // Square image.
-        let mut square_path = content_path.clone();
-        square_path.push(format!("{id}_square.jpg"));
-
-        s.spawn(|| {
-            let size = u32::min(width, height);
-            let square = img.crop(width / 2 - size / 2, height / 2 - size / 2, size, size);
-            square
-                .save_with_format(square_path, Image::ImageFormat::Jpeg)
-                .unwrap();
-        });
-    });
+        CustomError::build(500, Some("Failed to process image."))
+    })?;
 
     println!("img save/crop: {:?}", now.elapsed());
 
     Ok(Json(result))
+}
+
+async fn save_images(
+    id: ObjectId,
+    mut img: DynamicImage,
+    width: u32,
+    height: u32,
+) -> Result<(), String> {
+    // Normal image.
+    let base_path = "media/content";
+    let normal_path = format!("{base_path}/{id}.jpg");
+
+    let img_clone = img.clone();
+
+    let img1 = thread::spawn(move || {
+        img_clone
+            .into_rgba8()
+            .save_with_format(normal_path, Image::ImageFormat::Jpeg)
+            .unwrap();
+    });
+
+    // Square image.
+    let square_path = format!("{base_path}/{id}_square.jpg");
+
+    let img2 = thread::spawn(move || {
+        let size = u32::min(width, height);
+        let square = img.crop(width / 2 - size / 2, height / 2 - size / 2, size, size);
+        square
+            .into_rgba8()
+            .save_with_format(square_path, Image::ImageFormat::Jpeg)
+            .unwrap();
+    });
+
+    img1.join().map_err(|_| "couldnt join 1".to_string())?;
+    img2.join().map_err(|_| "couldnt join 2".to_string())?;
+
+    Ok(())
 }
 
 // old scale code
