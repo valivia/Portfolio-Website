@@ -4,9 +4,9 @@ use mongodb::{Client, Database};
 use rocket::fairing::AdHoc;
 use std::env;
 
+pub mod asset;
 pub mod project;
 pub mod tag;
-pub mod asset;
 
 pub fn init() -> AdHoc {
     AdHoc::on_ignite("Connecting to MongoDB", |rocket| async {

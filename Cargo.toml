@@ -18,6 +18,8 @@ futures = "0.3"
 image = {version = "0.24.3", default-features = false, features = ["jpeg", "jpeg_rayon", "png", "webp"]}
 mongodb = "2.1.0"
 rocket = {version = "0.5.0-rc.2", default-features = false, features = ["json"]}
+rocket-validation = "0.1.2"
 serde = {version = "1.0", features = ["derive"]}
 serde_json = "1.0"
 tokio = "1.21"
+validator = "0.16.0"

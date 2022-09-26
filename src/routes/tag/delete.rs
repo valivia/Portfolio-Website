@@ -5,6 +5,7 @@ use rocket::serde::json::Json;
 use rocket::State;
 
 use crate::HTTPErr;
+use crate::errors::database::DatabaseError;
 use crate::models::tag::Tag;
 use crate::db::tag;
 use crate::errors::response::CustomError;
@@ -18,22 +19,17 @@ pub async fn delete(
 ) -> Result<Json<Tag>, CustomError> {
     let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
-    match tag::delete(db, oid).await {
-        Ok(_tag_doc) => {
-            if _tag_doc.is_none() {
-                return Err(CustomError::build(
-                    400,
-                    Some(format!("Tag not found with _id {}", &_id)),
-                ));
+    let result = tag::delete(db, oid)
+        .await
+        .map_err(|error| match error {
+            DatabaseError::NotFound => {
+                CustomError::build(404, Some("No tag with this ID exists"))
             }
-            Ok(Json(_tag_doc.unwrap()))
-        }
-        Err(_error) => {
-            println!("{:?}", _error);
-            Err(CustomError::build(
-                400,
-                Some(format!("Tag not found with _id {}", &_id)),
-            ))
-        }
-    }
+            DatabaseError::Database => {
+                CustomError::build(500, Some("Failed to delete tag from the database"))
+            }
+            _ => CustomError::build(500, Some("Unexpected server error.")),
+        })?;
+
+    Ok(Json(result))
 }

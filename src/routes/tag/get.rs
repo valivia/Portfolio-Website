@@ -1,13 +1,14 @@
 use mongodb::bson::doc;
-use mongodb::Database;
 use mongodb::bson::oid::ObjectId;
+use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
 
-use crate::HTTPErr;
-use crate::models::tag::Tag;
 use crate::db::tag;
+use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
+use crate::models::tag::Tag;
+use crate::HTTPErr;
 
 #[get("/tag?<limit>&<page>")]
 pub async fn get_all(
@@ -37,38 +38,33 @@ pub async fn get_all(
     let limit: i64 = limit.unwrap_or(12);
     let page: i64 = page.unwrap_or(1);
 
-    match tag::find(db, limit, page).await {
-        Ok(_tag_docs) => Ok(Json(_tag_docs)),
-        Err(_error) => {
-            println!("{:?}", _error);
-            Err(CustomError::build(400, Some(_error.to_string())))
-        }
-    }
+    let tags = tag::find(db, limit, page)
+        .await
+        .map_err(|error| match error {
+            DatabaseError::Database => {
+                CustomError::build(500, Some("Failed to fetch this data from the database"))
+            }
+            _ => CustomError::build(500, Some("Unexpected server error.")),
+        })?;
+
+    Ok(Json(tags))
 }
 
 #[get("/tag/<_id>")]
-pub async fn get_by_id(
-    db: &State<Database>,
-    _id: String,
-) -> Result<Json<Tag>, CustomError> {
+pub async fn get_by_id(db: &State<Database>, _id: String) -> Result<Json<Tag>, CustomError> {
     let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
-    match tag::find_by_id(db, oid).await {
-        Ok(_tag_doc) => {
-            if _tag_doc.is_none() {
-                return Err(CustomError::build(
-                    400,
-                    Some(format!("Tag not found with _id {}", &_id)),
-                ));
+    let tag = tag::find_by_id(db, oid)
+        .await
+        .map_err(|error| match error {
+            DatabaseError::NotFound => {
+                CustomError::build(404, Some("No tag with this ID exists"))
             }
-            Ok(Json(_tag_doc.unwrap()))
-        }
-        Err(_error) => {
-            println!("{:?}", _error);
-            Err(CustomError::build(
-                400,
-                Some(format!("Tag not found with _id {}", &_id)),
-            ))
-        }
-    }
+            DatabaseError::Database => {
+                CustomError::build(500, Some("Failed to fetch this data from the database"))
+            }
+            _ => CustomError::build(500, Some("Unexpected server error.")),
+        })?;
+
+    Ok(Json(tag))
 }

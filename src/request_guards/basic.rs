@@ -3,7 +3,6 @@ use rocket::request::{FromRequest, Outcome, Request};
 
 use std::env;
 
-// #[derive(OpenApiFromRequest)]
 pub struct ApiKey(String);
 
 #[derive(Debug)]

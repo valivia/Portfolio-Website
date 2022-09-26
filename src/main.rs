@@ -24,6 +24,7 @@ fn rocket() -> _ {
     dotenv().ok();
     let r = rocket::build()
         .register("/", catchers![not_found])
+        .register("/", catchers![rocket_validation::validation_catcher])
         .attach(db::init())
         .attach(fairings::cors::Cors);
     routes::mount(r)
