@@ -1,10 +1,15 @@
+use mongodb::bson::doc;
 // use mongodb::bson::{doc, Document};
-use mongodb::options::ClientOptions;
-use mongodb::{Client, Database};
+use mongodb::options::{ClientOptions, CreateIndexOptions, IndexOptions};
+use mongodb::{Client, Database, IndexModel};
 use rocket::fairing::AdHoc;
 use std::env;
 
+use crate::errors::database::DatabaseError;
+use crate::models::mail::Mail;
+
 pub mod asset;
+pub mod mailing;
 pub mod project;
 pub mod tag;
 
@@ -27,7 +32,26 @@ async fn connect() -> mongodb::error::Result<Database> {
     let client = Client::with_options(client_options)?;
     let database = client.database(mongo_db_name.as_str());
 
+    prepare_db(&database).await;
+
     println!("MongoDB Connected!");
 
     Ok(database)
+}
+
+async fn prepare_db(db: &Database) -> Result<(), DatabaseError> {
+    let index_options = IndexOptions::builder().unique(true).build();
+    let mailing_collection = db.collection::<Mail>("mailing");
+
+    let mailing_index = IndexModel::builder()
+        .keys(doc! {"email": 1})
+        .options(index_options)
+        .build();
+
+    mailing_collection
+        .create_index(mailing_index, None)
+        .await
+        .unwrap();
+
+    Ok(())
 }

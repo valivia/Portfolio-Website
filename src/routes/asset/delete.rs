@@ -13,7 +13,6 @@ use crate::models::asset::Asset;
 
 #[delete("/asset/<id>")]
 pub async fn delete(db: &State<Database>, id: String) -> Result<Json<Asset>, CustomError> {
-    dbg!(&id);
     let oid = HTTPErr!(ObjectId::parse_str(&id), 400, "Invalid id format.");
 
     // Delete from DB.

@@ -16,7 +16,6 @@ pub async fn patch(
     id: String,
     input: Json<AssetUpdate>,
 ) -> Result<Json<Asset>, CustomError> {
-    dbg!(&id);
     let oid = HTTPErr!(ObjectId::parse_str(&id), 400, "Invalid id format.");
 
     // update DB entry.

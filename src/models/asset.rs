@@ -7,7 +7,6 @@ use mongodb::bson::{doc, oid::ObjectId, Document};
 use rocket::fs::TempFile;
 use serde::{Deserialize, Serialize};
 
-#[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AssetDocument {
     pub _id: ObjectId,
@@ -24,7 +23,6 @@ pub struct AssetDocument {
     pub height: u32,
 }
 
-#[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Asset {
     #[serde(rename = "id")]

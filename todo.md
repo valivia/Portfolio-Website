@@ -1,10 +1,12 @@
 - [x] asset
 - [x] project
-- [ ] tag
+- [x] tag data
+- [ ] tag icons
 - [ ] enums?
-- [ ] contact
-- [ ] mailing
-- [ ] further input validation
+- [x] mailing signup
+- [ ] mailing sending
+- [x] further input validation
+- [ ] proper input error info
 - [ ] trigger page regeneration
 - [ ] github webhook
 - [ ] auth

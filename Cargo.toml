@@ -23,3 +23,7 @@ serde = {version = "1.0", features = ["derive"]}
 serde_json = "1.0"
 tokio = "1.21"
 validator = "0.16.0"
+
+google-authenticator = "0.3.0"
+lettre = "0.10.1"
+jwt-simple = "0.11.0"
