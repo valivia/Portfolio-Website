@@ -1,6 +1,6 @@
 use mongodb::bson::doc;
 // use mongodb::bson::{doc, Document};
-use mongodb::options::{ClientOptions, CreateIndexOptions, IndexOptions};
+use mongodb::options::{ClientOptions, IndexOptions};
 use mongodb::{Client, Database, IndexModel};
 use rocket::fairing::AdHoc;
 use std::env;

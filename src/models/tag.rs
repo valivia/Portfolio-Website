@@ -10,6 +10,7 @@ use rocket_validation::Validate;
 pub struct TagDocument {
     pub _id: ObjectId,
 
+    pub icon_updated_at: Option<bson::DateTime>,
     pub used_since: bson::DateTime,
     pub notable_project: Option<ObjectId>,
 
@@ -26,6 +27,7 @@ pub struct Tag {
     #[serde(rename = "id")]
     pub _id: String,
 
+    pub icon_updated_at: Option<DateTime<Utc>>,
     pub used_since: DateTime<Utc>,
     pub notable_project: Option<ObjectId>,
 
@@ -38,8 +40,10 @@ pub struct Tag {
 
 impl From<TagDocument> for Tag {
     fn from(x: TagDocument) -> Self {
+        let icon_updated_at: Option<DateTime<Utc>> = x.icon_updated_at.map(|data| data.into());
         Tag {
             _id: x._id.to_string(),
+            icon_updated_at,
             used_since: x.used_since.into(),
             notable_project: x.notable_project,
             name: x.name,
@@ -50,10 +54,16 @@ impl From<TagDocument> for Tag {
     }
 }
 
+impl Tag {
+    pub fn is_experience(&self) -> bool {
+        self.icon_updated_at.is_some() && self.score.is_some()
+    }
+}
 #[derive(Debug, Deserialize, Serialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
 pub struct TagInput {
     pub used_since: DateTime<Utc>,
+
     pub notable_project: Option<ObjectId>,
 
     #[validate(length(min = 3, max = 32))]
@@ -89,6 +99,7 @@ impl TagInput {
     pub fn into_tag_doc(self) -> Document {
         doc! {
             "used_since": bson::DateTime::from(self.used_since),
+            "icon_updated_at": None::<bson::DateTime>,
 
             "name": self.name.clone(),
             "description": self.description.clone(),
@@ -103,7 +114,6 @@ impl TagInput {
     pub fn into_project_doc(self) -> Document {
         doc! {
             "tags.$.used_since": bson::DateTime::from(self.used_since),
-
             "tags.$.name": self.name.clone(),
             "tags.$.description": self.description.clone(),
             "tags.$.website": self.website.clone(),

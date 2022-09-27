@@ -22,6 +22,7 @@ pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
             tag::get::get_by_id,
             tag::delete::delete,
             tag::post::post_icon,
+            tag::delete::delete_icon,
             // Asset
             asset::delete::delete,
             asset::patch::patch,

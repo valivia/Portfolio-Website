@@ -2,6 +2,7 @@ use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::models::tag::{Tag, TagInput};
 use crate::{HTTPErr, HTTPOption};
+use bson::DateTime;
 use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
 use mongodb::Database;
@@ -18,12 +19,10 @@ pub async fn post(
     input: Validated<Json<TagInput>>,
 ) -> Result<Json<Tag>, CustomError> {
     let data = input.into_inner();
-    let tag_oid = tag::insert(db, data)
-        .await
-        .map_err(|error| match error {
-            DatabaseError::Database => CustomError::build(500, Some("Failed to create db entry.")),
-            _ => CustomError::build(500, Some("Unexpected server error.")),
-        })?;
+    let tag_oid = tag::insert(db, data).await.map_err(|error| match error {
+        DatabaseError::Database => CustomError::build(500, Some("Failed to create db entry.")),
+        _ => CustomError::build(500, Some("Unexpected server error.")),
+    })?;
 
     let tag = tag::find_by_id(db, tag_oid).await.map_err(|_| {
         CustomError::build(500, Some("Tag was inserted but couldnt return the data."))
@@ -32,12 +31,12 @@ pub async fn post(
     Ok(Json(tag))
 }
 
-#[post("/tag/<_id>", data = "<file>")]
+#[post("/tag/icon/<_id>", data = "<file>")]
 pub async fn post_icon(
     db: &State<Database>,
     _id: String,
     mut file: TempFile<'_>,
-) -> Result<String, CustomError> {
+) -> Result<Json<Tag>, CustomError> {
     // Check if valid oid.
     let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
@@ -49,7 +48,7 @@ pub async fn post_icon(
         return Err(CustomError::build(401, Some("Invalid file type")));
     }
 
-    tag::find_by_id(db, oid)
+    let tag = tag::update_icon(db, oid, Some(DateTime::now()))
         .await
         .map_err(|error| match error {
             DatabaseError::NotFound => CustomError::build(404, Some("No tag with this ID exists")),
@@ -62,7 +61,10 @@ pub async fn post_icon(
     // Save file.
     file.persist_to(format!("media/tag/{}.svg", _id))
         .await
-        .map_err(|_| CustomError::build(500, Some("Failed to save file")))?;
+        .map_err(|err| {
+            eprintln!("{err}");
+            CustomError::build(500, Some("Failed to save file"))
+        })?;
 
-    Ok("ssdg".to_string())
+    Ok(Json(tag))
 }

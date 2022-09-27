@@ -1,7 +1,7 @@
 - [x] asset
 - [x] project
 - [x] tag data
-- [ ] tag icons
+- [x] tag icons
 - [ ] enums?
 - [x] mailing signup
 - [ ] mailing sending
