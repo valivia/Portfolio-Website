@@ -27,7 +27,7 @@ pub async fn login(
     let auth = GoogleAuthenticator::new();
     let secret = env::var("TFA_TOKEN").expect("TFA_TOKEN is not found.");
 
-    if !auth.verify_code(&secret, &data.code, 3, 0) {
+    if !auth.verify_code(&secret, &data.code, 0, 0) {
         return Err(CustomError::build(403, Some("Invalid code")));
     }
 
