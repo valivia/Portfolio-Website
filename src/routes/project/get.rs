@@ -7,12 +7,14 @@ use rocket::State;
 use crate::db::project;
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
+use crate::models::auth::UserInfo;
 use crate::models::project::Project;
 use crate::HTTPErr;
 
 #[get("/project?<limit>&<page>")]
 pub async fn get_all(
     db: &State<Database>,
+    _user_info: UserInfo,
     limit: Option<i64>,
     page: Option<i64>,
 ) -> Result<Json<Vec<Project>>, CustomError> {

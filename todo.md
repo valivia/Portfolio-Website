@@ -9,6 +9,7 @@
 - [ ] proper input error info
 - [ ] trigger page regeneration
 - [ ] github webhook
-- [ ] auth
+- [x] auth
+- [ ] auth testing
 - [ ] reminder emails
 - [ ] docs
