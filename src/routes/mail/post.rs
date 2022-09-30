@@ -1,7 +1,7 @@
 use std::env;
 
 use crate::{
-    db::mailing,
+    db::mailing::{self, find},
     errors::{database::DatabaseError, response::CustomError},
     lib::mailing::make_email,
     HTTPErr,
@@ -18,16 +18,16 @@ use lettre::Transport;
 
 #[derive(Debug, Deserialize, Serialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
-pub struct Input {
+pub struct SignupInput {
     #[validate(email)]
     email: String,
 }
 
-#[post("/mailing", data = "<input>")]
-pub async fn post(
+#[post("/mailing/signup", data = "<input>")]
+pub async fn signup(
     db: &State<Database>,
     mailer: &State<SmtpTransport>,
-    input: Validated<Json<Input>>,
+    input: Validated<Json<SignupInput>>,
 ) -> Result<(), CustomError> {
     let address = input.0.email.to_owned();
 
@@ -67,4 +67,51 @@ fn send_email(mailer: &SmtpTransport, oid: ObjectId, address: String) -> Result<
     })?;
 
     Ok(())
+}
+
+#[derive(Debug, Deserialize, Serialize, Validate, Clone)]
+#[serde(crate = "rocket::serde")]
+pub struct SendInput {
+    #[validate(length(min = 3, max = 32))]
+    subject: String,
+    #[validate(length(min = 12, max = 32_768))]
+    body: String,
+}
+
+#[post("/mailing/send", data = "<input>")]
+pub async fn send(
+    db: &State<Database>,
+    mailer: &State<SmtpTransport>,
+    input: Validated<Json<SendInput>>,
+) -> Result<String, CustomError> {
+    todo!();
+
+    let data = input.0;
+    let emails = find(db)
+        .await
+        .map_err(|_| CustomError::build(500, Some("Unexpected server error.")))?;
+
+    let message_template = make_email().subject(format!("🦉 {}", data.subject));
+
+    for email in emails.iter() {
+        let message = message_template
+            .clone()
+            .to(HTTPErr!(
+                email.email.parse(),
+                400,
+                "Failed to parse this email"
+            ))
+            .body(data.body.to_owned())
+            .map_err(|err| {
+                eprintln!("{}", err);
+                CustomError::build(500, Some("Invalid email body"))
+            })?;
+
+        mailer.send(&message).map_err(|err| {
+            eprintln!("{}", err);
+            CustomError::build(500, Some("A server error occured"))
+        })?;
+    }
+
+    Ok(emails.len().to_string())
 }

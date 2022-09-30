@@ -1,6 +1,7 @@
 use rocket::{Build, Rocket};
 
 pub mod asset;
+pub mod auth;
 pub mod mail;
 pub mod project;
 pub mod tag;
@@ -28,9 +29,13 @@ pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
             asset::patch::patch,
             asset::post::post,
             // Mailing
-            mail::post::post,
-            mail::verify::verify,
-            mail::delete::delete
+            mail::post::signup,
+            mail::post::send,
+            mail::get::verify,
+            mail::get::delete,
+            // Auth
+            auth::post::login,
+            auth::get::qr,
         ],
     )
 }

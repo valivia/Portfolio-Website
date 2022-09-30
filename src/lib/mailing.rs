@@ -4,6 +4,7 @@ use std::time::Duration;
 use anyhow::Result;
 use lettre::message::MessageBuilder;
 use lettre::transport::smtp::authentication::Credentials;
+use lettre::transport::smtp::PoolConfig;
 use lettre::Message;
 use lettre::SmtpTransport;
 use rocket::fairing::AdHoc;
@@ -24,6 +25,9 @@ async fn connect() -> Result<SmtpTransport> {
         env::var("MAILING_USER").expect("MAILING_USER is not found."),
         env::var("MAILING_PASS").expect("MAILING_PASS is not found."),
     );
+
+    let pool_config = PoolConfig::default();
+
     let mailer =
         SmtpTransport::relay(&env::var("MAILING_HOST").expect("MAILING_PASS is not found."))?
             .timeout(Some(Duration::new(5, 0)))
@@ -34,6 +38,7 @@ async fn connect() -> Result<SmtpTransport> {
                     .parse()
                     .unwrap(),
             )
+            .pool_config(pool_config)
             .build();
 
     println!("Mailing server connected!");
