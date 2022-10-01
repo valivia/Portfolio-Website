@@ -4,30 +4,31 @@ use serde::Deserialize;
 #[serde(rename_all = "lowercase")]
 pub struct Config {
     // Database.
-    mongo_url: String,
-    mongo_db_name: String,
+    pub mongo_url: String,
+    pub mongo_db_name: String,
 
     // Mailing.
-    mailing_host: String,
-    mailing_port: u64,
-    mailing_user: String,
-    mailing_pass: String,
-    mailing_from: String,
+    pub mailing_host: String,
+    pub mailing_port: u64,
+    pub mailing_user: String,
+    pub mailing_pass: String,
+    pub mailing_from: String,
 
     // Module urls.
-    api_url: String,
+    pub api_url: String,
 
-    tfa_token: String,
-    jwt_key: String,
-    auth_timeout: u64,
+    // auth
+    pub tfa_token: String,
+    pub jwt_key: String,
+    pub auth_timeout: u64,
 }
 
-pub fn validate_env() {
+pub fn validate_env() -> Config {
     match envy::from_env::<Config>() {
-        Ok(_) => (), //println!("{:#?}", config),
+        Ok(data) => data,
         Err(error) => {
             eprintln!("{:#?}", error);
-            panic!("{error}")
+            panic!();
         }
     }
 }

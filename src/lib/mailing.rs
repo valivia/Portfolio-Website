@@ -22,24 +22,18 @@ pub fn init() -> AdHoc {
 
 async fn connect() -> Result<SmtpTransport> {
     let creds = Credentials::new(
-        env::var("MAILING_USER").expect("MAILING_USER is not found."),
-        env::var("MAILING_PASS").expect("MAILING_PASS is not found."),
+        env::var("MAILING_USER").unwrap(),
+        env::var("MAILING_PASS").unwrap(),
     );
 
     let pool_config = PoolConfig::default();
 
-    let mailer =
-        SmtpTransport::relay(&env::var("MAILING_HOST").expect("MAILING_PASS is not found."))?
-            .timeout(Some(Duration::new(5, 0)))
-            .credentials(creds)
-            .port(
-                env::var("MAILING_PORT")
-                    .expect("MAILING_PORT is not found.")
-                    .parse()
-                    .unwrap(),
-            )
-            .pool_config(pool_config)
-            .build();
+    let mailer = SmtpTransport::relay(&env::var("MAILING_HOST").unwrap())?
+        .timeout(Some(Duration::new(5, 0)))
+        .credentials(creds)
+        .port(env::var("MAILING_PORT").unwrap().parse().unwrap())
+        .pool_config(pool_config)
+        .build();
 
     println!("Mailing server connected!");
 
@@ -47,10 +41,5 @@ async fn connect() -> Result<SmtpTransport> {
 }
 
 pub fn make_email() -> MessageBuilder {
-    Message::builder().from(
-        env::var("MAILING_FROM")
-            .expect("MAILING_FROM is not found.")
-            .parse()
-            .unwrap(),
-    )
+    Message::builder().from(env::var("MAILING_FROM").unwrap().parse().unwrap())
 }

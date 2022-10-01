@@ -1,16 +1,14 @@
-use std::env;
+use crate::{errors::response::CustomError, lib::env::Config};
 
-use crate::errors::response::CustomError;
+use rocket::State;
 use google_authenticator::GoogleAuthenticator;
 
 #[get("/auth/qr")]
-pub async fn qr() -> Result<String, CustomError> {
-    todo!();
+pub async fn qr(config: &State<Config>) -> Result<String, CustomError> {
     let auth = GoogleAuthenticator::new();
-    let secret = env::var("TFA_TOKEN").unwrap();
 
     let code = auth
-        .qr_code(&secret, "qr_code", "name", 200, 200, 'M')
+        .qr_code(&config.tfa_token, "qr_code", "name", 200, 200, 'M')
         .map_err(|_| CustomError::build(500, Some("Unexpected server error.")))?;
 
     Ok(code)

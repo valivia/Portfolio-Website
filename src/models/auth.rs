@@ -9,5 +9,5 @@ pub struct UserInfo {
 
 
 pub struct LastLogin {
-    pub code: Arc<Mutex<u64>>,
+    pub code: Arc<Mutex<String>>,
 }
