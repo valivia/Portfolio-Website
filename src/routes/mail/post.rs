@@ -48,7 +48,7 @@ pub async fn signup(
 fn send_email(mailer: &SmtpTransport, oid: ObjectId, address: String) -> Result<(), CustomError> {
     let body = format!(
         "Please click the following link to verify your subscription: \n\n {}/mailing/verify/{}",
-        env::var("SERVER_URL").expect("SERVER_URL is not found."),
+        env::var("API_URL").unwrap(),
         oid
     );
 
