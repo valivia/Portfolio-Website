@@ -4,7 +4,6 @@ use image::{self as Image, DynamicImage};
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
-use std::path::PathBuf;
 use std::thread;
 use std::time::Instant;
 use tokio::fs::remove_file;
@@ -15,57 +14,55 @@ use rocket::form::Form;
 use crate::db::asset::{self, insert};
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
-use crate::models::asset::{Asset, AssetInsert, AssetPost};
+use crate::lib::revalidate::Revalidator;
+use crate::models::asset::{Asset, AssetPost, AssetUpdate};
+use crate::models::response::{Response, ResponseBody};
 use crate::{HTTPErr, HTTPOption};
 
-#[post("/asset", data = "<input>")]
+#[post("/asset/<project_id>", data = "<input>")]
 pub async fn post(
     db: &State<Database>,
-    mut input: Form<AssetPost<'_>>,
-) -> Result<Json<Asset>, CustomError> {
+    project_id: String,
+    input: Form<AssetPost<'_>>,
+) -> Response<Asset> {
     let now = Instant::now();
 
+    let AssetPost {
+        created_at,
+        alt,
+        description,
+        is_displayed,
+        is_pinned,
+        mut file,
+    } = input.into_inner();
+
     // input validation.
-    let created_parsed = HTTPErr!(
-        DateTime::parse_from_rfc3339(&input.created_at),
+    let created_at = HTTPErr!(
+        DateTime::parse_from_rfc3339(&created_at),
         400,
         "Invalid created_at"
     );
 
-    let project_id_parsed = HTTPErr!(
-        ObjectId::parse_str(&input.project_id),
-        400,
-        "Invalid project_id"
-    );
+    // Parse project id.
+    let project_id = HTTPErr!(ObjectId::parse_str(project_id), 400, "Invalid project_id");
 
     // get image content type.
-    let file_type = HTTPOption!(input.file.content_type(), 400, "No file type detected");
+    let file_type = HTTPOption!(file.content_type(), 400, "No file type detected");
 
     // Check if image is acceptable format.
     if !(file_type.is_png() || file_type.is_jpeg() || file_type.is_webp()) {
         return Err(CustomError::build(401, Some("Invalid file type")));
     };
 
-    let id = ObjectId::new();
+    let asset_id = ObjectId::new();
     let extension = file_type.extension().unwrap().to_string();
-
-    // make path.
-    let media_path = PathBuf::from("media");
-
-    let mut archive_path = media_path.clone();
-    archive_path.push("archive");
-    archive_path.push(id.to_string());
-    archive_path.set_extension(extension);
+    let archive_path = format!("media/archive/{asset_id}.{extension}");
 
     // save image to disk
-    input
-        .file
-        .persist_to(&archive_path)
-        .await
-        .map_err(|error| {
-            eprintln!("{error}");
-            CustomError::build(500, Some("Failed to persist file.".to_string()))
-        })?;
+    file.persist_to(&archive_path).await.map_err(|error| {
+        eprintln!("{error}");
+        CustomError::build(500, Some("Failed to persist file.".to_string()))
+    })?;
 
     // open image for editing
     let img = ImageReader::open(&archive_path)
@@ -85,43 +82,56 @@ pub async fn post(
     let width = img.width();
     let height = img.height();
 
-    let asset_input = AssetInsert {
-        id,
-        created_at: created_parsed.into(),
-        project_id: project_id_parsed,
-        alt: input.alt.to_owned(),
-        description: input.description.to_owned(),
-        is_displayed: input.is_displayed,
-        is_pinned: input.is_pinned,
-        height,
-        width,
+    let db_data = AssetUpdate {
+        created_at: created_at.into(),
+        alt,
+        description,
+        is_displayed,
+        is_pinned,
     };
 
     // insert into db.
-    let result = insert(db, asset_input).await.map_err(|error| {
-        let _ = remove_file(archive_path); // can't do anything if this fails.
-        match error {
-            DatabaseError::Database => CustomError::build(500, Some("Failed to create db entry.")),
-            _ => CustomError::build(500, Some("Unexpected server error.")),
-        }
-    })?;
+    let data = insert(db, project_id, db_data, asset_id, width, height)
+        .await
+        .map_err(|error| {
+            let _ = remove_file(archive_path); // can't do anything if this fails.
+            match error {
+                DatabaseError::Database => {
+                    CustomError::build(500, Some("Failed to create db entry."))
+                }
+                _ => CustomError::build(500, Some("Unexpected server error.")),
+            }
+        })?;
 
     println!("insert into db: {:?}", now.elapsed());
     let now = Instant::now();
 
     // Save images.
-    save_images(id, img, width, height).await.map_err(|error| {
-        dbg!(error);
+    save_images(asset_id, img, width, height)
+        .await
+        .map_err(|error| {
+            dbg!(error);
 
-        let _ = asset::delete(db, id);
-        result.delete_files();
+            let _ = asset::delete(db, asset_id);
+            data.delete_files();
 
-        CustomError::build(500, Some("Failed to process image."))
-    })?;
+            CustomError::build(500, Some("Failed to process image."))
+        })?;
 
     println!("img save/crop: {:?}", now.elapsed());
 
-    Ok(Json(result))
+    // Revalidate paths on next.js.
+    let mut revalidated = Revalidator::new().add_project(project_id);
+
+    // Check if gallery page should be re-rendered.
+    if data.is_displayed {
+        revalidated = revalidated.add_gallery();
+    }
+
+    let revalidated = Some(revalidated.send().await);
+
+    // Respond
+    Ok(Json(ResponseBody { revalidated, data }))
 }
 
 async fn save_images(
@@ -160,15 +170,3 @@ async fn save_images(
 
     Ok(())
 }
-
-// old scale code
-// let pixels = width * height;
-// let scale = (3840 * 2160) as f32 / pixels as f32;
-// let scale = scale.sqrt();
-// let width = (width as f32 * scale) as u32;
-// let height = (height as f32 * scale) as u32;
-
-// println!("calculations: {:?}", now.elapsed());
-// let now = Instant::now();
-
-// let scaled = img.resize(width, height, image::imageops::FilterType::Lanczos3);

@@ -6,6 +6,8 @@ use crate::models::tag::TagDocument;
 
 use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
+use mongodb::options::FindOneAndUpdateOptions;
+use mongodb::options::ReturnDocument;
 use mongodb::Database;
 use rocket::serde::json::Json;
 
@@ -72,9 +74,13 @@ pub async fn update(
 
     let doc = bson::to_bson(&doc).unwrap();
 
+    let query_options = FindOneAndUpdateOptions::builder()
+        .return_document(ReturnDocument::After)
+        .build();
+
     // Update the DB.
     let current = collection
-        .find_one_and_update(doc! {"_id": oid}, doc! {"$set": doc}, None)
+        .find_one_and_update(doc! {"_id": oid}, doc! {"$set": doc}, query_options)
         .await
         .map_err(|error| {
             eprintln!("{error}");

@@ -1,8 +1,8 @@
 use crate::errors::database::DatabaseError;
-use crate::models::asset::{Asset, AssetUpdate};
+use crate::models::asset::{Asset, AssetDocument, AssetUpdate};
 use crate::models::project::ProjectDocument;
+use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
-use mongodb::bson::{doc, DateTime};
 use mongodb::options::{FindOneAndUpdateOptions, ReturnDocument};
 use mongodb::Database;
 
@@ -10,27 +10,49 @@ pub async fn patch(
     db: &Database,
     oid: ObjectId,
     input: AssetUpdate,
-) -> Result<Asset, DatabaseError> {
+) -> Result<(Asset, Asset), DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
+
+    let old = collection
+        .find_one(doc! {"assets._id": oid}, None)
+        .await
+        .map_err(|error| {
+            eprintln!("{error}");
+            DatabaseError::Database
+        })?
+        .ok_or(DatabaseError::NotFound)?
+        .get_asset_by_id(oid)
+        .ok_or(DatabaseError::Database)?;
+
+    let AssetUpdate {
+        created_at,
+        alt,
+        description,
+        is_displayed,
+        is_pinned,
+    } = input;
+
+    let doc = AssetDocument {
+        id: old.id,
+        created_at: created_at.into(),
+        alt,
+        description,
+        is_displayed,
+        is_pinned,
+        width: old.width,
+        height: old.height,
+    };
+
+    let doc = bson::to_bson(&doc).map_err(|_| DatabaseError::Input)?;
 
     let query_options = FindOneAndUpdateOptions::builder()
         .return_document(ReturnDocument::After)
         .build();
 
-    let update_doc = doc! {
-        "assets.$.created_at": DateTime::from(input.created_at),
-
-        "assets.$.alt": input.alt,
-        "assets.$.description": input.description,
-
-        "assets.$.is_displayed": input.is_displayed,
-        "assets.$.is_pinned": input.is_pinned,
-    };
-
-    collection
+    let current = collection
         .find_one_and_update(
             doc! {"assets._id": oid},
-            doc! {"$set": update_doc},
+            doc! {"$set": {"assets.$" : doc}},
             query_options,
         )
         .await
@@ -39,6 +61,9 @@ pub async fn patch(
             DatabaseError::Database
         })?
         .ok_or(DatabaseError::NotFound)?
-        .get_asset_by_id(oid.to_string())
-        .ok_or(DatabaseError::Database)
+        .get_asset_by_id(oid)
+        .ok_or(DatabaseError::Database)?
+        .into();
+
+    Ok((current, old.into()))
 }

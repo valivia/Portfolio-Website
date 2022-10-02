@@ -1,6 +1,6 @@
 use crate::errors::database::DatabaseError;
 use crate::models::asset::Asset;
-use crate::models::project::{Project, ProjectDocument};
+use crate::models::project::ProjectDocument;
 use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
 use mongodb::options::{FindOneAndUpdateOptions, ReturnDocument};
@@ -13,7 +13,7 @@ pub async fn delete(db: &Database, oid: ObjectId) -> Result<Asset, DatabaseError
         .return_document(ReturnDocument::Before)
         .build();
 
-    let project_doc = collection
+    let data = collection
         .find_one_and_update(
             doc! {"assets._id": oid},
             doc! {"$pull": { "assets": { "_id": oid }}},
@@ -24,16 +24,10 @@ pub async fn delete(db: &Database, oid: ObjectId) -> Result<Asset, DatabaseError
             eprintln!("{error}");
             DatabaseError::Database
         })?
-        .ok_or(DatabaseError::NotFound)?;
-
-    let project = Project::from(project_doc);
-
-    let asset = project
-        .assets
-        .iter()
-        .find(|entry| entry._id == oid.to_string())
+        .ok_or(DatabaseError::NotFound)?
+        .get_asset_by_id(oid)
         .ok_or(DatabaseError::Database)?
-        .to_owned();
+        .into();
 
-    Ok(asset)
+    Ok(data)
 }
