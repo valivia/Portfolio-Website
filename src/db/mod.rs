@@ -1,9 +1,11 @@
+use futures::TryStreamExt;
 use mongodb::bson::doc;
 // use mongodb::bson::{doc, Document};
 use mongodb::options::{ClientOptions, IndexOptions};
-use mongodb::{Client, Database, IndexModel};
+use mongodb::{Client, Cursor, Database, IndexModel};
 use rocket::fairing::AdHoc;
 use std::env;
+use std::fmt::Display;
 
 use crate::errors::database::DatabaseError;
 use crate::models::mail::Mail;
@@ -32,7 +34,7 @@ async fn connect() -> mongodb::error::Result<Database> {
     let client = Client::with_options(client_options)?;
     let database = client.database(mongo_db_name.as_str());
 
-    prepare_db(&database).await;
+    let _ = prepare_db(&database).await;
 
     println!("MongoDB Connected!");
 
@@ -54,4 +56,32 @@ async fn prepare_db(db: &Database) -> Result<(), DatabaseError> {
         .unwrap();
 
     Ok(())
+}
+
+#[async_trait]
+trait CursorToVec<O> {
+    async fn cursor_to_vec(self) -> Result<Vec<O>, DatabaseError>;
+}
+
+#[async_trait]
+impl<I, O> CursorToVec<O> for Cursor<I>
+where
+    mongodb::Cursor<I>: futures::TryStream,
+    <mongodb::Cursor<I> as futures::TryStream>::Error: Display,
+    I: Unpin + Send,
+    O: Send,
+    O: From<<mongodb::Cursor<I> as futures::TryStream>::Ok>,
+{
+    async fn cursor_to_vec(mut self) -> Result<Vec<O>, DatabaseError> {
+        let mut output: Vec<O> = vec![];
+
+        while let Some(result) = self.try_next().await.map_err(|error| {
+            eprintln!("{error}");
+            DatabaseError::Database
+        })? {
+            output.push(O::from(result));
+        }
+
+        Ok(output)
+    }
 }
