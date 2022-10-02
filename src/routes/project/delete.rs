@@ -1,23 +1,24 @@
+use crate::db::project;
+use crate::errors::database::DatabaseError;
+use crate::errors::response::CustomError;
+use crate::lib::revalidate::Revalidator;
+use crate::models::auth::UserInfo;
+use crate::models::project::Project;
+use crate::models::response::{Response, ResponseBody};
+use crate::HTTPErr;
+
 use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
 
-use crate::db::project;
-use crate::errors::database::DatabaseError;
-use crate::errors::response::CustomError;
-use crate::models::project::Project;
-use crate::HTTPErr;
+#[delete("/project/<id>")]
+pub async fn delete(db: &State<Database>, _user_info: UserInfo, id: String) -> Response<Project> {
+    let oid = HTTPErr!(ObjectId::parse_str(&id), 400, "Invalid id format.");
 
-#[delete("/project/<_id>")]
-pub async fn delete(
-    db: &State<Database>,
-    _id: String,
-) -> Result<Json<Project>, CustomError> {
-    let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
-
-    let result = project::delete(db, oid)
+    // Fetch and delete data from the database.
+    let data = project::delete(db, oid)
         .await
         .map_err(|error| match error {
             DatabaseError::NotFound => {
@@ -29,5 +30,25 @@ pub async fn delete(
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
-    Ok(Json(result))
+    let mut revalidated = Revalidator::new().add_project(oid);
+
+    // Check projects page should be re-rendered.
+    if data.is_project {
+        revalidated = revalidated.add_projects();
+    }
+
+    // Check gallery should be re-rendered.
+    if data.assets.iter().any(|asset| asset.is_displayed) {
+        revalidated = revalidated.add_gallery();
+    }
+
+    // Check if about page should be re-rendered.
+    if data.tags.iter().any(|tag| tag.is_experience()) {
+        revalidated = revalidated.add_about();
+    }
+
+    let revalidated = Some(revalidated.send().await);
+
+    // Respond
+    Ok(Json(ResponseBody { revalidated, data }))
 }

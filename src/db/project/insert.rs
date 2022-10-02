@@ -1,42 +1,58 @@
 use crate::db::project::collect_tags;
 use crate::errors::database::DatabaseError;
-use crate::models::project::ProjectInput;
+use crate::models::project::{ProjectDocument, ProjectInput};
+use crate::models::tag::TagDocument;
 
 // use chrono::prelude::*;
 use mongodb::bson::oid::ObjectId;
-use mongodb::bson::{doc, Document};
 use mongodb::Database;
 use rocket::serde::json::Json;
 
 pub async fn insert(db: &Database, input: Json<ProjectInput>) -> Result<ObjectId, DatabaseError> {
-    let project_collection = db.collection::<Document>("project");
+    let project_collection = db.collection::<ProjectDocument>("project");
 
-    let tags = match &input.tags {
+    // Destructure input struct.
+    let ProjectInput {
+        created_at,
+        name,
+        description,
+        markdown,
+        status,
+        is_pinned,
+        is_project,
+        tags,
+    } = input.0;
+
+    // Convert vec of objectIds to vec of Tags.
+    let tags = match tags {
         Some(data) => collect_tags(db, data.clone())
             .await
             .map_err(|_| DatabaseError::Mismatch)?,
-        None => vec![] as Vec<Document>,
+        None => vec![] as Vec<TagDocument>,
     };
 
-    let created_at: bson::DateTime = input.created_at.into();
+    // Generate DB data struct.
+    let doc = ProjectDocument {
+        id: ObjectId::new(),
 
-    let doc = doc! {
-        "created_at": created_at,
-        "updated_at": created_at,
+        created_at: created_at.into(),
+        updated_at: created_at.into(),
 
-        "name": input.name.clone(),
-        "description": input.description.clone(),
-        "markdown": input.markdown.clone(),
+        banner_id: None::<ObjectId>,
+        status,
 
-        "status": input.status.to_string(),
+        name,
+        description,
+        markdown,
 
-        "is_pinned": input.is_pinned,
-        "is_project": input.is_project,
+        is_pinned,
+        is_project,
 
-        "assets": [],
-        "tags": tags
+        assets: vec![],
+        tags,
     };
 
+    // Insert into the DB.
     let insert_one_result = project_collection
         .insert_one(doc, None)
         .await

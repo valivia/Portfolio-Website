@@ -1,6 +1,6 @@
 use crate::errors::database::DatabaseError;
+use crate::models::tag::TagDocument;
 
-use bson::Document;
 use futures::TryStreamExt;
 use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
@@ -18,10 +18,10 @@ pub use insert::*;
 pub mod update;
 pub use update::*;
 
-async fn collect_tags(db: &Database, tags: Vec<ObjectId>) -> Result<Vec<Document>, DatabaseError> {
-    let collection = db.collection::<Document>("tag");
+async fn collect_tags(db: &Database, tags: Vec<ObjectId>) -> Result<Vec<TagDocument>, DatabaseError> {
+    let collection = db.collection::<TagDocument>("tag");
 
-    let mut result: Vec<Document> = vec![];
+    let mut result: Vec<TagDocument> = vec![];
 
     let mut cursor = collection
         .find(doc! {"_id": {"$in": &tags}}, None)

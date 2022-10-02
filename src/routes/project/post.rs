@@ -1,19 +1,27 @@
+use crate::db::project;
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
+use crate::lib::revalidate::Revalidator;
+use crate::models::auth::UserInfo;
 use crate::models::project::{Project, ProjectInput};
+use crate::models::response::{Response, ResponseBody};
+
 use mongodb::bson::doc;
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
-
-use crate::db::project;
+use rocket_validation::Validated;
 
 #[post("/project", data = "<input>")]
 pub async fn post(
     db: &State<Database>,
-    input: Json<ProjectInput>,
-) -> Result<Json<Project>, CustomError> {
-    let oid = project::insert(db, input)
+    _user_info: UserInfo,
+    input: Validated<Json<ProjectInput>>,
+) -> Response<Project> {
+    let input = input.into_inner();
+
+    // Update the DB.
+    let oid = project::insert(db, input.clone())
         .await
         .map_err(|error| match error {
             DatabaseError::Database => CustomError::build(500, Some("Failed to create db entry.")),
@@ -23,9 +31,26 @@ pub async fn post(
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
-    let project = project::find_by_id(db, oid)
-        .await
-        .map_err(|_| CustomError::build(500, Some("Db entry created but couldnt fetch data.")))?;
+    // Get data from DB.
+    let data = project::find_by_id(db, oid).await.map_err(|_| {
+        CustomError::build(500, Some("Database entry created but couldnt fetch data."))
+    })?;
 
-    Ok(Json(project))
+    // Revalidate paths on next.js.
+    let mut revalidated = Revalidator::new().add_project(oid);
+
+    // Check if projects page should be re-rendered.
+    if data.is_project {
+        revalidated = revalidated.add_projects();
+    }
+
+    // Check if about page should be re-rendered.
+    if data.tags.iter().any(|tag| tag.is_experience()) {
+        revalidated = revalidated.add_about();
+    }
+
+    let revalidated = Some(revalidated.send().await);
+
+    // Respond
+    Ok(Json(ResponseBody { revalidated, data }))
 }

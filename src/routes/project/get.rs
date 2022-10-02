@@ -1,23 +1,22 @@
+use crate::db::project;
+use crate::errors::database::DatabaseError;
+use crate::errors::response::CustomError;
+use crate::models::project::Project;
+use crate::models::response::{Response, ResponseBody};
+use crate::HTTPErr;
+
 use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
 
-use crate::db::project;
-use crate::errors::database::DatabaseError;
-use crate::errors::response::CustomError;
-use crate::models::auth::UserInfo;
-use crate::models::project::Project;
-use crate::HTTPErr;
-
 #[get("/project?<limit>&<page>")]
 pub async fn get_all(
     db: &State<Database>,
-    _user_info: UserInfo,
     limit: Option<i64>,
     page: Option<i64>,
-) -> Result<Json<Vec<Project>>, CustomError> {
+) -> Response<Vec<Project>> {
     if let Some(x) = limit {
         if x < 0 {
             return Err(CustomError::build(
@@ -40,7 +39,8 @@ pub async fn get_all(
     let limit: i64 = limit.unwrap_or(12);
     let page: i64 = page.unwrap_or(1);
 
-    let projects = project::find(db, limit, page)
+    // Fetch data from database.
+    let data = project::find(db, limit, page)
         .await
         .map_err(|error| match error {
             DatabaseError::Database => {
@@ -49,14 +49,19 @@ pub async fn get_all(
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
-    Ok(Json(projects))
+    // Respond
+    Ok(Json(ResponseBody {
+        revalidated: None,
+        data,
+    }))
 }
 
 #[get("/project/<_id>")]
-pub async fn get_by_id(db: &State<Database>, _id: String) -> Result<Json<Project>, CustomError> {
+pub async fn get_by_id(db: &State<Database>, _id: String) -> Response<Project> {
     let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
 
-    let project = project::find_by_id(db, oid)
+    // Fetch data from database.
+    let data = project::find_by_id(db, oid)
         .await
         .map_err(|error| match error {
             DatabaseError::NotFound => {
@@ -68,5 +73,9 @@ pub async fn get_by_id(db: &State<Database>, _id: String) -> Result<Json<Project
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
-    Ok(Json(project))
+    // Respond
+    Ok(Json(ResponseBody {
+        revalidated: None,
+        data,
+    }))
 }
