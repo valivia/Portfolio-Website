@@ -5,9 +5,9 @@ use mongodb::bson;
 use mongodb::bson::oid::ObjectId;
 use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
-use strum::EnumIter;
+use strum::{EnumIter, Display};
 
-#[derive(Debug, EnumIter, Serialize, Deserialize, Clone, Copy)]
+#[derive(Debug, EnumIter, Display ,Serialize, Deserialize, Clone, Copy)]
 pub enum Category {
     Software,
     Language,

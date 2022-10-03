@@ -3,6 +3,7 @@ use rocket::{Build, Rocket};
 pub mod asset;
 pub mod auth;
 pub mod banner;
+pub mod enums;
 pub mod mail;
 pub mod project;
 pub mod tag;
@@ -42,6 +43,11 @@ pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
             auth::post::login,
             auth::get::qr,
             // Webhook
+            // webook::post::post
+
+            // Enums
+            enums::status,
+            enums::category,
         ],
     )
 }

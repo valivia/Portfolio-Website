@@ -2,16 +2,16 @@
 - [x] project
 - [x] tag data
 - [x] tag icons
-- [ ] enums?
-- [x] mailing signup
-- [ ] mailing sending
+- [x] banner on project.
 - [x] further input validation
-- [ ] proper input error info l
-- [x] trigger page regeneration
-- [ ] github webhook
 - [x] clean up all the db and route code.
+- [x] trigger page regeneration
+- [x] mailing signup
 - [x] auth
+- [x] enums?
 - [ ] auth testing
+- [ ] github webhook
+- [ ] proper input error info l
+- [ ] mailing sending
 - [ ] reminder emails
 - [ ] docs
-- [x] banner on project.

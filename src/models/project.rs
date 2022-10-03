@@ -1,29 +1,22 @@
-use std::fmt::{Display, Formatter};
-
 use mongodb::bson::{doc, oid::ObjectId};
 use rocket_validation::Validate;
 use serde::{Deserialize, Serialize};
 
 use chrono::{DateTime, Utc};
+use strum::{Display, EnumIter};
 
 use super::{
     asset::{Asset, AssetDocument},
     tag::{Tag, TagDocument},
 };
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+#[derive(Debug, EnumIter, Display, Serialize, Deserialize, Clone, Copy)]
 pub enum Status {
-    Finished,
     InProgress,
-}
-
-impl Display for Status {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Status::Finished => write!(f, "Finished"),
-            Status::InProgress => write!(f, "InProgress"),
-        }
-    }
+    Abandoned,
+    Finished,
+    Unknown,
+    OnHold,
 }
 
 #[allow(non_snake_case)]
@@ -62,11 +55,10 @@ impl ProjectDocument {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Project {
     pub id: String,
+    pub banner_id: Option<String>,
 
     pub created_at: String,
     pub updated_at: String,
-
-    pub banner_id: Option<String>,
 
     pub name: String,
     pub description: Option<String>,
