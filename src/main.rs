@@ -10,7 +10,6 @@ use std::{sync::Arc, sync::Mutex};
 
 mod db;
 mod errors;
-mod fairings;
 mod lib;
 mod models;
 mod request_guards;
@@ -40,7 +39,6 @@ fn rocket() -> _ {
             code: Arc::new(Mutex::new(String::from("000000"))),
         })
         .attach(db::init())
-        .attach(lib::mailing::init())
-        .attach(fairings::cors::Cors);
+        .attach(lib::mailing::init());
     routes::mount(r)
 }
