@@ -5,6 +5,15 @@ use mongodb::bson;
 use mongodb::bson::oid::ObjectId;
 use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
+use strum::EnumIter;
+
+#[derive(Debug, EnumIter, Serialize, Deserialize, Clone, Copy)]
+pub enum Category {
+    Software,
+    Language,
+    Framework,
+    Other,
+}
 
 #[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -21,6 +30,7 @@ pub struct TagDocument {
     pub website: Option<String>,
 
     pub score: Option<u8>,
+    pub category: Category,
 }
 
 #[allow(non_snake_case)]
@@ -28,8 +38,8 @@ pub struct TagDocument {
 pub struct Tag {
     pub id: String,
 
-    pub icon_updated_at: Option<DateTime<Utc>>,
     pub used_since: DateTime<Utc>,
+    pub icon_updated_at: Option<DateTime<Utc>>,
     pub notable_project: Option<ObjectId>,
 
     pub name: String,
@@ -37,6 +47,7 @@ pub struct Tag {
     pub website: Option<String>,
 
     pub score: Option<u8>,
+    pub category: Category,
 }
 
 impl Tag {
@@ -54,16 +65,29 @@ impl Tag {
 
 impl From<TagDocument> for Tag {
     fn from(x: TagDocument) -> Self {
-        let icon_updated_at: Option<DateTime<Utc>> = x.icon_updated_at.map(|data| data.into());
-        Tag {
-            id: x.id.to_string(),
+        let TagDocument {
+            id,
             icon_updated_at,
-            used_since: x.used_since.into(),
-            notable_project: x.notable_project,
-            name: x.name,
-            description: x.description,
-            website: x.website,
-            score: x.score,
+            used_since,
+            notable_project,
+            name,
+            description,
+            website,
+            score,
+            category,
+        } = x;
+
+        let icon_updated_at: Option<DateTime<Utc>> = icon_updated_at.map(|data| data.into());
+        Tag {
+            id: id.to_string(),
+            icon_updated_at,
+            used_since: used_since.into(),
+            notable_project,
+            name,
+            description,
+            website,
+            score,
+            category,
         }
     }
 }
@@ -86,4 +110,5 @@ pub struct TagInput {
 
     #[validate(range(min = 0, max = 100))]
     pub score: Option<u8>,
+    pub category: Category,
 }

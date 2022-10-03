@@ -15,6 +15,7 @@ pub async fn insert(db: &Database, input: Json<TagInput>) -> Result<ObjectId, Da
         description,
         website,
         score,
+        category,
     } = input.0;
 
     let doc = TagDocument {
@@ -26,6 +27,7 @@ pub async fn insert(db: &Database, input: Json<TagInput>) -> Result<ObjectId, Da
         description,
         website,
         score,
+        category,
     };
 
     let insert_one_result = collection

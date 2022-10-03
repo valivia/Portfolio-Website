@@ -31,6 +31,7 @@ pub async fn update(
         description,
         website,
         score,
+        category
     } = input.0;
 
     let updated_tag = TagDocument {
@@ -42,6 +43,7 @@ pub async fn update(
         description,
         website,
         score,
+        category
     };
 
     let doc = bson::to_bson(&updated_tag).unwrap();
