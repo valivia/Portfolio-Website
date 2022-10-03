@@ -9,7 +9,9 @@ export default async function handler(
   }
 
   try {
-    await res.revalidate(`/${(req.query.url as string[]).join("/")}`);
+    const url = `/${(req.query.url as string[]).join("/")}`;
+    await res.revalidate(url);
+    console.info(`Revalidated ${url}`);
     return res.json({ revalidated: true });
   } catch (err) {
     return res.status(500).send("Error revalidating");
