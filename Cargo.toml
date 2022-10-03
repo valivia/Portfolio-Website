@@ -13,20 +13,27 @@ strip = true
 anyhow = "1.0.64"
 bson = {version = "2.3.0", features = ["chrono-0_4"]}
 chrono = {version = "0.4", features = ["serde"]}
+mongodb = "2.1.0"
 dotenv = "0.15.0"
 futures = "0.3"
-image = {version = "0.24.3", default-features = false, features = ["jpeg", "jpeg_rayon", "png", "webp"]}
-mongodb = "2.1.0"
-rocket-validation = "0.1.2"
-serde = {version = "1.0", features = ["derive"]}
+
 serde_json = "1.0"
-tokio = "1.21"
+serde = {version = "1.0", features = ["derive"]}
+rocket-validation = "0.1.2"
 validator = "0.16.0"
 
 lettre = "0.10.1"
 jwt-simple = "0.11.0"
 hex = "0.4.3"
 envy = "0.4.2"
+
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
+
+[dependencies.image]
+version = "0.24.3"
+default-features = false
+features = ["jpeg", "jpeg_rayon", "png", "webp"]
 
 
 [dependencies.rocket]

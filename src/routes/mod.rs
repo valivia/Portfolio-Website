@@ -2,9 +2,11 @@ use rocket::{Build, Rocket};
 
 pub mod asset;
 pub mod auth;
+pub mod banner;
 pub mod mail;
 pub mod project;
 pub mod tag;
+pub mod webook;
 
 pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
     rocket.mount(
@@ -28,6 +30,9 @@ pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
             asset::delete::delete,
             asset::patch::patch,
             asset::post::post,
+            // Banner
+            banner::post::post,
+            banner::delete::delete,
             // Mailing
             mail::post::signup,
             mail::post::send,
@@ -36,6 +41,7 @@ pub fn mount(rocket: Rocket<Build>) -> Rocket<Build> {
             // Auth
             auth::post::login,
             auth::get::qr,
+            // Webhook
         ],
     )
 }

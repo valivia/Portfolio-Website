@@ -15,7 +15,7 @@ pub struct Config {
     pub mailing_from: String,
 
     // Module urls.
-    pub api_url: String,
+    pub app_url: String,
 
     // auth
     pub tfa_token: String,

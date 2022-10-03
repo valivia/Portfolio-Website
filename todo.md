@@ -6,10 +6,12 @@
 - [x] mailing signup
 - [ ] mailing sending
 - [x] further input validation
-- [ ] proper input error info
-- [ ] trigger page regeneration
+- [ ] proper input error info l
+- [x] trigger page regeneration
 - [ ] github webhook
+- [x] clean up all the db and route code.
 - [x] auth
 - [ ] auth testing
 - [ ] reminder emails
 - [ ] docs
+- [x] banner on project.

@@ -1,4 +1,5 @@
-use bson::{doc, Document};
+use std::{fs::remove_file, path::PathBuf};
+
 use chrono::{DateTime, Utc};
 use mongodb::bson;
 use mongodb::bson::oid::ObjectId;
@@ -8,7 +9,8 @@ use rocket_validation::Validate;
 #[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TagDocument {
-    pub _id: ObjectId,
+    #[serde(rename = "_id")]
+    pub id: ObjectId,
 
     pub icon_updated_at: Option<bson::DateTime>,
     pub used_since: bson::DateTime,
@@ -24,8 +26,7 @@ pub struct TagDocument {
 #[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Tag {
-    #[serde(rename = "id")]
-    pub _id: String,
+    pub id: String,
 
     pub icon_updated_at: Option<DateTime<Utc>>,
     pub used_since: DateTime<Utc>,
@@ -38,11 +39,24 @@ pub struct Tag {
     pub score: Option<u8>,
 }
 
+impl Tag {
+    pub fn delete_file(&self) {
+        // Remove main image.
+        let path = PathBuf::from(format!("media/tag/{}.svg", self.id));
+        let _ = remove_file(&path)
+            .map_err(|_| eprintln!("Failed to delete \"{}\"", path.to_string_lossy()));
+    }
+
+    pub fn is_experience(&self) -> bool {
+        self.icon_updated_at.is_some() && self.score.is_some()
+    }
+}
+
 impl From<TagDocument> for Tag {
     fn from(x: TagDocument) -> Self {
         let icon_updated_at: Option<DateTime<Utc>> = x.icon_updated_at.map(|data| data.into());
         Tag {
-            _id: x._id.to_string(),
+            id: x.id.to_string(),
             icon_updated_at,
             used_since: x.used_since.into(),
             notable_project: x.notable_project,
@@ -54,11 +68,6 @@ impl From<TagDocument> for Tag {
     }
 }
 
-impl Tag {
-    pub fn is_experience(&self) -> bool {
-        self.icon_updated_at.is_some() && self.score.is_some()
-    }
-}
 #[derive(Debug, Deserialize, Serialize, Validate, Clone)]
 #[serde(crate = "rocket::serde")]
 pub struct TagInput {
@@ -77,50 +86,4 @@ pub struct TagInput {
 
     #[validate(range(min = 0, max = 100))]
     pub score: Option<u8>,
-}
-
-// pub struct Validated<T>(T);
-
-// #[rocket::async_trait]
-// impl<'fr, T> rocket::request::FromRequest<'fr> for Validated<Json<T>>
-// where
-//     T: Validate + DeserializeOwned,
-// {
-//     type Error = ValidationError;
-
-//     fn from_request<'r>(
-//         request: &'fr rocket::Request<'r>,
-//     ) -> rocket::request::Outcome<Self, Self::Error> {
-//         todo!()
-//     }
-// }
-
-impl TagInput {
-    pub fn into_tag_doc(self) -> Document {
-        doc! {
-            "used_since": bson::DateTime::from(self.used_since),
-            "icon_updated_at": None::<bson::DateTime>,
-
-            "name": self.name.clone(),
-            "description": self.description.clone(),
-            "website": self.website.clone(),
-
-            "notable_project": self.notable_project,
-
-            "score": self.score.map(i32::from),
-        }
-    }
-
-    pub fn into_project_doc(self) -> Document {
-        doc! {
-            "tags.$.used_since": bson::DateTime::from(self.used_since),
-            "tags.$.name": self.name.clone(),
-            "tags.$.description": self.description.clone(),
-            "tags.$.website": self.website.clone(),
-
-            "tags.$.notable_project": self.notable_project,
-
-            "tags.$.score": self.score.map(i32::from),
-        }
-    }
 }
