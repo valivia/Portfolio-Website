@@ -8,20 +8,21 @@ use mongodb::Database;
 
 pub async fn patch(
     db: &Database,
-    oid: ObjectId,
+    project_id: ObjectId,
+    asset_id: ObjectId,
     input: AssetUpdate,
 ) -> Result<(Asset, Asset), DatabaseError> {
     let collection = db.collection::<ProjectDocument>("project");
 
     let old = collection
-        .find_one(doc! {"assets._id": oid}, None)
+        .find_one(doc! {"assets._id": asset_id}, None)
         .await
         .map_err(|error| {
             eprintln!("{error}");
             DatabaseError::Database
         })?
         .ok_or(DatabaseError::NotFound)?
-        .get_asset_by_id(oid)
+        .get_asset_by_id(asset_id)
         .ok_or(DatabaseError::Database)?;
 
     let AssetUpdate {
@@ -51,7 +52,7 @@ pub async fn patch(
 
     let current = collection
         .find_one_and_update(
-            doc! {"assets._id": oid},
+            doc! { "assets._id": asset_id, "_id": project_id },
             doc! {"$set": {"assets.$" : doc}},
             query_options,
         )
@@ -61,7 +62,7 @@ pub async fn patch(
             DatabaseError::Database
         })?
         .ok_or(DatabaseError::NotFound)?
-        .get_asset_by_id(oid)
+        .get_asset_by_id(asset_id)
         .ok_or(DatabaseError::Database)?
         .into();
 

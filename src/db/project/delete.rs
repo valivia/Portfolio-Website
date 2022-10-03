@@ -23,3 +23,25 @@ pub async fn delete(db: &Database, oid: ObjectId) -> Result<Project, DatabaseErr
 
     Ok(project)
 }
+
+pub async fn delete_banner(
+    db: &Database,
+    project_id: ObjectId,
+) -> Result<ProjectDocument, DatabaseError> {
+    let collection = db.collection::<ProjectDocument>("project");
+
+    let project = collection
+        .find_one_and_update(
+            doc! { "_id": project_id },
+            doc! { "$set": { "banner_id": None::<ObjectId> }},
+            None,
+        )
+        .await
+        .map_err(|error| {
+            eprintln!("{error}");
+            DatabaseError::Database
+        })?
+        .ok_or(DatabaseError::NotFound)?;
+
+    Ok(project)
+}

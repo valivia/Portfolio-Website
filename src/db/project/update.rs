@@ -90,3 +90,30 @@ pub async fn update(
 
     Ok((current.into(), old.into()))
 }
+
+pub async fn update_banner(
+    db: &Database,
+    project_id: ObjectId,
+    asset_id: ObjectId,
+) -> Result<ProjectDocument, DatabaseError> {
+    let collection = db.collection::<ProjectDocument>("project");
+
+    let query_options = FindOneAndUpdateOptions::builder()
+        .return_document(ReturnDocument::After)
+        .build();
+
+    let project = collection
+        .find_one_and_update(
+            doc! { "assets._id": asset_id, "_id": project_id },
+            doc! { "$set": { "banner_id": asset_id }},
+            query_options,
+        )
+        .await
+        .map_err(|error| {
+            eprintln!("{error}");
+            DatabaseError::Database
+        })?
+        .ok_or(DatabaseError::NotFound)?;
+
+    Ok(project)
+}
