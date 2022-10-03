@@ -16,12 +16,14 @@ use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::lib::revalidate::Revalidator;
 use crate::models::asset::{Asset, AssetPost, AssetUpdate};
+use crate::models::auth::UserInfo;
 use crate::models::response::{Response, ResponseBody};
 use crate::{HTTPErr, HTTPOption};
 
 #[post("/asset/<project_id>", data = "<input>")]
 pub async fn post(
     db: &State<Database>,
+    _user_info: UserInfo,
     project_id: String,
     input: Form<AssetPost<'_>>,
 ) -> Response<Asset> {
@@ -112,7 +114,7 @@ pub async fn post(
         .map_err(|error| {
             dbg!(error);
 
-            let _ = asset::delete(db, asset_id);
+            let _ = asset::delete(db, project_id, asset_id);
             data.delete_files();
 
             CustomError::build(500, Some("Failed to process image."))
