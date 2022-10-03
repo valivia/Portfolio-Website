@@ -4,6 +4,7 @@ use crate::models::project::ProjectDocument;
 use bson::oid::ObjectId;
 use mongodb::bson::doc;
 use mongodb::Database;
+use mongodb::options::{FindOneAndUpdateOptions, ReturnDocument};
 
 pub async fn insert(
     db: &Database,
@@ -36,6 +37,10 @@ pub async fn insert(
 
     let doc = bson::to_bson(&doc).map_err(|_| DatabaseError::Input)?;
 
+    let query_options = FindOneAndUpdateOptions::builder()
+        .return_document(ReturnDocument::After)
+        .build();
+
     let data = projects
         .find_one_and_update(
             doc! {
@@ -44,7 +49,7 @@ pub async fn insert(
             doc! {
                 "$push": { "assets": doc }
             },
-            None,
+            query_options,
         )
         .await
         .map_err(|error| {
