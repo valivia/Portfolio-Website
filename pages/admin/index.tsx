@@ -1,61 +1,39 @@
-import type { GetServerSideProps } from "next";
 import Head from "next/head";
-import { NextRouter, withRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@styles/admin.module.scss";
-import { ExtendedProject } from "@typeFiles/extended_project.type";
-import ProjectAdmin from "@components/admin_project/project.module";
-import Link from "next/link";
+import List from "@components/admin/list.module";
+import Search from "@components/admin/search.module";
+import Selector from "@components/admin/selector.module";
+import useProjects from "data/use_projects";
+import { useRouter } from "next/router";
+import useTags from "data/use_tags";
 
-const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
+function Admin(): JSX.Element {
+  const router = useRouter();
+  const { loggedOut: loggedOutProjects, projects } = useProjects();
+  const { loggedOut: loggedOutTags, tags } = useTags();
 
-class Admin extends React.Component<Props, State> {
+  const [query, setQuery] = useState("");
+  const [path, setPath] = useState("project");
 
-  constructor(props: Props) {
-    super(props);
+  useEffect(() => {
+    const cookie = window.localStorage.getItem("adminPath");
+    if (!cookie) return;
+    setPath(cookie);
+  }, []);
+  useEffect(() => {
+    window.localStorage.setItem("adminPath", path);
+  }, [path]);
 
-    this.state = {
-      loading: true,
-      failed: false,
-      projects: this.props.projects,
-    };
+  if (loggedOutProjects || loggedOutTags) {
+    router.push("/login");
+    return <></>;
   }
 
-  async componentDidMount() {
-    const result = await fetch(`${apiServer}/auth`, { credentials: "include", mode: "cors", method: "POST" })
-      .then(x => { if (x.ok) return true; })
-      .catch(() => false);
-
-
-    if (result) this.setState({ loading: false });
-    else this.setState({ loading: false, failed: true });
-  }
-
-  public search = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { value } = e.target;
-    const { projects } = this.props;
-    const result = [];
-    value = value.toLowerCase();
-
-    for (const project of projects) {
-      if (project.name.toLowerCase().includes(value)
-        || project.description?.toLowerCase().includes(value)
-        || project.markdown?.toLowerCase().includes(value)
-        || project.tags.find(x => x.name.toLowerCase().includes(value))
-      ) result.push(project);
-    }
-
-    this.setState({ projects: result });
-  }
-
-  public render = (): JSX.Element => {
-
-    if (this.state.loading) return <> </>;
-    if (this.state.failed) {
-      this.props.router.replace("/login");
-      return <></>;
-    }
-
+  function render(): JSX.Element {
+    let list = [] as Entry[];
+    if (path === "project") list = projects;
+    if (path === "tag") list = tags;
     return (
       <>
         <Head>
@@ -65,43 +43,22 @@ class Admin extends React.Component<Props, State> {
         </Head>
         <main className={styles.main}>
           <h1>Admin Panel</h1>
-          <section className={styles.menu}>
-            <Link href="/admin/experience">Tags</Link>
-            <Link href="/admin/markdown">Markdown</Link>
-          </section>
-          <section>
-            <input className={styles.search} onInput={this.search} type="text" placeholder="search" />
-            <Link href="/admin/project/new" ><a>+</a></Link>
-          </section>
-          <ProjectAdmin projects={this.state.projects} />
+          <Selector path={path} setSearchSettings={setPath} />
+          <Search path={path} search={setQuery} />
+          <List path={path} entries={list} query={query} />
         </main>
       </>
     );
   }
 
+  return render();
 }
 
-export default withRouter(Admin);
+export default Admin;
 
-export interface Props {
-  router: NextRouter;
-  projects: ExtendedProject[];
+interface Entry extends Record<string, any> {
+  uuid: string;
+  name: string;
+  created: Date;
+  description: string | null;
 }
-
-export interface State {
-  loading: boolean;
-  failed: boolean;
-  projects: ExtendedProject[];
-}
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const projectData = await fetch(`${apiServer}/project`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
-  const projects = await projectData.json() as ExtendedProject;
-
-  if (!projects) return { notFound: true };
-
-
-  return {
-    props: { projects },
-  };
-};

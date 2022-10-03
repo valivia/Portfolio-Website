@@ -1,0 +1,38 @@
+@use "styles/vars" as *;
+
+$width: 1px;
+
+input:not(.exclude):not(input[type="checkbox"]):not(input[type="submit"]),
+textarea:not(.exclude),
+select:not(.exclude) {
+    border-radius: $borderRadius;
+    border: none;
+    outline: $width $text solid;
+
+    background-color: transparent;
+    color: $text;
+
+    resize: none;
+
+    padding: 5px;
+    width: 100%;
+
+    font-size: 1.03rem;
+    text-transform: capitalize;
+
+    &:hover {
+        outline: $width $textHover solid;
+    }
+
+    &:focus-visible {
+        outline: none;
+        outline: $width rgb(131, 97, 34) solid;
+    }
+}
+
+select:not(.exclude) {
+    & option {
+        background-color: $primary;
+        padding: 10px;
+    }
+}

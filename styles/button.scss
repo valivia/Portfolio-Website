@@ -1,0 +1,49 @@
+@use "styles/vars" as *;
+
+@mixin button {
+    // Text
+    font-family: "abel";
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    padding: 5px 20px;
+
+    border: none;
+    border-radius: 2px;
+
+    transition: background-color 200ms;
+    background-color: transparent;
+
+    transition: color 400ms;
+    color: $text;
+
+    transition: transform 200ms;
+    transform: scale(1);
+
+    outline: 1px $text solid;
+    padding: 10px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $text;
+        color: black;
+        outline: 1px transparent solid;
+    }
+
+    &:active {
+        transform: scale(0.9);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+
+        &:hover {
+            background-color: $disabledHover;
+            color: $text;
+        }
+    }
+}
+
+button:not(.exclude),
+input[type="submit"]:not(.exclude) {
+    @include button();
+}

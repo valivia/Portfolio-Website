@@ -9,9 +9,9 @@ import MailingList from "@components/global/mailing.module";
 
 import { MDXProvider } from "@mdx-js/react";
 import SkillsetMarkdown from "@public/markdown/skillset.mdx";
-import { experience_category } from "@prisma/client";
 import ExperienceMenu from "@components/about_me/experience_menu.module";
 import experience from "@typeFiles/experience";
+import { tag_category } from "@prisma/client";
 
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
@@ -26,7 +26,10 @@ class About extends React.Component<Props, State> {
         <Head>
           <title>About</title>
           <meta name="theme-color" content="#B5A691" />
-          <meta name="description" content="About the creator of this website and its purpose" />
+          <meta
+            name="description"
+            content="About the creator of this website and its purpose"
+          />
         </Head>
 
         <MailingList />
@@ -37,7 +40,6 @@ class About extends React.Component<Props, State> {
           <div onClick={this.scroll}>﹀</div>
         </header>
         <main className={styles.main} id="main">
-
           <article className={styles.textbox}>
             <header>About me</header>
             <section className={styles.markdown}>
@@ -49,7 +51,10 @@ class About extends React.Component<Props, State> {
 
           <article>
             <header>Skillset</header>
-            <ExperienceMenu experiences={this.props.experiences} sorted={this.props.sortedExperiences} />
+            <ExperienceMenu
+              experiences={this.props.experiences}
+              sorted={this.props.sortedExperiences}
+            />
           </article>
 
           <article className={styles.textbox}>
@@ -57,17 +62,28 @@ class About extends React.Component<Props, State> {
             <section>
               <h2>Experiences</h2>
               <p>
-                Expedita iste cum velit ipsum aut qui. Tempora tempora nihil omnis animi possimus ut non quia. Praesentium ratione natus temporibus consequatur
-                doloremque et voluptates. Aut odio animi deserunt voluptatem veritatis non et deserunt. Excepturi consequuntur explicabo vitae officia.
+                Expedita iste cum velit ipsum aut qui. Tempora tempora nihil
+                omnis animi possimus ut non quia. Praesentium ratione natus
+                temporibus consequatur doloremque et voluptates. Aut odio animi
+                deserunt voluptatem veritatis non et deserunt. Excepturi
+                consequuntur explicabo vitae officia.
               </p>
               <p>
-                Placeat et quos qui voluptatem quibusdam voluptatem ad dolorem. Tempore mollitia voluptates id. Est maxime ea omnis explicabo est alias cupiditate. Et aspernatur quibusdam consequuntur ut.
+                Placeat et quos qui voluptatem quibusdam voluptatem ad dolorem.
+                Tempore mollitia voluptates id. Est maxime ea omnis explicabo
+                est alias cupiditate. Et aspernatur quibusdam consequuntur ut.
               </p>
               <h3>among us?</h3>
               <p>
-                Natus quia facilis sed. Velit odio eum in iusto aut. Labore aut sequi tempora incidunt eos ea veritatis. Numquam qui quia et sit voluptates laboriosam eum. Et voluptatibus quia totam perspiciatis.
-                Ratione veritatis modi fuga quam beatae. Laborum debitis et et. Et sint minus eaque quisquam non mollitia animi.
-                Animi natus culpa veritatis corrupti voluptatum. Modi est voluptas nemo. Illo totam dolores beatae quia aut et cum. Vero vitae qui quas. Sunt perferendis nihil dolores atque consequatur.
+                Natus quia facilis sed. Velit odio eum in iusto aut. Labore aut
+                sequi tempora incidunt eos ea veritatis. Numquam qui quia et sit
+                voluptates laboriosam eum. Et voluptatibus quia totam
+                perspiciatis. Ratione veritatis modi fuga quam beatae. Laborum
+                debitis et et. Et sint minus eaque quisquam non mollitia animi.
+                Animi natus culpa veritatis corrupti voluptatum. Modi est
+                voluptas nemo. Illo totam dolores beatae quia aut et cum. Vero
+                vitae qui quas. Sunt perferendis nihil dolores atque
+                consequatur.
               </p>
             </section>
           </article>
@@ -77,7 +93,7 @@ class About extends React.Component<Props, State> {
           </article>
 
           <Footer />
-        </main >
+        </main>
       </>
     );
   }
@@ -86,34 +102,39 @@ class About extends React.Component<Props, State> {
 export default withRouter(About);
 
 export const getStaticProps: GetStaticProps = async () => {
-  const rawData = await fetch(`${apiServer}/experience`, { headers: { authorization: process.env.CLIENT_SECRET as string } });
-  const experiences = await rawData.json() as experience[];
-
+  const rawData = await fetch(`${apiServer}/tag`, {
+    headers: { authorization: process.env.CLIENT_SECRET as string },
+  });
+  let experiences = (await rawData.json()) as experience[];
   if (!experiences) return { notFound: true };
+  experiences = experiences.filter((tag) => tag.score !== null);
 
   let sortedExperiences: list[] = [];
 
   const categories = new Set();
-  experiences.forEach(x => categories.add(x.category));
+  experiences.forEach((x) => categories.add(x.category));
 
-  for (const category of Array.from(categories) as experience_category[]) {
+  for (const category of Array.from(categories) as tag_category[]) {
     sortedExperiences.push({
       category,
-      experiences: experiences.filter(x => x.category === category).sort((a, b) => b.score - a.score),
+      experiences: experiences
+        .filter((x) => x.category === category)
+        .sort((a, b) => b.score - a.score),
     });
   }
 
-  sortedExperiences = sortedExperiences.sort((a, b) => b.experiences.length - a.experiences.length);
+  sortedExperiences = sortedExperiences.sort(
+    (a, b) => b.experiences.length - a.experiences.length
+  );
 
   return {
     props: { experiences, sortedExperiences },
   };
 };
 
-
 export interface Props {
   router: NextRouter;
-  experiences: experience[]
+  experiences: experience[];
   sortedExperiences: list[];
 }
 
@@ -122,6 +143,6 @@ interface State {
 }
 
 interface list {
-  category: experience_category;
-  experiences: experience[]
+  category: tag_category;
+  experiences: experience[];
 }

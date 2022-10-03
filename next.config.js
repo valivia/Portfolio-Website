@@ -19,7 +19,7 @@ module.exports = withMDX({
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    domains: ["portfolio.xayania.com"],
+    domains: ["xayania.com"],
   },
   i18n: {
     locales: ["en"],

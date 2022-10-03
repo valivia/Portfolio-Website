@@ -6,7 +6,7 @@
     background-color: transparent;
     justify-content: center;
     height: 60px;
-    
+
     border-bottom: 1px rgba(51, 51, 51, 0.532) solid;
 
     z-index: 10;
@@ -53,12 +53,24 @@
 
     & > label {
         font-family: "tbhc";
-        font-size: .9rem;
+        font-size: 0.9rem;
         line-height: 1;
         display: block;
         text-align: center;
         font-weight: 100;
         margin: 0 10px;
+    }
+}
+
+.dismiss {
+    border: none;
+    background-color: transparent;
+    color: $text;
+    transform: scale(1);
+
+    &:hover {
+        transform: scale(1.1);
+        color: $textHover;
     }
 }
 

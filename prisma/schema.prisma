@@ -7,28 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model asset {
-  uuid       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  project_id String @db.Uuid
-
-  created DateTime @default(now()) @db.Timestamp(0)
-
-  alt         String? @db.VarChar(256)
-  description String? @db.VarChar(256)
-
-  width  Int @db.Integer
-  height Int @db.Integer
-
-  display Boolean    @default(false)
-  type    asset_type
-
-
-  // relations
-  project project @relation(fields: [project_id], references: [uuid])
-
-  @@index([project_id], name: "Assets_FK")
-}
-
 model project {
   uuid      String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   banner_id String? @unique @db.Uuid
@@ -47,8 +25,30 @@ model project {
   // relations
   assets asset[]
   tags   tag[]
-  links  link[]
   tag    tag[]   @relation(name: "notable_project_FK")
+}
+
+model asset {
+  uuid       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id String @db.Uuid
+
+  created DateTime @default(now()) @db.Timestamp(0)
+
+  alt         String? @db.VarChar(256)
+  description String? @db.VarChar(256)
+
+  width  Int @db.Integer
+  height Int @db.Integer
+
+  display Boolean @default(false)
+  pinned  Boolean @default(false)
+
+  type asset_type
+
+  // relations
+  project project @relation(fields: [project_id], references: [uuid])
+
+  @@index([project_id], name: "Assets_FK")
 }
 
 model tag {
@@ -68,7 +68,8 @@ model tag {
   projects        project[]
   notable_project project?  @relation(name: "notable_project_FK", fields: [project_uuid], references: [uuid])
 
-  category experience_category @default(other)
+  category tag_category @default(other)
+
   @@index([uuid])
 }
 
@@ -80,17 +81,6 @@ model mailing_list {
   verified Boolean @default(false) @db.Boolean()
 }
 
-model link {
-  created    DateTime @default(now()) @db.Timestamp(0)
-  project_id String   @db.Uuid
-
-  uuid String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name String @db.VarChar(32)
-  url  String @db.VarChar(256)
-
-  projects project @relation(fields: [project_id], references: [uuid])
-}
-
 enum asset_type {
   image
   audio
@@ -100,15 +90,17 @@ enum asset_type {
 
 enum project_status {
   finished
-  in_progress  @map("in Progress")
+  in_progress @map("in Progress")
   abandoned
   unknown
-  on_hold      @map("On Hold")
+  on_hold     @map("On Hold")
 }
 
-enum experience_category {
+enum tag_category {
   software
   language
   framework
   other
+
+  @@map("tag_category")
 }

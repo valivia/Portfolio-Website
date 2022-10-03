@@ -4,25 +4,38 @@ import styles from "@styles/contact.module.scss";
 import React, { ReactNode } from "react";
 import Footer from "@components/global/footer.module";
 import { submitJson } from "../components/submit";
-import MailingList from "@components/global/mailing.module";
 
 export default class contact extends React.Component<State> {
   state = {
     sending: false,
-    form: {} as FormInputs,
-  }
+    form: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      subject: "",
+      message: "",
+    },
+  };
 
-  public handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    if (event == null) return;
-    this.setState({ form: { ...this.state.form, [event.target.name]: event.target.value } });
-  }
+  public handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
+    this.setState({
+      form: { ...this.state.form, [event.target.name]: event.target.value },
+    });
+  };
 
-
-  public onSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  public onSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
     this.setState({ sending: true });
 
-    const response = await submitJson(this.state.form as unknown as Record<string, string>, "/contact", "POST");
+    const response = await submitJson(
+      this.state.form as unknown as Record<string, string>,
+      "/contact",
+      "POST"
+    );
 
     if (response.status === 200) {
       alert("Email successfully sent!");
@@ -31,7 +44,7 @@ export default class contact extends React.Component<State> {
     } else alert(response.message || "Unknown error");
 
     this.setState({ sending: false });
-  }
+  };
 
   render(): ReactNode {
     const formData = this.state.form;
@@ -42,13 +55,11 @@ export default class contact extends React.Component<State> {
           <title>Contact</title>
         </Head>
 
-        <MailingList />
         <NavBar />
 
         <main className={styles.main}>
           <h1>Contact</h1> <br />
           <form onSubmit={this.onSubmit} className={styles.form}>
-
             <fieldset>
               <legend>Name:</legend>
               <input
@@ -59,7 +70,7 @@ export default class contact extends React.Component<State> {
                 minLength={2}
                 maxLength={32}
                 onChange={this.handleChange}
-                value={formData.firstName || ""}
+                value={formData.firstName}
                 required
               />
 
@@ -71,7 +82,7 @@ export default class contact extends React.Component<State> {
                 minLength={2}
                 maxLength={32}
                 onChange={this.handleChange}
-                value={formData.lastName || ""}
+                value={formData.lastName}
                 required
               />
             </fieldset>
@@ -83,7 +94,7 @@ export default class contact extends React.Component<State> {
                 name="email"
                 placeholder="Email"
                 onChange={this.handleChange}
-                value={formData.email || ""}
+                value={formData.email}
                 required
               />
             </section>
@@ -98,7 +109,7 @@ export default class contact extends React.Component<State> {
                 minLength={3}
                 maxLength={32}
                 onChange={this.handleChange}
-                value={formData.subject || ""}
+                value={formData.subject}
                 required
               />
             </section>
@@ -113,13 +124,17 @@ export default class contact extends React.Component<State> {
                 maxLength={512}
                 rows={6}
                 onChange={this.handleChange}
-                value={formData.message || ""}
+                value={formData.message}
                 required
               ></textarea>
             </section>
 
             <section>
-              <input type="submit" value="Submit" disabled={this.state.sending} />
+              <input
+                type="submit"
+                value="Submit"
+                disabled={this.state.sending}
+              />
             </section>
           </form>
         </main>

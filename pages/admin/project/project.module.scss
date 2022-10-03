@@ -1,0 +1,109 @@
+@use "styles/vars" as *;
+@use "styles/markdown" as md;
+
+.container {
+    background-color: $primary;
+    background-image: url("/noise.jpg");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main {
+    display: grid;
+    width: 100%;
+    max-width: 2000px;
+    grid-template-columns: 1.3fr 2fr;
+    grid-template-rows: min-content auto;
+    grid-template-areas: "input markdown" "assets parsedMarkdown";
+    align-items: start;
+
+    gap: 30px;
+    min-height: 100vh;
+
+    padding: 30px;
+
+    & > * {
+        width: 100%;
+    }
+}
+
+.form {
+    grid-area: input;
+    justify-self: right;
+
+    border-radius: $borderRadius;
+    padding: 15px;
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+
+    & > .buttons {
+        display: flex;
+        gap: 20px;
+
+        & > * {
+            flex-grow: 1;
+        }
+    }
+}
+
+.assets {
+    grid-area: assets;
+    justify-self: right;
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.markdownInput {
+    grid-area: markdown;
+    height: 100%;
+
+    border-radius: $borderRadius;
+    padding: 15px;
+
+    & > textarea {
+        background-color: transparent;
+        outline: 2px $text solid;
+        border: none;
+        border-radius: 10px;
+        width: 100%;
+        height: 80%;
+        resize: none;
+        color: $text;
+        padding: 20px;
+    }
+}
+
+.markdown {
+    grid-area: parsedMarkdown;
+    padding: 0 20px;
+    overflow-y: scroll;
+}
+
+@media only screen and (orientation: portrait) {
+    .main {
+        min-height: 100vh;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .markdown {
+        min-height: 50vh;
+    }
+
+    .markdownInput {
+        min-height: 40vh;
+        overflow-y: auto;
+        padding: 20px;
+
+        & > textarea {
+            border-radius: 6px;
+            min-height: 40vh;
+        }
+    }
+}

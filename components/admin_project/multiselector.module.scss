@@ -3,11 +3,14 @@
 .main {
     width: 100%;
     min-height: 30px;
-    background-color: $tetiary;
     border: 2px solid $text;
-    border-radius: 10px;
+    border-radius: $borderRadius;
 
-    &>input {
+    & * {
+        font-size: 1.03rem;
+    }
+
+    & > input {
         border: none;
         background-color: transparent;
         width: 100%;
@@ -31,10 +34,10 @@
 
 .selected {
     border: 1px solid $text;
-    border-radius: 10px;
+    border-radius: $borderRadius;
 
     text-transform: none;
-    font-size: .8rem;
+    font-size: 0.9rem;
     padding: 4px;
     letter-spacing: normal;
 

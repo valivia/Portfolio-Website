@@ -9,15 +9,24 @@ import { WithRouterProps } from "next/dist/client/with-router";
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
 class Login extends React.Component<WithRouterProps> {
-  state = { code: "", error: "", ratelimit: false, loading: true, failed: false };
+  state = {
+    code: "",
+    error: "",
+    ratelimit: false,
+    loading: true,
+    failed: false,
+  };
 
-  public handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+  public onChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
     if (event == null) return;
     this.setState({ code: event.target.value });
-  }
+  };
 
-
-  public submit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  public submit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
 
     this.state.code = this.state.code.replace(" ", "");
@@ -49,20 +58,24 @@ class Login extends React.Component<WithRouterProps> {
     } else {
       this.props.router.push("/admin");
     }
-  }
+  };
 
   async componentDidMount() {
-    const result = await fetch(`${apiServer}/auth`, { credentials: "include", mode: "cors", method: "POST" })
-      .then(x => { if (x.ok) return true; })
+    const result = await fetch(`${apiServer}/auth`, {
+      credentials: "include",
+      mode: "cors",
+      method: "POST",
+    })
+      .then((x) => {
+        if (x.ok) return true;
+      })
       .catch(() => false);
-
 
     if (result) this.setState({ loading: false, failed: true });
     else this.setState({ loading: false });
   }
 
   render(): ReactNode {
-
     if (this.state.loading) return <> </>;
     if (this.state.failed) {
       this.props.router.replace("/admin");
@@ -79,22 +92,22 @@ class Login extends React.Component<WithRouterProps> {
 
         <main className={styles.main}>
           <h1>{this.state.error || "Login"}</h1>
-          <form className={styles.form} onSubmit={this.submit} >
+          <form className={styles.form} onSubmit={this.submit}>
             <section>
               <label>code:</label>
               <input
                 type="text"
                 name="code"
-                onChange={this.handleChange}
+                onChange={this.onChange}
                 value={this.state.code}
                 disabled={this.state.ratelimit}
-                required />
+                required
+              />
             </section>
 
             <section>
               <input type="submit" value="Login" />
             </section>
-
           </form>
         </main>
 
