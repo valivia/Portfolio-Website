@@ -1,24 +1,30 @@
+use bson::oid::ObjectId;
 use mongodb::bson::doc;
-use mongodb::bson::oid::ObjectId;
 use mongodb::Database;
 use rocket::serde::json::Json;
 use rocket::State;
-use tokio::fs::remove_file;
 
 use crate::db::tag;
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
+use crate::lib::revalidate::{RevalidateResult, Revalidator};
+use crate::models::auth::UserInfo;
+use crate::models::response::{Response, ResponseBody};
 use crate::models::tag::Tag;
 use crate::HTTPErr;
 
-#[delete("/tag/<_id>")]
-pub async fn delete(
-    db: &State<Database>,
-    _id: String,
-) -> Result<Json<Tag>, CustomError> {
-    let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
+#[delete("/tag/<tag_id>")]
+pub async fn delete(db: &State<Database>, _user_info: UserInfo, tag_id: String) -> Response<Tag> {
+    let tag_id = HTTPErr!(ObjectId::parse_str(&tag_id), 400, "Invalid id format.");
 
-    let result = tag::delete(db, oid).await.map_err(|error| match error {
+    // Fetch all the projects the tag is related to.
+    let projects = match tag::find_projects(db, tag_id).await {
+        Ok(data) => data,
+        Err(_) => vec![],
+    };
+
+    // Delete tag from db
+    let data = tag::delete(db, tag_id).await.map_err(|error| match error {
         DatabaseError::NotFound => CustomError::build(404, Some("No tag with this ID exists")),
         DatabaseError::Database => {
             CustomError::build(500, Some("Failed to delete tag from the database"))
@@ -26,15 +32,43 @@ pub async fn delete(
         _ => CustomError::build(500, Some("Unexpected server error.")),
     })?;
 
-    Ok(Json(result))
+    data.delete_file();
+
+    let mut revalidated = Revalidator::new();
+
+    // Check every project that contains this tag.
+    for project in &projects {
+        revalidated = revalidated.add_project(project.id);
+    }
+
+    // Check projects page and gallery should be re-rendered.
+    if !projects.is_empty() {
+        revalidated = revalidated.add_projects();
+        revalidated = revalidated.add_gallery();
+    }
+
+    // Check if about page should be re-rendered.
+    if data.is_experience() {
+        revalidated = revalidated.add_about();
+    }
+
+    let revalidated = Some(revalidated.send().await);
+
+    // Respond.
+    Ok(Json(ResponseBody { data, revalidated }))
 }
 
-#[delete("/tag/icon/<id>")]
-pub async fn delete_icon(db: &State<Database>, id: String) -> Result<Json<Tag>, CustomError> {
-    // Check if valid oid.
-    let oid = HTTPErr!(ObjectId::parse_str(&id), 400, "Invalid id format.");
+#[delete("/tag/icon/<tag_id>")]
+pub async fn delete_icon(
+    db: &State<Database>,
+    _user_info: UserInfo,
+    tag_id: String,
+) -> Response<Tag> {
+    // Check if valid tag_id.
+    let tag_id = HTTPErr!(ObjectId::parse_str(tag_id), 400, "Invalid id format.");
 
-    let tag = tag::update_icon(db, oid, None)
+    // Update db entry.
+    let data = tag::update_icon(db, tag_id, None)
         .await
         .map_err(|error| match error {
             DatabaseError::NotFound => CustomError::build(404, Some("No tag with this ID exists")),
@@ -44,7 +78,16 @@ pub async fn delete_icon(db: &State<Database>, id: String) -> Result<Json<Tag>, 
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
-    let _ = remove_file(format!("media/tag/{}.svg", tag._id)).await;
+    // Remove file.
+    data.delete_file();
 
-    Ok(Json(tag))
+    // Revalidate page if needed.
+    let mut revalidated: Option<RevalidateResult> = None;
+
+    if data.is_experience() {
+        revalidated = Some(Revalidator::new().add_about().send().await);
+    }
+
+    // Response.
+    Ok(Json(ResponseBody { data, revalidated }))
 }

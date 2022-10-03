@@ -12,27 +12,46 @@ use mongodb::options::ReturnDocument;
 use mongodb::Database;
 use rocket::serde::json::Json;
 
+use super::find_by_id_raw;
+
 pub async fn update(
     db: &Database,
-    oid: ObjectId,
+    tag_id: ObjectId,
     input: Json<TagInput>,
-) -> Result<Tag, DatabaseError> {
+) -> Result<(Tag, Tag), DatabaseError> {
     let tag_collection = db.collection::<TagDocument>("tag");
     let project_collection = db.collection::<ProjectDocument>("project");
+
+    let old_tag = find_by_id_raw(db, tag_id).await?;
+
+    let TagInput {
+        used_since,
+        notable_project,
+        name,
+        description,
+        website,
+        score,
+    } = input.0;
+
+    let updated_tag = TagDocument {
+        id: old_tag.id,
+        icon_updated_at: old_tag.icon_updated_at,
+        used_since: used_since.into(),
+        notable_project,
+        name,
+        description,
+        website,
+        score,
+    };
+
+    let doc = bson::to_bson(&updated_tag).unwrap();
 
     let query_options = FindOneAndUpdateOptions::builder()
         .return_document(ReturnDocument::After)
         .build();
 
-    let update_tag_doc = input.clone().into_inner().into_tag_doc();
-    let update_project_doc = input.into_inner().into_project_doc();
-
-    let tag = tag_collection
-        .find_one_and_update(
-            doc! {"_id": oid},
-            doc! {"$set": update_tag_doc},
-            query_options,
-        )
+    let new_tag = tag_collection
+        .find_one_and_update(doc! {"_id": tag_id}, doc! {"$set": &doc}, query_options)
         .await
         .map_err(|error| {
             eprintln!("{error}");
@@ -43,8 +62,8 @@ pub async fn update(
 
     project_collection
         .update_many(
-            doc! {"tags._id": oid},
-            doc! {"$set": update_project_doc},
+            doc! {"tags._id": tag_id},
+            doc! {"$set": { "tags.$": doc } },
             None,
         )
         .await
@@ -53,7 +72,7 @@ pub async fn update(
             DatabaseError::Database
         })?;
 
-    Ok(tag)
+    Ok((new_tag, old_tag.into()))
 }
 
 pub async fn update_icon(

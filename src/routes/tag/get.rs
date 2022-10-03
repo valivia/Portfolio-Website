@@ -7,6 +7,7 @@ use rocket::State;
 use crate::db::tag;
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
+use crate::models::response::{Response, ResponseBody};
 use crate::models::tag::Tag;
 use crate::HTTPErr;
 
@@ -15,7 +16,7 @@ pub async fn get_all(
     db: &State<Database>,
     limit: Option<i64>,
     page: Option<i64>,
-) -> Result<Json<Vec<Tag>>, CustomError> {
+) -> Response<Vec<Tag>> {
     if let Some(x) = limit {
         if x < 0 {
             return Err(CustomError::build(
@@ -38,7 +39,8 @@ pub async fn get_all(
     let limit: i64 = limit.unwrap_or(12);
     let page: i64 = page.unwrap_or(1);
 
-    let tags = tag::find(db, limit, page)
+    // Fetch from database.
+    let data = tag::find(db, limit, page)
         .await
         .map_err(|error| match error {
             DatabaseError::Database => {
@@ -47,24 +49,30 @@ pub async fn get_all(
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
-    Ok(Json(tags))
+    // Respond.
+    Ok(Json(ResponseBody {
+        revalidated: None,
+        data,
+    }))
 }
 
-#[get("/tag/<_id>")]
-pub async fn get_by_id(db: &State<Database>, _id: String) -> Result<Json<Tag>, CustomError> {
-    let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
+#[get("/tag/<tag_id>")]
+pub async fn get_by_id(db: &State<Database>, tag_id: String) -> Response<Tag> {
+    let tag_id = HTTPErr!(ObjectId::parse_str(tag_id), 400, "Invalid id format.");
 
-    let tag = tag::find_by_id(db, oid)
+    let data = tag::find_by_id(db, tag_id)
         .await
         .map_err(|error| match error {
-            DatabaseError::NotFound => {
-                CustomError::build(404, Some("No tag with this ID exists"))
-            }
+            DatabaseError::NotFound => CustomError::build(404, Some("No tag with this ID exists")),
             DatabaseError::Database => {
                 CustomError::build(500, Some("Failed to fetch this data from the database"))
             }
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
-    Ok(Json(tag))
+    // Respond.
+    Ok(Json(ResponseBody {
+        revalidated: None,
+        data,
+    }))
 }
