@@ -15,7 +15,7 @@ macro_rules! HTTPErr {
     ($e:expr, $code:expr, $msg:expr) => {
         match $e {
             Ok(x) => x,
-            Err(_) => return Err(CustomError::build($code, Some($msg))),
+            Err(_) => return Err(CustomError::build($code, $msg)),
         }
     };
 }
@@ -26,7 +26,7 @@ macro_rules! HTTPOption {
     ($e:expr, $code:expr, $msg:expr) => {
         match $e {
             Some(x) => x,
-            None => return Err(CustomError::build($code, Some($msg))),
+            None => return Err(CustomError::build($code, $msg)),
         }
     };
 }
@@ -39,18 +39,19 @@ pub struct CustomError {
 
 impl CustomError {
     /// building a custom error.
-    pub fn build<S: Into<String>>(code: u16, description: Option<S>) -> CustomError {
+    pub fn build(code: u16, description: Option<&str>) -> CustomError {
         let reason = match code {
             400 => "Bad Request".to_string(),
             401 => "Unauthorized".to_string(),
             500 => "Server Error".to_string(),
+            415 => "Unsupported Media Type".to_string(),
             _ => "Error".to_string(),
         };
         CustomError {
             error: ErrorContent {
                 code,
                 reason,
-                description: description.map(S::into),
+                description: description.map(|input| input.into()),
             },
         }
     }

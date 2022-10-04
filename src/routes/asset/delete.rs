@@ -21,20 +21,23 @@ pub async fn delete(
     project_id: String,
     asset_id: String,
 ) -> Response<Asset> {
-    let project_id = HTTPErr!(ObjectId::parse_str(project_id), 400, "Invalid id format.");
-    let asset_id = HTTPErr!(ObjectId::parse_str(asset_id), 400, "Invalid id format.");
+    let project_id = HTTPErr!(
+        ObjectId::parse_str(project_id),
+        400,
+        Some("Invalid id format.")
+    );
+    let asset_id = HTTPErr!(
+        ObjectId::parse_str(asset_id),
+        400,
+        Some("Invalid id format.")
+    );
 
     // Delete from DB.
     let data = asset::delete(db, project_id, asset_id)
         .await
         .map_err(|error| match error {
-            DatabaseError::NotFound => {
-                CustomError::build(404, Some("No asset with this ID exists"))
-            }
-            DatabaseError::Database => {
-                CustomError::build(500, Some("Failed to delete asset from the database"))
-            }
-            _ => CustomError::build(500, Some("Unexpected server error.")),
+            DatabaseError::NotFound => CustomError::build(404, None),
+            _ => CustomError::build(500, None),
         })?;
 
     data.delete_files();

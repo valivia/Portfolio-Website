@@ -19,19 +19,13 @@ pub async fn get_all(
 ) -> Response<Vec<Project>> {
     if let Some(x) = limit {
         if x < 0 {
-            return Err(CustomError::build(
-                400,
-                Some("limit cannot be less than 0".to_string()),
-            ));
+            return Err(CustomError::build(400, Some("limit cannot be less than 0")));
         }
     }
 
     if let Some(x) = page {
         if x < 0 {
-            return Err(CustomError::build(
-                400,
-                Some("page cannot be less than 1".to_string()),
-            ));
+            return Err(CustomError::build(400, Some("page cannot be less than 1")));
         }
     }
 
@@ -42,12 +36,7 @@ pub async fn get_all(
     // Fetch data from database.
     let data = project::find(db, limit, page)
         .await
-        .map_err(|error| match error {
-            DatabaseError::Database => {
-                CustomError::build(500, Some("Failed to fetch this data from the database"))
-            }
-            _ => CustomError::build(500, Some("Unexpected server error.")),
-        })?;
+        .map_err(|_| CustomError::build(500, None))?;
 
     // Respond
     Ok(Json(ResponseBody {
@@ -56,21 +45,20 @@ pub async fn get_all(
     }))
 }
 
-#[get("/project/<_id>")]
-pub async fn get_by_id(db: &State<Database>, _id: String) -> Response<Project> {
-    let oid = HTTPErr!(ObjectId::parse_str(&_id), 400, "Invalid id format.");
+#[get("/project/<project_id>")]
+pub async fn get_by_id(db: &State<Database>, project_id: String) -> Response<Project> {
+    let project_id = HTTPErr!(
+        ObjectId::parse_str(project_id),
+        400,
+        Some("Invalid id format.")
+    );
 
     // Fetch data from database.
-    let data = project::find_by_id(db, oid)
+    let data = project::find_by_id(db, project_id)
         .await
         .map_err(|error| match error {
-            DatabaseError::NotFound => {
-                CustomError::build(404, Some("No project with this ID exists"))
-            }
-            DatabaseError::Database => {
-                CustomError::build(500, Some("Failed to fetch this data from the database"))
-            }
-            _ => CustomError::build(500, Some("Unexpected server error.")),
+            DatabaseError::NotFound => CustomError::build(404, None),
+            _ => CustomError::build(500, None),
         })?;
 
     // Respond

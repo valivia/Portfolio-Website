@@ -23,17 +23,14 @@ pub async fn patch(
     input: Validated<Json<TagInput>>,
 ) -> Response<Tag> {
     let input = input.into_inner();
-    let tag_id = HTTPErr!(ObjectId::parse_str(tag_id), 400, "Invalid id format.");
+    let tag_id = HTTPErr!(ObjectId::parse_str(tag_id), 400, Some("Invalid id format."));
 
     // Update database and fetch new.
     let (new_tag, old_tag) = tag::update(db, tag_id, input)
         .await
         .map_err(|error| match error {
-            DatabaseError::NotFound => CustomError::build(404, Some("No tag with this ID exists")),
-            DatabaseError::Database => {
-                CustomError::build(500, Some("Failed to update this data in the database"))
-            }
-            _ => CustomError::build(500, Some("Unexpected server error.")),
+            DatabaseError::NotFound => CustomError::build(404, None),
+            _ => CustomError::build(500, None),
         })?;
 
     // Fetch all the projects the tag is related to.

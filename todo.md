@@ -9,7 +9,9 @@
 - [x] mailing signup
 - [x] auth
 - [x] enums?
-- [ ] auth testing
+- [x] auth testing
+- [x] FILE PERMS
+- [ ] RATELIMIT
 - [ ] github webhook
 - [ ] proper input error info l
 - [ ] mailing sending

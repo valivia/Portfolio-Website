@@ -56,7 +56,7 @@ pub async fn login(
     // Sign jwt.
     let token = key
         .authenticate(claims)
-        .map_err(|_| CustomError::build(500, Some("Unexpected server error.")))?;
+        .map_err(|_| CustomError::build(500, None))?;
 
     // Make cookie.
     let cookie = Cookie::build("token", token)

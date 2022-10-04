@@ -1,4 +1,4 @@
-use std::fs::{self, set_permissions, Permissions};
+use std::fs::{self, set_permissions};
 use std::os::unix::prelude::PermissionsExt;
 
 use crate::errors::database::DatabaseError;
@@ -53,14 +53,14 @@ pub async fn post_icon(
     file: TempFile<'_>,
 ) -> Response<Tag> {
     // Check if valid oid.
-    let tag_id = HTTPErr!(ObjectId::parse_str(tag_id), 400, "Invalid id format.");
+    let tag_id = HTTPErr!(ObjectId::parse_str(tag_id), 400, Some("Invalid id format."));
 
     // Check file validity.
-    let file_type = HTTPOption!(file.content_type(), 400, "No file type detected");
+    let file_type = HTTPOption!(file.content_type(), 415, None);
 
     // Check if its the right file type.
     if !file_type.is_svg() {
-        return Err(CustomError::build(401, Some("Invalid file type")));
+        return Err(CustomError::build(415, None));
     }
 
     // Save file.
@@ -72,14 +72,11 @@ pub async fn post_icon(
     let data = tag::update_icon(db, tag_id, Some(DateTime::now()))
         .await
         .map_err(|error| match error {
-            DatabaseError::NotFound => CustomError::build(404, Some("No tag with this ID exists")),
-            DatabaseError::Database => {
-                CustomError::build(500, Some("Failed to update this data in the database"))
-            }
-            _ => CustomError::build(500, Some("Unexpected server error.")),
+            DatabaseError::NotFound => CustomError::build(404, None),
+            _ => CustomError::build(500, None),
         })?;
-    
-        // todo , maybe delete file on fail but it isnt vital so this is ok for now.
+
+    // todo , maybe delete file on fail but it isnt vital so this is ok for now.
 
     // Revalidate page if needed.
     let mut revalidated: Option<RevalidateResult> = None;

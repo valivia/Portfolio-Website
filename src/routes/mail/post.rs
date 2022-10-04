@@ -53,7 +53,7 @@ fn send_email(mailer: &SmtpTransport, oid: ObjectId, address: String) -> Result<
     );
 
     let message = make_email()
-        .to(HTTPErr!(address.parse(), 400, "Failed to parse this email"))
+        .to(HTTPErr!(address.parse(), 400, Some("Failed to parse this email")))
         .subject("🦉 Verify your subscription.")
         .body(body)
         .map_err(|err| {
@@ -63,7 +63,7 @@ fn send_email(mailer: &SmtpTransport, oid: ObjectId, address: String) -> Result<
 
     mailer.send(&message).map_err(|err| {
         eprintln!("{}", err);
-        CustomError::build(500, Some("A server error occured"))
+        CustomError::build(500, None)
     })?;
 
     Ok(())
@@ -86,12 +86,12 @@ pub async fn send(
 ) -> Result<String, CustomError> {
     todo!();
 
-    let data = input.0;
+    let input = input.into_inner();
     let emails = find(db)
         .await
         .map_err(|_| CustomError::build(500, Some("Unexpected server error.")))?;
 
-    let message_template = make_email().subject(format!("🦉 {}", data.subject));
+    let message_template = make_email().subject(format!("🦉 {}", input.subject));
 
     for email in emails.iter() {
         let message = message_template
@@ -99,9 +99,9 @@ pub async fn send(
             .to(HTTPErr!(
                 email.email.parse(),
                 400,
-                "Failed to parse this email"
+                Some("Failed to parse this email")
             ))
-            .body(data.body.to_owned())
+            .body(input.body.to_owned())
             .map_err(|err| {
                 eprintln!("{}", err);
                 CustomError::build(500, Some("Invalid email body"))
@@ -109,7 +109,7 @@ pub async fn send(
 
         mailer.send(&message).map_err(|err| {
             eprintln!("{}", err);
-            CustomError::build(500, Some("A server error occured"))
+            CustomError::build(500, None)
         })?;
     }
 

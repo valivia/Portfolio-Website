@@ -24,11 +24,11 @@ pub async fn post(
     let oid = project::insert(db, input.clone())
         .await
         .map_err(|error| match error {
-            DatabaseError::Database => CustomError::build(500, Some("Failed to create db entry.")),
+            DatabaseError::Database => CustomError::build(500, None),
             DatabaseError::Mismatch => {
                 CustomError::build(400, Some("Tags dont match with the database"))
             }
-            _ => CustomError::build(500, Some("Unexpected server error.")),
+            _ => CustomError::build(500, None),
         })?;
 
     // Get data from DB.

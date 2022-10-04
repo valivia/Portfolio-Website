@@ -23,20 +23,15 @@ pub async fn patch(
     input: Validated<Json<ProjectInput>>,
 ) -> Response<Project> {
     let input = input.into_inner();
-    let oid = HTTPErr!(ObjectId::parse_str(&id), 400, "Invalid id format.");
+    let oid = HTTPErr!(ObjectId::parse_str(&id), 400, Some("Invalid id format."));
 
     // Update the DB.
     let (new_project, old_project) =
         project::update(db, oid, input)
             .await
             .map_err(|error| match error {
-                DatabaseError::NotFound => {
-                    CustomError::build(404, Some("No project with this ID exists"))
-                }
-                DatabaseError::Database => {
-                    CustomError::build(500, Some("Failed to update this data in the database"))
-                }
-                _ => CustomError::build(500, Some("Unexpected server error.")),
+                DatabaseError::NotFound => CustomError::build(404, None),
+                _ => CustomError::build(500, None),
             })?;
 
     let mut revalidated = Revalidator::new().add_project(oid);

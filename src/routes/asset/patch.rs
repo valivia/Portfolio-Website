@@ -23,20 +23,23 @@ pub async fn patch(
     asset_id: String,
 ) -> Response<Asset> {
     let input = input.into_inner();
-    let project_id = HTTPErr!(ObjectId::parse_str(project_id), 400, "Invalid id format.");
-    let asset_id = HTTPErr!(ObjectId::parse_str(asset_id), 400, "Invalid id format.");
+    let project_id = HTTPErr!(
+        ObjectId::parse_str(project_id),
+        400,
+        Some("Invalid id format.")
+    );
+    let asset_id = HTTPErr!(
+        ObjectId::parse_str(asset_id),
+        400,
+        Some("Invalid id format.")
+    );
 
     // update DB entry.
     let (new_asset, old_asset) = asset::patch(db, project_id, asset_id, input.into_inner())
         .await
         .map_err(|error| match error {
-            DatabaseError::NotFound => {
-                CustomError::build(404, Some("No asset with this ID exists"))
-            }
-            DatabaseError::Database => {
-                CustomError::build(500, Some("Failed to update asset in the database"))
-            }
-            _ => CustomError::build(500, Some("Unexpected server error")),
+            DatabaseError::NotFound => CustomError::build(404, None),
+            _ => CustomError::build(500, None),
         })?;
 
     // Revalidate paths on next.js.

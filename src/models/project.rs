@@ -55,7 +55,6 @@ impl ProjectDocument {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Project {
     pub id: String,
-    pub banner_id: Option<String>,
 
     pub created_at: String,
     pub updated_at: String,
@@ -64,9 +63,11 @@ pub struct Project {
     pub description: Option<String>,
     pub markdown: Option<String>,
 
+    pub banner_id: Option<String>,
     pub status: Status,
-    pub is_pinned: bool,
+
     pub is_project: bool,
+    pub is_pinned: bool,
 
     pub tags: Vec<Tag>,
     pub assets: Vec<Asset>,

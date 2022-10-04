@@ -9,7 +9,6 @@ use std::fmt::Display;
 
 use crate::errors::database::DatabaseError;
 use crate::models::mail::Mail;
-use crate::models::project::ProjectDocument;
 use crate::models::tag::TagDocument;
 
 pub mod asset;
@@ -46,7 +45,6 @@ async fn connect() -> mongodb::error::Result<Database> {
 async fn prepare_db(db: &Database) -> Result<(), DatabaseError> {
     let index_options = IndexOptions::builder().unique(true).build();
     let mailing_collection = db.collection::<Mail>("mailing");
-    let project_collection = db.collection::<ProjectDocument>("project");
     let tag_collection = db.collection::<TagDocument>("project");
 
     let mailing_index = IndexModel::builder()
@@ -59,22 +57,12 @@ async fn prepare_db(db: &Database) -> Result<(), DatabaseError> {
         .await
         .unwrap();
 
-    // let project_index = IndexModel::builder()
-    //     .keys(doc! {"name": 1})
-    //     .options(index_options.clone())
-    //     .build();
+    let tag_index = IndexModel::builder()
+        .keys(doc! {"name": 1})
+        .options(index_options.clone())
+        .build();
 
-    // project_collection
-    //     .create_index(project_index, None)
-    //     .await
-    //     .unwrap();
-
-    // let tag_index = IndexModel::builder()
-    //     .keys(doc! {"name": 1})
-    //     .options(index_options.clone())
-    //     .build();
-
-    // tag_collection.create_index(tag_index, None).await.unwrap();
+    tag_collection.create_index(tag_index, None).await.unwrap();
 
     Ok(())
 }

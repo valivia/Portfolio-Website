@@ -9,7 +9,7 @@ pub async fn qr(config: &State<Config>) -> Result<String, CustomError> {
 
     let code = auth
         .qr_code(&config.tfa_token, "qr_code", "name", 200, 200, 'M')
-        .map_err(|_| CustomError::build(500, Some("Unexpected server error.")))?;
+        .map_err(|_| CustomError::build(500, None))?;
 
     Ok(code)
 }

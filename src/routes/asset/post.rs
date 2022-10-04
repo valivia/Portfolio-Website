@@ -12,7 +12,6 @@ use mongodb::bson::oid::ObjectId;
 use rocket::form::Form;
 
 use crate::db::asset::{self, insert};
-use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::lib::revalidate::Revalidator;
 use crate::models::asset::{Asset, AssetPost, AssetUpdate};
@@ -42,18 +41,22 @@ pub async fn post(
     let created_at = HTTPErr!(
         DateTime::parse_from_rfc3339(&created_at),
         400,
-        "Invalid created_at"
+        Some("Invalid created_at")
     );
 
     // Parse project id.
-    let project_id = HTTPErr!(ObjectId::parse_str(project_id), 400, "Invalid project_id");
+    let project_id = HTTPErr!(
+        ObjectId::parse_str(project_id),
+        400,
+        Some("Invalid project_id")
+    );
 
     // get image content type.
-    let file_type = HTTPOption!(file.content_type(), 400, "No file type detected");
+    let file_type = HTTPOption!(file.content_type(), 415, None);
 
     // Check if image is acceptable format.
     if !(file_type.is_png() || file_type.is_jpeg() || file_type.is_webp()) {
-        return Err(CustomError::build(401, Some("Invalid file type")));
+        return Err(CustomError::build(415, None));
     };
 
     let asset_id = ObjectId::new();
@@ -63,19 +66,19 @@ pub async fn post(
     // save image to disk
     file.persist_to(&archive_path).await.map_err(|error| {
         eprintln!("{error}");
-        CustomError::build(500, Some("Failed to persist file.".to_string()))
+        CustomError::build(500, Some("Failed to persist file."))
     })?;
 
     // open image for editing
     let img = ImageReader::open(&archive_path)
         .map_err(|error| {
             eprintln!("{error}");
-            CustomError::build(500, Some("Failed to read image.".to_string()))
+            CustomError::build(500, Some("Failed to read image."))
         })?
         .decode()
         .map_err(|error| {
             eprintln!("{error}");
-            CustomError::build(500, Some("Failed to decode image.".to_string()))
+            CustomError::build(500, Some("Failed to decode image."))
         })?;
 
     println!("img open: {:?}", now.elapsed());
@@ -95,14 +98,9 @@ pub async fn post(
     // insert into db.
     let data = insert(db, project_id, db_data, asset_id, width, height)
         .await
-        .map_err(|error| {
+        .map_err(|_| {
             let _ = remove_file(archive_path); // can't do anything if this fails.
-            match error {
-                DatabaseError::Database => {
-                    CustomError::build(500, Some("Failed to create db entry."))
-                }
-                _ => CustomError::build(500, Some("Unexpected server error.")),
-            }
+            CustomError::build(500, None)
         })?;
 
     println!("insert into db: {:?}", now.elapsed());

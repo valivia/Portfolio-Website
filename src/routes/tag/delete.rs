@@ -15,7 +15,11 @@ use crate::HTTPErr;
 
 #[delete("/tag/<tag_id>")]
 pub async fn delete(db: &State<Database>, _user_info: UserInfo, tag_id: String) -> Response<Tag> {
-    let tag_id = HTTPErr!(ObjectId::parse_str(&tag_id), 400, "Invalid id format.");
+    let tag_id = HTTPErr!(
+        ObjectId::parse_str(&tag_id),
+        400,
+        Some("Invalid id format.")
+    );
 
     // Fetch all the projects the tag is related to.
     let projects = match tag::find_projects(db, tag_id).await {
@@ -26,10 +30,7 @@ pub async fn delete(db: &State<Database>, _user_info: UserInfo, tag_id: String) 
     // Delete tag from db
     let data = tag::delete(db, tag_id).await.map_err(|error| match error {
         DatabaseError::NotFound => CustomError::build(404, Some("No tag with this ID exists")),
-        DatabaseError::Database => {
-            CustomError::build(500, Some("Failed to delete tag from the database"))
-        }
-        _ => CustomError::build(500, Some("Unexpected server error.")),
+        _ => CustomError::build(500, None),
     })?;
 
     data.delete_file();
@@ -65,17 +66,17 @@ pub async fn delete_icon(
     tag_id: String,
 ) -> Response<Tag> {
     // Check if valid tag_id.
-    let tag_id = HTTPErr!(ObjectId::parse_str(tag_id), 400, "Invalid id format.");
+    let tag_id = HTTPErr!(ObjectId::parse_str(tag_id), 400, Some("Invalid id format."));
 
     // Update db entry.
     let data = tag::update_icon(db, tag_id, None)
         .await
         .map_err(|error| match error {
-            DatabaseError::NotFound => CustomError::build(404, Some("No tag with this ID exists")),
+            DatabaseError::NotFound => CustomError::build(404, None),
             DatabaseError::Database => {
-                CustomError::build(500, Some("Failed to fetch this data from the database"))
+                CustomError::build(500, None)
             }
-            _ => CustomError::build(500, Some("Unexpected server error.")),
+            _ => CustomError::build(500, None),
         })?;
 
     // Remove file.

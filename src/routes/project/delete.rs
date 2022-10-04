@@ -15,19 +15,14 @@ use rocket::State;
 
 #[delete("/project/<id>")]
 pub async fn delete(db: &State<Database>, _user_info: UserInfo, id: String) -> Response<Project> {
-    let oid = HTTPErr!(ObjectId::parse_str(&id), 400, "Invalid id format.");
+    let oid = HTTPErr!(ObjectId::parse_str(&id), 400, Some("Invalid id format."));
 
     // Fetch and delete data from the database.
     let data = project::delete(db, oid)
         .await
         .map_err(|error| match error {
-            DatabaseError::NotFound => {
-                CustomError::build(404, Some("No project with this ID exists"))
-            }
-            DatabaseError::Database => {
-                CustomError::build(500, Some("Failed to delete project from the database"))
-            }
-            _ => CustomError::build(500, Some("Unexpected server error.")),
+            DatabaseError::NotFound => CustomError::build(404, None),
+            _ => CustomError::build(500, None),
         })?;
 
     let mut revalidated = Revalidator::new().add_project(oid);
