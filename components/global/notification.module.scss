@@ -1,0 +1,54 @@
+@use "@styles/vars" as *;
+
+.wrapper {
+    position: sticky;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    flex-direction: column-reverse;
+    gap: 10px;
+    bottom: 0;
+    padding: 20px;
+}
+
+.main {
+    border: 1px $text solid;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.599);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 400px;
+}
+
+.status {
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    background-color: $text;
+
+    &[data-type="danger"] {
+        background-color: rgb(140, 63, 63);
+    }
+
+    &[data-type="success"] {
+        background-color: rgb(59, 129, 59);
+    }
+
+    &[data-type="warning"] {
+        background-color: rgb(135, 107, 56);
+    }
+}
+
+.close {
+    background-color: transparent;
+    border: none;
+    color: $text;
+    font-size: 1.2rem;
+    padding: 0;
+    margin: 0;
+    margin-left: auto;
+}
