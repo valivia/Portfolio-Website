@@ -5,9 +5,9 @@ use mongodb::bson;
 use mongodb::bson::oid::ObjectId;
 use rocket::serde::{Deserialize, Serialize};
 use rocket_validation::Validate;
-use strum::{EnumIter, Display};
+use strum::{Display, EnumIter};
 
-#[derive(Debug, EnumIter, Display ,Serialize, Deserialize, Clone, Copy)]
+#[derive(Debug, EnumIter, Display, Serialize, Deserialize, Clone, Copy)]
 pub enum Category {
     Software,
     Language,
@@ -99,7 +99,7 @@ pub struct TagInput {
 
     pub notable_project: Option<ObjectId>,
 
-    #[validate(length(min = 3, max = 32))]
+    #[validate(length(min = 2, max = 32))]
     pub name: String,
 
     #[validate(length(min = 3))]

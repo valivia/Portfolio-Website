@@ -113,7 +113,7 @@ impl From<ProjectDocument> for Project {
 pub struct ProjectInput {
     pub created_at: DateTime<Utc>,
 
-    #[validate(length(min = 3, max = 32))]
+    #[validate(length(min = 2, max = 32))]
     pub name: String,
 
     #[validate(length(min = 3))]

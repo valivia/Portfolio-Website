@@ -30,7 +30,7 @@ pub async fn get_all(
     }
 
     // Setting default values
-    let limit: i64 = limit.unwrap_or(12);
+    let limit: i64 = limit.unwrap_or(300);
     let page: i64 = page.unwrap_or(1);
 
     // Fetch data from database.

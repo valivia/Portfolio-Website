@@ -20,6 +20,7 @@ pub struct Config {
     // auth
     pub tfa_token: String,
     pub jwt_key: String,
+    pub webhook_key: String,
     pub auth_timeout: u64,
 }
 

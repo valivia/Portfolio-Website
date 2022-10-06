@@ -43,7 +43,7 @@ impl CustomError {
         let reason = match code {
             400 => "Bad Request".to_string(),
             401 => "Unauthorized".to_string(),
-            500 => "Server Error".to_string(),
+            500 => "A server error occurred".to_string(),
             415 => "Unsupported Media Type".to_string(),
             _ => "Error".to_string(),
         };

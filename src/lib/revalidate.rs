@@ -56,7 +56,7 @@ impl Revalidator {
             async move {
                 match client
                     .get(format!("{base_url}/api/revalidate/{path}"))
-                    .header("token", api_key)
+                    .header("authorization", api_key)
                     .send()
                     .await
                 {
