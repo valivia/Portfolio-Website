@@ -11,6 +11,7 @@ function app({ Component, pageProps }: AppProps): ReactNode {
     <>
       <Head>
         <link rel="Icon" href="/favicon.ico" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width"></meta>
       </Head>
       <SWRConfig
         value={{
