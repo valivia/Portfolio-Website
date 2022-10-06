@@ -10,7 +10,7 @@ export default class MailingList extends React.Component<
 
   onsubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    const response = await submitJson(this.state, "mailing", "POST");
+    const response = await submitJson(this.state, "mailing/signup", "POST");
 
     if (response.status === 200) {
       window.localStorage.setItem("emailList", "true");

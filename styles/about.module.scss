@@ -4,24 +4,24 @@
 .main {
     width: 100%;
 
-    &>article {
+    & > article {
         min-height: 30vh;
         background-color: $primary;
         display: flex;
         flex-direction: column;
 
-        &>section {
+        & > section {
             text-transform: none;
             letter-spacing: normal;
             min-width: 70%;
             padding: 0 30px;
         }
 
-        &>figure {
+        & > figure {
             display: none;
         }
 
-        &>header {
+        & > header {
             background-color: $tetiary;
             min-width: 100%;
             text-align: center;
@@ -35,11 +35,11 @@
     padding: 10px 50px;
 }
 
-.skill>section {
+.skill > section {
     display: flex;
     flex-direction: row;
 
-    &>.skills {
+    & > .skills {
         padding: 10px 40px;
         width: 30vw;
     }
@@ -69,11 +69,11 @@
         padding: 0;
     }
 
-    .skill>section {
+    .skill > section {
         display: flex;
         flex-direction: column;
 
-        &>.skills {
+        & > .skills {
             padding: 10px 0px;
             width: 100%;
         }

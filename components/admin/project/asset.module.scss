@@ -1,6 +1,6 @@
 @use "styles/vars" as *;
 @use "styles/vars" as var;
-
+@use "styles/button" as buttonModule;
 
 .main {
     outline: 2px $text solid;
@@ -34,22 +34,23 @@
 .form {
     padding: 15px;
 
-    &>h2 {
+    & > h2 {
         margin: 0;
         color: $text;
     }
 
-    &>section {
+    & > section {
         padding: 2px 0;
     }
 }
 
 .buttons {
+    @include buttonModule.button;
     display: flex;
     gap: 10px;
     width: 100%;
 
-    &>input,
+    & > input,
     button {
         flex-grow: 1;
     }

@@ -14,7 +14,7 @@ export default function NavBar(): JSX.Element {
           Github
         </a>
       </Link>
-      <Link href="/browse">
+      <Link href="/gallery">
         <a className={path === "/browse" ? styles.active : undefined}>
           Gallery
         </a>

@@ -1,8 +1,9 @@
 import {
   AnchorHTMLAttributes,
-  Component,
   DetailedHTMLProps,
   ImgHTMLAttributes,
+  useEffect,
+  useState,
 } from "react";
 import styles from "./markdown.module.scss";
 import Image from "next/image";
@@ -10,32 +11,17 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import Link from "next/link";
 
-export default class Markdown extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+type Markdown = MDXRemoteSerializeResult<Record<string, unknown>>;
 
-    this.state = { markdown: undefined };
-  }
+export default function MarkdownComponent({ markdownString }: Props): JSX.Element {
+  const [markdown, setMarkdown] = useState<Markdown>();
 
-  componentDidMount = async (): Promise<void> => {
-    const { value } = this.props;
-    if (!value) return;
-    const markdown = await serialize(value);
-    this.setState({ markdown });
-  };
+  useEffect(() => {
+    if (!markdownString) return;
+    serialize(markdownString).then(parsed => setMarkdown(parsed)).catch(() => null);
+  }, [markdownString]);
 
-  public render(): React.ReactNode {
-    const { markdown } = this.state;
-    if (!markdown) return null;
-
-    return (
-      <section className={styles.main}>
-        <MDXRemote {...markdown} components={this.components} />
-      </section>
-    );
-  }
-
-  ResponsiveImage = (
+  const ResponsiveImage = (
     props: DetailedHTMLProps<
       ImgHTMLAttributes<HTMLImageElement>,
       HTMLImageElement
@@ -50,7 +36,8 @@ export default class Markdown extends Component<Props, State> {
     }
     return <Image alt={props.alt} layout="fill" src={props.src as string} />;
   };
-  LinkElement = (
+
+  const LinkElement = (
     props: DetailedHTMLProps<
       AnchorHTMLAttributes<HTMLAnchorElement>,
       HTMLAnchorElement
@@ -61,16 +48,21 @@ export default class Markdown extends Component<Props, State> {
     </Link>
   );
 
-  components = {
-    img: this.ResponsiveImage,
-    a: this.LinkElement,
+  const components = {
+    img: ResponsiveImage,
+    a: LinkElement,
   };
+
+
+  if (!markdown) return <></>;
+
+  return (
+    <section className={styles.main}>
+      <MDXRemote {...markdown} components={components} />
+    </section>
+  );
 }
 
 interface Props {
-  value: string | null;
-}
-
-interface State {
-  markdown?: MDXRemoteSerializeResult<Record<string, unknown>>;
+  markdownString?: string | null;
 }

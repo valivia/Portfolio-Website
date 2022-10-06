@@ -1,18 +1,18 @@
-import { tag } from ".prisma/client";
+import Tag from "@typeFiles/api/tag.type";
 import { Component, ReactNode } from "react";
 import styles from "./tags.module.scss";
 
 export default class Tags extends Component<Props> {
   render(): ReactNode {
     return (
-      <section className={styles.main}>
-        {this.props.tags.map((data) => <p key={data.uuid}>{data.name}</p>)}
-      </section>
+      <article className={styles.main}>
+        {this.props.tags.map((data) => <p key={data.id}>{data.name}</p>)}
+      </article>
     );
   }
 }
 
 interface Props {
-  tags: tag[];
+  tags: Tag[];
   clickable?: boolean;
 }

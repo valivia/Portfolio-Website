@@ -1,4 +1,4 @@
-import { project } from "@prisma/client";
+import Project from "@typeFiles/api/project.type";
 import useSWR from "swr";
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
@@ -10,7 +10,7 @@ const fetcher = (url: string) =>
   });
 
 export default function useProjects() {
-  const { data, error, mutate } = useSWR<project[]>(`${API}/project`, fetcher);
+  const { data, error, mutate } = useSWR(`${API}/project`, fetcher);
 
   const loading = !data && !error;
   const loggedOut = error && error.status === 401 ? true : false;
@@ -18,7 +18,7 @@ export default function useProjects() {
   return {
     loading,
     loggedOut,
-    projects: data !== undefined ? data : ([] as project[]),
+    projects: data !== undefined ? data.data as Project[] : ([] as Project[]),
     mutate,
   };
 }

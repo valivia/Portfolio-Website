@@ -5,12 +5,13 @@ import Head from "next/head";
 import ImageItem from "@components/browse/imageItem";
 import React, { ReactNode } from "react";
 import Footer from "@components/global/footer.module";
-import { GalleryImage } from "@typeFiles/gallery_image.type";
 import MailingList from "@components/global/mailing.module";
+import Project from "@typeFiles/api/project.type";
+import { asset_to_gallery, GalleryAsset } from "@typeFiles/api/asset.type";
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 
-class Browse extends React.Component<Props> {
+class GalleryPage extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
@@ -37,8 +38,8 @@ class Browse extends React.Component<Props> {
 
         <main className={styles.content} id="main">
           <div className={styles.squares} id="art">
-            {this.props.projects.map((data) => (
-              <ImageItem key={data.uuid} {...data} />
+            {this.props.assets.map((data) => (
+              <ImageItem key={data.asset_id} {...data} />
             ))}
           </div>
         </main>
@@ -49,10 +50,10 @@ class Browse extends React.Component<Props> {
   }
 }
 
-export default Browse;
+export default GalleryPage;
 
 export interface Props {
-  projects: GalleryImage[];
+  assets: GalleryAsset[];
 }
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -60,21 +61,27 @@ export const getStaticProps: GetStaticProps = async () => {
     headers: { authorization: process.env.CLIENT_SECRET as string },
   };
 
-  let projects = await fetch(`${API}/gallery`, headers)
+  const projects: Project[] = await fetch(`${API}/project`, headers)
     .then(async (data) => {
-      if (!data.ok) return null;
-      return (await data.json()) as GalleryImage[];
+      if (!data.ok) return [];
+      return (await data.json()).data;
     })
-    .catch(() => null);
+    .catch(() => []);
 
-  if (projects === null) return { notFound: true };
+  let assets: GalleryAsset[] = [];
+  for (const project of projects) {
+    for (const asset of project.assets) {
+      if (!asset.is_displayed) continue;
+      assets.push(asset_to_gallery(asset, project));
+    }
+  }
 
-  const pinned = projects.filter((project) => project.pinned);
-  const normal = projects.filter((project) => !project.pinned);
-  projects = pinned.concat(normal);
+  const pinned = assets.filter((project) => project.is_pinned);
+  const normal = assets.filter((project) => !project.is_pinned);
+  assets = pinned.concat(normal);
 
   return {
-    props: { projects },
+    props: { assets },
   };
 };
 

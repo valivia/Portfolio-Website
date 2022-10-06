@@ -1,115 +1,114 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 
-import React, {
-  ReactNode,
-} from "react";
+import React from "react";
 import NavBar from "@components/global/navbar.module";
 
 import styles from "../../styles/project.module.scss";
-import { ProjectQuery } from "@typeFiles/api_project.type";
 
 import Footer from "@components/global/footer.module";
 import Tags from "@components/project/tags.module";
-import AssetGallery from "@components/project/assetGallery.module";
-import Markdown from "@components/admin_project/markdown.module";
+import AssetGallery from "@components/project/asset_gallery.module";
+import MarkdownComponent from "@components/global/markdown.module";
+import Project from "@typeFiles/api/project.type";
 
-const api = process.env.NEXT_PUBLIC_API_SERVER;
-const mediaServer = process.env.NEXT_PUBLIC_MEDIA_SERVER;
+const API = process.env.NEXT_PUBLIC_API_SERVER;
+const MEDIA = process.env.NEXT_PUBLIC_MEDIA_SERVER;
 
-export default class Projects extends React.Component<ProjectQuery, never> {
-  private scroll() {
+export default function ProjectPage({ project }: Props): JSX.Element {
+  const scroll = () => {
     document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
-  }
+  };
 
-  render(): ReactNode {
-    const { assets, tags, markdown } = this.props;
-    const project = this.props;
-    const banner = assets.find((asset) => asset.uuid === project.banner_id);
+  const { assets, tags, markdown } = project;
+  const banner = assets.find((asset) => asset.id === project.banner_id);
 
-    let BannerElement;
+  let BannerElement = <header className={styles.spacer}></header>;
 
-    if (banner)
-      BannerElement = (
-        <header
-          className={styles.header}
-          style={{
-            backgroundImage: `url("${mediaServer}/content/${banner?.uuid}_high.jpg")`,
-          }}
-        >
-          <p onClick={this.scroll}>﹀</p>
-        </header>
-      );
-    else BannerElement = <header className={styles.spacer}></header>;
-
-    return (
-      <>
-        <Head>
-          <title>{project.name}</title>
-          <meta name="theme-color" content="#B5A691" />
-          <meta name="description" content={project.description || ""}></meta>
-        </Head>
-        <NavBar />
-        {BannerElement}
-        <article className={styles.content} id="main">
-          <header>
-            <h1>{project.name}</h1>
-          </header>
-          <section className={styles.info}>
-            <Tags tags={tags} />
-            <table>
-              <tr>
-                <td>Name</td>
-                <td>{project.name}</td>
-              </tr>
-              <tr>
-                <td>Status</td>
-                <td>{project.status}</td>
-              </tr>
-              <tr>
-                <td>Last updated</td>
-                <td>{new Date(project.updated).toDateString()}</td>
-              </tr>
-              <tr>
-                <td>Created</td>
-                <td>{new Date(project.created).toDateString()}</td>
-              </tr>
-            </table>
-          </section>
-
-          {(markdown || project.description) && (
-            <section className={styles.markdown}>
-              {markdown ? (
-                <Markdown value={project.markdown} />
-              ) : (
-                project.description
-              )}
-            </section>
-          )}
-
-          {assets.length > 0 && (
-            <section className={styles.assets}>
-              <header>
-                <h2>Gallery</h2>
-              </header>
-              <AssetGallery assets={assets} />
-            </section>
-          )}
-        </article>
-        <Footer />
-      </>
+  if (banner)
+    BannerElement = (
+      <header
+        className={styles.header}
+        style={{
+          backgroundImage: `url("${MEDIA}/content/${banner?.id}.jpg")`,
+        }}
+      >
+        <p onClick={scroll}>﹀</p>
+      </header>
     );
-  }
+
+  return (
+    <>
+      <Head>
+        <title>{project.name}</title>
+        <meta name="theme-color" content="#B5A691" />
+        <meta name="description" content={project.description || ""}></meta>
+      </Head>
+      <NavBar />
+      {BannerElement}
+      <article className={styles.content} id="main">
+        <header>
+          <h1>{project.name}</h1>
+        </header>
+        <section className={styles.info}>
+          <Tags tags={tags} />
+          <table>
+            <tr>
+              <td>Name</td>
+              <td>{project.name}</td>
+            </tr>
+            <tr>
+              <td>Status</td>
+              <td>{project.status}</td>
+            </tr>
+            <tr>
+              <td>Last updated</td>
+              <td>{new Date(project.updated_at).toDateString()}</td>
+            </tr>
+            <tr>
+              <td>Created</td>
+              <td>{new Date(project.created_at).toDateString()}</td>
+            </tr>
+          </table>
+        </section>
+
+        {(markdown || project.description) && (
+          <section className={styles.markdown}>
+            {markdown ? (
+              <MarkdownComponent markdownString={markdown} />
+            ) : (
+              project.description
+            )}
+          </section>
+        )}
+
+        {assets.length > 0 && (
+          <section className={styles.assets}>
+            <header>
+              <h2>Gallery</h2>
+            </header>
+            <AssetGallery assets={assets} />
+          </section>
+        )}
+      </article>
+      <Footer />
+    </>
+  );
+
+}
+
+interface Props {
+  project: Project
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${api}/project`, {
+  const res = await fetch(`${API}/project`, {
     headers: { authorization: process.env.CLIENT_SECRET as string },
   });
-  const data = (await res.json()) as ProjectQuery[];
+  const data = (await res.json()).data as Project[];
 
   const paths = data.map((project) => {
-    return { params: { id: project.uuid } };
+    return { params: { id: project.id } };
   });
 
   return {
@@ -119,22 +118,22 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const data = await fetch(`${api}/project/${params?.id}`, {
+  const project = await fetch(`${API}/project/${params?.id}`, {
     headers: { authorization: process.env.CLIENT_SECRET as string },
   })
     .then(async (x) => {
-      if (x.ok) return (await x.json()) as ProjectQuery;
+      if (x.ok) return (await x.json()).data as Project;
       else return null;
     })
     .catch(() => null);
 
-  if (!data) {
+  if (!project) {
     return {
       notFound: true,
     };
   }
 
   return {
-    props: data,
+    props: { project },
   };
 };

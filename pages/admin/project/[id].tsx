@@ -1,36 +1,40 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import React, { useState } from "react";
-import { ProjectQuery } from "@typeFiles/api_project.type";
 import styles from "./project.module.scss";
 import { NextRouter, useRouter } from "next/router";
-import prisma, { project_status, tag } from "@prisma/client";
-import Link from "next/link";
 import onChangeParser from "@components/onchange";
-import { submitJson } from "@components/submit";
-import Multiselector from "@components/admin_project/multiselector.module";
+import { submitJson, submitUrl } from "@components/submit";
+import MultiselectorInput from "@components/admin/project/multiselector.module";
 import TextInput from "@components/input/text_input.module";
 import TextArea from "@components/input/textarea.module";
 import Checkbox from "@components/input/checkbox.module";
-import Markdown from "@components/admin_project/markdown.module";
-import Asset from "@components/admin_project/asset.module";
+import MarkdownComponent from "@components/global/markdown.module";
+import AdminPageAssetComponent from "@components/admin/project/asset.module";
 import DateInput from "@components/input/date.module";
 import Select from "@components/input/select.module";
+import { ProjectInput } from "@typeFiles/api/project.type";
+import Tag from "@typeFiles/api/tag.type";
+import Asset from "@typeFiles/api/asset.type";
+import AdminNavBar from "@components/admin/navbar.component";
+
+// Notifications.
+import { ReactNotifications, Store } from "react-notifications-component";
+import NotificationType from "@typeFiles/notification";
+import NotificationComponent from "@components/global/notification.module";
+import "react-notifications-component/dist/theme.css";
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
-const EMPTYPROJECT: Project = {
+const EMPTYPROJECT: ProjectInput = {
   name: "",
   tags: [],
   assets: [],
-  status: "",
-  banner_id: null,
-  created: new Date().toISOString(),
-  description: null,
-  markdown: null,
-  pinned: false,
-  projects: false,
-  updated: new Date().toISOString(),
-  uuid: "",
+  status: "Finished",
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+
+  is_pinned: false,
+  is_project: false,
 };
 
 export default function AdminProject(props: Props): JSX.Element {
@@ -38,85 +42,114 @@ export default function AdminProject(props: Props): JSX.Element {
   const [project, setProject] = useState(props.project);
   const [sending, setSending] = useState(false);
 
-  const isNew = project.uuid === "";
-  const hasChanged = JSON.stringify(project) !== JSON.stringify(props.project);
+  const isEqualState = (): boolean => {
+    const propProject = props.project;
+    const stateProject = project;
 
-  async function onChange(
+    if (propProject.created_at !== stateProject.created_at) return false;
+    if (propProject.name !== stateProject.name) return false;
+    if (propProject.description !== stateProject.description) return false;
+    if (propProject.markdown !== stateProject.markdown) return false;
+
+    if (propProject.status !== stateProject.status) return false;
+    if (propProject.is_project !== stateProject.is_project) return false;
+    if (propProject.is_pinned !== stateProject.is_pinned) return false;
+
+    if (propProject.tags !== stateProject.tags) return false;
+
+
+    return true;
+  };
+
+  const onChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
-  ) {
+  ) => {
     const target = e.target;
     const value = onChangeParser(target);
     setProject({ ...project, [target.name]: value });
-  }
+  };
 
-  const multiselectorChange = (selected: { uuid: string; name: string }[]) => {
+  const multiselectorChange = (selected: { id: string; name: string }[]) => {
     setProject({ ...project, tags: selected });
   };
 
-  const submit = async (): Promise<void> => {
+  const notify = (message: string, type: NotificationType) => {
+    let duration = 5000;
+    if (type === "success") duration = 2000;
+    Store.addNotification({
+      type,
+      container: "top-right",
+      content: NotificationComponent,
+      message,
+      animationIn: ["animate__animated", "animate__fadeIn"],
+      animationOut: ["animate__animated", "animate__fadeOut"],
+      dismiss: {
+        duration,
+      },
+    });
+  };
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+
     setSending(true);
 
-    const submitData = project as unknown as SubmitProject;
-    submitData.tags = project.tags.map((x) => x.uuid);
+    const submitData = { ...project } as unknown as Record<string, unknown>;
+    submitData.tags = project.tags.map((x) => x.id);
 
     const method = isNew ? "POST" : "PATCH";
+    const path = isNew ? "project" : `project/${submitData.id}`;
 
     const response = await submitJson(
-      submitData as unknown as Record<string, unknown>,
-      "project",
+      submitData,
+      path,
       method
     );
 
     if (response.status !== 200) {
-      alert(response.message || "Unknown error");
-      setSending(false);
-      return;
+      notify(response.message, "danger");
+    } else if (isNew) {
+      await router.replace(`/admin/project/${response.data.id}`);
+    } else {
+      notify("Project updated", "success");
     }
-
-    if (isNew) await router.push(`/admin/project/${project.uuid}`);
-    else {
-      setProject(response.data.project);
-      alert("Project updated");
-    }
-
+    setProject(response.data);
     setSending(false);
   };
 
   const deleteProject = async (): Promise<void> => {
     setSending(true);
     if (!confirm("Are you sure you want to delete this project?")) return;
+
     if (isNew) {
       setProject(EMPTYPROJECT);
       return;
     }
-    const response = await submitJson(
-      { uuid: project.uuid },
-      "project",
+    const response = await submitUrl(
+      `project/${project.id}`,
       "DELETE"
     );
 
     if (response.status !== 200) {
-      alert(response.message || "Unknown error");
+      notify(response.message, "danger");
       setSending(false);
-      return;
+    } else {
+      await router.push("/admin");
     }
-
-    await router.push("/admin");
   };
 
-  const confirmProceed = (event: { preventDefault: () => void }): void => {
-    if (!hasChanged) return;
+  const upsertAsset = (input: Asset) => {
+    setProject((old) => {
+      const assets = old.assets.concat([]);
+      const currentId = assets.findIndex(x => x.id == input.id);
 
-    if (confirm("Are you sure you want to proceed?")) return;
-    event.preventDefault();
-  };
+      if (currentId === -1) assets.unshift(input);
+      else assets[currentId] = input;
 
-  const upsertAsset = (asset: temp) => {
-    const assets = project.assets.filter((x) => x.uuid !== asset.uuid);
-    assets.unshift(asset);
-    setProject({ ...project, assets });
+      return { ...old, assets };
+    });
   };
 
   const setBanner = (banner_id: string) => {
@@ -124,136 +157,135 @@ export default function AdminProject(props: Props): JSX.Element {
   };
 
   const deleteAsset = (id: string) => {
-    const assets = project.assets.filter((x) => x.uuid !== id);
-    setProject({ ...project, assets });
+    setProject((old) => (
+      { ...old, assets: old.assets.filter((asset) => asset.id !== id) }
+    ));
   };
 
-  const render = (): JSX.Element => {
-    return (
-      <div className={styles.container}>
-        <Head>
-          <title>{project.name === "" ? "New Project" : project.name}</title>
-          <meta name="theme-color" content="#B5A691" />
-        </Head>
+  const isNew = project.id === undefined;
+  const hasChanged = !isEqualState();
 
-        <header className={styles.header}>
-          <Link href="/admin">
-            <a onClick={confirmProceed}>〈</a>
-          </Link>
-          <Link href={`/project/${project.uuid}`}>
-            <a onClick={confirmProceed}>Project</a>
-          </Link>
-        </header>
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>{project.name === "" ? "New Project" : project.name}</title>
+        <meta name="theme-color" content="#B5A691" />
+      </Head>
 
-        <main className={styles.main}>
-          <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-            <h2>Project</h2>
+      <ReactNotifications />
+      <AdminNavBar path={project.id && `/project/${project.id}`} hasChanged={hasChanged} />
 
-            <TextInput name={"name"} value={project.name} onChange={onChange} />
+      <main className={styles.main}>
+        <form className={styles.form} onSubmit={onSubmit}>
+          <h2>Project</h2>
 
-            <TextArea
-              name={"description"}
-              value={project.description}
+          <TextInput name={"name"} value={project.name} onChange={onChange} />
+
+          <TextArea
+            name={"description"}
+            value={project.description}
+            onChange={onChange}
+            minLength={3}
+            maxLength={1024}
+          />
+
+          <DateInput
+            name="created"
+            onChange={onChange}
+            value={new Date(project.created_at)}
+          />
+
+          <Select
+            name="status"
+            onChange={onChange}
+            value={project.status || props.status[0]}
+            list={props.status}
+          />
+
+          <section>
+            <label>Tags:</label>
+            <MultiselectorInput
+              options={props.tags}
+              active={project.tags || []}
+              onChange={multiselectorChange}
+            />
+          </section>
+
+          <section className={styles.checkbox}>
+            <Checkbox
+              name={"is_project"}
+              text={"Display on projects page?"}
+              value={project.is_project}
               onChange={onChange}
-              maxLength={1024}
             />
 
-            <DateInput
-              name="created"
+            <Checkbox
+              name={"is_pinned"}
+              text={"Display as pinned?"}
+              value={project.is_pinned}
               onChange={onChange}
-              value={new Date(project.created)}
             />
+          </section>
 
-            <Select
-              name="status"
-              onChange={onChange}
-              value={project.status || props.status[0]}
-              list={props.status}
+          <section className={styles.buttons}>
+            {hasChanged && (
+              <button type="submit" disabled={sending} >
+                {isNew ? "Create" : "Update"}
+              </button>
+            )}
+            {(hasChanged || !isNew) && (
+              <button type="button" onClick={deleteProject} disabled={sending}>
+                Delete
+              </button>
+            )}
+          </section>
+        </form>
+
+        {!isNew && (
+          <section className={styles.assets}>
+            <header>
+              <h2>Assets</h2>
+            </header>
+            <AdminPageAssetComponent
+              key="new"
+              project={project}
+              notify={notify}
+              upsertAsset={upsertAsset}
+              deleteAsset={deleteAsset}
+              setBanner={setBanner}
             />
-
-            <section>
-              <label>Tags:</label>
-              <Multiselector
-                options={props.tags}
-                selected={project.tags || []}
-                onChange={multiselectorChange}
-              />
-            </section>
-
-            <section className={styles.checkbox}>
-              <Checkbox
-                name={"projects"}
-                text={"Display on projects page?"}
-                value={project.projects}
-                onChange={onChange}
-              />
-
-              <Checkbox
-                name={"pinned"}
-                text={"Display as pinned?"}
-                value={project.pinned}
-                onChange={onChange}
-              />
-            </section>
-
-            <section className={styles.buttons}>
-              {hasChanged && (
-                <button disabled={sending} onClick={submit}>
-                  Submit
-                </button>
-              )}
-              {(hasChanged || !isNew) && (
-                <button onClick={deleteProject} disabled={sending}>
-                  Delete
-                </button>
-              )}
-            </section>
-          </form>
-
-          {!isNew && (
-            <section className={styles.assets}>
-              <header>
-                <h2>Assets</h2>
-              </header>
-              <Asset
-                key="new"
-                project={project as unknown as ProjectQuery}
+            {project.assets.map((x) => (
+              <AdminPageAssetComponent
+                key={x.id}
+                asset={x}
+                project={project}
+                notify={notify}
                 upsertAsset={upsertAsset}
                 deleteAsset={deleteAsset}
                 setBanner={setBanner}
               />
-              {project.assets.map((x) => (
-                <Asset
-                  key={x.uuid}
-                  asset={x}
-                  project={project as unknown as ProjectQuery}
-                  upsertAsset={upsertAsset}
-                  deleteAsset={deleteAsset}
-                  setBanner={setBanner}
-                />
-              ))}
-            </section>
-          )}
-
-          <section className={styles.markdownInput}>
-            <h2>Markdown</h2>
-            <textarea
-              name="markdown"
-              value={project.markdown || ""}
-              onChange={onChange}
-            ></textarea>
+            ))}
           </section>
+        )}
 
-          <section className={styles.markdown}>
-            <h2>Rendered Markdown</h2>
-            <Markdown value={project.markdown} />
-          </section>
-        </main>
-      </div>
-    );
-  };
+        <section className={styles.markdownInput}>
+          <h2>Markdown</h2>
+          <textarea
+            name="markdown"
+            value={project.markdown || ""}
+            onChange={onChange}
+          ></textarea>
+        </section>
 
-  return render();
+        <section className={styles.markdown}>
+          <h2>Rendered Markdown</h2>
+          <MarkdownComponent markdownString={project.markdown} />
+        </section>
+      </main>
+    </div>
+  );
+
+
 }
 
 export const getServerSideProps: GetServerSideProps = async ({
@@ -261,7 +293,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
 }) => {
   // Check auth. (this is fine i promiseeeeee (the actual api POST endpoints have proper auth))
-  if (req.cookies.session === undefined) {
+  if (req.cookies.token === undefined) {
     return {
       redirect: {
         destination: "/login",
@@ -278,7 +310,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     (await fetch(`${API}/project/${params?.id}`, headers)
       .then(async (data) => {
         if (!data.ok) return null;
-        return (await data.json()) as Project;
+        return (await data.json()).data as ProjectInput;
       })
       .catch(() => null)) ?? EMPTYPROJECT;
 
@@ -292,13 +324,13 @@ export const getServerSideProps: GetServerSideProps = async ({
   const tags = await fetch(`${API}/tag`, headers)
     .then(async (data) => {
       if (!data.ok) return [];
-      return (await data.json()) as tag[];
+      return (await data.json()).data as Tag[];
     })
     .catch(() => []);
 
   if (project.status === "" && status.length !== 0) project.status = status[0];
 
-  if (project.uuid === "" && params?.id !== "new") return { notFound: true };
+  if (!project.id && params?.id !== "new") return { notFound: true };
 
   return {
     props: { tags, project, status },
@@ -307,26 +339,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
 interface Props {
   router: NextRouter;
-  tags: tag[];
-  status: project_status[];
-  project: Project;
-}
-
-interface Project
-  extends Omit<
-    ProjectQuery,
-    "tags" | "status" | "created" | "updated" | "assets"
-  > {
-  status: string;
-  created: string;
-  updated: string;
-  assets: temp[];
-  tags: { uuid: string; name: string }[];
-}
-interface SubmitProject extends Omit<Project, "tags"> {
-  tags: string[];
-}
-
-interface temp extends Omit<prisma.asset, "created"> {
-  created: string;
+  tags: Tag[];
+  status: string[];
+  project: ProjectInput;
 }

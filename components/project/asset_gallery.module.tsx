@@ -1,8 +1,8 @@
 import Image from "next/image";
-import styles from "./assetGallery.module.scss";
-import prisma from "@prisma/client";
+import styles from "./asset_gallery.module.scss";
 import { Component, ReactNode } from "react";
 import { motion } from "framer-motion";
+import Asset from "@typeFiles/api/asset.type";
 
 
 export default class AssetGallery extends Component<Props, State> {
@@ -36,11 +36,11 @@ export default class AssetGallery extends Component<Props, State> {
 
             return (
               <article
-                key={asset.uuid}
+                key={asset.id}
                 className={styles.image}
                 onClick={() => this.setState({ current: this.props.assets.indexOf(asset) })}>
                 <Image
-                  src={`${mediaServer}/content/${asset.uuid}_square.jpg`}
+                  src={`${mediaServer}/content/${asset.id}_square.jpg`}
                   layout="responsive"
                   height={size}
                   width={size}
@@ -59,12 +59,12 @@ export default class AssetGallery extends Component<Props, State> {
             className={styles.fullscreenMain}
           >
             <motion.div
-              key={currentAsset.uuid}
+              key={currentAsset.id}
               initial={{ x: "600px", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
               className={styles.content}
-              style={{ backgroundImage: `url("${mediaServer}/content/${currentAsset.uuid}_high.jpg")` }}
+              style={{ backgroundImage: `url("${mediaServer}/content/${currentAsset.id}.jpg")` }}
             />
 
             <div className={styles.buttons}>
@@ -81,7 +81,7 @@ export default class AssetGallery extends Component<Props, State> {
 }
 
 interface Props {
-  assets: prisma.asset[];
+  assets: Asset[];
 }
 
 interface State {

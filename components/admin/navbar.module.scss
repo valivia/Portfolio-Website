@@ -1,0 +1,97 @@
+@use "@styles/vars" as *;
+@use "@styles/vars" as vars;
+
+.navbar {
+    @include vars.noselect;
+    height: 80px;
+    width: 100%;
+
+    margin-bottom: -80px;
+
+    position: -webkit-sticky;
+    position: sticky;
+    z-index: 10;
+    top: 0;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, 0) 100%);
+    align-items: center;
+
+    & > * {
+        grid-row: 1 / 2;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 1.4rem;
+        color: $text;
+
+        transition: transform 100ms;
+        transform: scale(1);
+
+        &:hover {
+            color: $textHover;
+            stroke: $textHover;
+            transform: scale(1.03);
+            cursor: pointer;
+        }
+
+        &:active:not(.logo) {
+            transform: scale(0.9);
+        }
+    }
+}
+
+.active {
+    text-decoration: underline;
+}
+
+.logo {
+    fill: none;
+    stroke: $text;
+    stroke-width: 25px;
+
+    & * {
+        transform-origin: center;
+        transition: transform 200ms;
+        transform: scale(1);
+    }
+
+    &:hover {
+        & > .inner {
+            transform: rotate(90deg) scale(0.75);
+        }
+
+        > .outer {
+            transform: scale(1.01);
+        }
+    }
+
+    &:active {
+        & > .inner {
+            transform: rotate(90deg) scale(0.55);
+        }
+        & > .outer {
+            transform: scale(1.1);
+        }
+    }
+}
+
+@media only screen and (orientation: portrait) {
+    .navbar {
+        grid-template-columns: 0 1fr 1fr 1fr 1fr 1fr 0;
+        grid-template-rows: 100%;
+        gap: 10px;
+        height: 80px;
+
+        & > * {
+            font-size: 3.5vw;
+        }
+    }
+}

@@ -1,8 +1,9 @@
 @use "styles/vars" as *;
-
+@use "styles/button" as buttonModule;
 // CONTACT
 
 .main {
+  @include buttonModule.button;
   min-height: 100vh;
   width: 100%;
   display: flex;

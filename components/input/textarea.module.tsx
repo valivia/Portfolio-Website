@@ -7,7 +7,7 @@ export default class TextArea extends Component<Props> {
   }
 
   public render(): React.ReactNode {
-    const { name, maxLength, onChange } = this.props;
+    const { name, maxLength, minLength, onChange } = this.props;
     const text = this.props.text ?? name;
     const value = this.props.value ?? "";
     const rows = this.props.rows ?? 2;
@@ -20,6 +20,7 @@ export default class TextArea extends Component<Props> {
           id={name}
           name={name}
           rows={rows}
+          minLength={minLength}
           maxLength={maxLength}
           onChange={onChange}
           value={value}
@@ -32,8 +33,9 @@ export default class TextArea extends Component<Props> {
 interface Props {
   name: string;
   text?: string;
-  value: string | null;
+  value: string | null | undefined;
   rows?: number;
+  minLength?: number;
   maxLength?: number;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }

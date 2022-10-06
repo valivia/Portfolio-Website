@@ -31,6 +31,6 @@ export default class TextInput extends Component<Props> {
 interface Props {
   name: string;
   text?: string;
-  value: string | null;
+  value: string | null | undefined;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }

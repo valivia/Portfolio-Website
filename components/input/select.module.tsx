@@ -20,7 +20,7 @@ export default class Select extends Component<Props> {
         );
       else
         return (
-          <option key={entry.uuid} value={entry.uuid}>
+          <option key={entry.id} value={entry.id}>
             {entry.name}
           </option>
         );
@@ -53,8 +53,8 @@ export default class Select extends Component<Props> {
 interface Props {
   name: string;
   text?: string;
-  value: string | null;
-  list: string[] | { name: string; uuid: string }[];
+  value: string | null | undefined;
+  list: string[] | { name: string; id: string }[];
   datalist?: boolean;
   onChange: (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
