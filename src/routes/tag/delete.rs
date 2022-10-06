@@ -33,7 +33,10 @@ pub async fn delete(db: &State<Database>, _user_info: UserInfo, tag_id: String) 
         _ => CustomError::build(500, None),
     })?;
 
-    data.delete_file();
+    // Delete icon if it exists.
+    if data.icon_updated_at.is_some() {
+        data.delete_file();
+    }
 
     let mut revalidated = Revalidator::new();
 
@@ -73,9 +76,6 @@ pub async fn delete_icon(
         .await
         .map_err(|error| match error {
             DatabaseError::NotFound => CustomError::build(404, None),
-            DatabaseError::Database => {
-                CustomError::build(500, None)
-            }
             _ => CustomError::build(500, None),
         })?;
 
