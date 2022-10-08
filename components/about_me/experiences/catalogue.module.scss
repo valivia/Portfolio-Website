@@ -1,0 +1,68 @@
+@use "styles/vars" as *;
+
+.main {
+    padding: 10px;
+    padding-left: 20vw;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border-right: 1px $text solid;
+}
+
+.category {
+    align-self: flex-end;
+    text-align: right;
+
+    & > p {
+        margin: 0;
+        padding-bottom: 10px;
+    }
+}
+
+.tagWrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-right: 7px;
+}
+
+.tag {
+    transform: scale(1);
+    transition: transform 200ms ease-in-out;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &[data-active="true"] {
+        transform: scale(1.2);
+    }
+}
+
+@media (max-height: 480px) and (orientation: landscape), (min-width: 641px) {
+    .main {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 640px) {
+    .main {
+        padding: 10px;
+        justify-content: center;
+        flex-direction: column;
+        border: none;
+        border-bottom: 1px $text solid;
+    }
+
+    .category {
+        align-self: center;
+        text-align: center;
+    }
+
+    .experience {
+        display: flex;
+        justify-content: center;
+    }
+}

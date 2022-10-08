@@ -1,0 +1,20 @@
+@use "styles/vars" as *;
+
+.main {
+    & * {
+        @include ralewayFont;
+        font-weight: 300;
+    }
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 640px) {
+    .main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+}
