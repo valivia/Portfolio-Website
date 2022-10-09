@@ -56,8 +56,11 @@
         align-items: center;
         width: 100%;
 
-        > meter {
+        & > meter {
             width: 50%;
+        }
+        & > label {
+            font-weight: 500;
         }
     }
 
@@ -92,7 +95,7 @@
 @media (max-width: 640px) {
     .wrapper {
         padding: 30px;
-        height: auto;
+        height: min-content;
     }
 
     .main {

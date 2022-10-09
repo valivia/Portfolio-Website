@@ -105,7 +105,12 @@ export default function ExperienceDisplayComponent(props: Props): JSX.Element {
         {current.website &&
           <section className={styles.property}>
             <label>Website</label>
-            <a href={current.website}>{current.website.split("/").slice(2, 3).join("/")}</a>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href={current.website}
+            >{current.website.split("/").slice(2, 3).join("/")}
+            </a>
           </section>
         }
       </motion.section>

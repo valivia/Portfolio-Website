@@ -15,7 +15,7 @@
 
     & > p {
         margin: 0;
-        padding-bottom: 10px;
+        padding-bottom: 15px;
     }
 }
 
@@ -29,7 +29,7 @@
 }
 
 .tag {
-    transition: transform 200ms ease-in-out;
+    transition: transform 100ms ease-in-out;
     filter: grayscale(.6);
     transform: scale(1);
 
