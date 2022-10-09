@@ -1,13 +1,13 @@
 import { NextRouter, withRouter } from "next/router";
-import NavBar from "@components/global/navbar.module";
+import NavigationBarComponent from "@components/global/navbar.module";
 import styles from "@styles/projects.module.scss";
 import Head from "next/head";
 import React from "react";
 import Footer from "@components/global/footer.module";
-import PinnedProject from "@components/projects/pinned_project.module";
+import BoxItemComponent from "@components/projects/box.module";
 import { GetStaticProps } from "next";
 import { motion } from "framer-motion";
-import ListProject from "@components/projects/list_project.module";
+import ListItemcomponent from "@components/projects/list.module";
 import Project from "@typeFiles/api/project.type";
 
 import dynamic from "next/dynamic";
@@ -36,7 +36,7 @@ class Projects extends React.Component<Props> {
         </Head>
 
         <MailingList />
-        <NavBar />
+        <NavigationBarComponent />
 
         <main className={styles.main}>
           <header>
@@ -55,7 +55,7 @@ class Projects extends React.Component<Props> {
               animate="visible"
               variants={animation_list}
             >
-              {this.props.pinned.map((x, y) => <PinnedProject key={y} index={y} project={x} />)}
+              {this.props.pinned.map((x, y) => <BoxItemComponent key={y} index={y} project={x} />)}
             </motion.section>
           </>
           }
@@ -69,7 +69,7 @@ class Projects extends React.Component<Props> {
                 variants={animation_list}
               >
                 <tbody>
-                  {this.props.list.map((x, y) => <ListProject key={y} index={y} project={x} delay={this.props.pinned.length * 0.2} />)}
+                  {this.props.list.map((x, y) => <ListItemcomponent key={y} index={y} project={x} delay={this.props.pinned.length * 0.2} />)}
                 </tbody>
               </motion.table>
             </section>

@@ -1,5 +1,5 @@
 import type { GetStaticProps } from "next";
-import NavBar from "@components/global/navbar.module";
+import NavigationBarComponent from "@components/global/navbar.module";
 import styles from "@styles/browse.module.scss";
 import Head from "next/head";
 import ImageItem from "@components/browse/imageItem";
@@ -33,7 +33,7 @@ class GalleryPage extends React.Component<Props> {
         </Head>
 
         <MailingList />
-        <NavBar />
+        <NavigationBarComponent />
 
         <header className={styles.subheader}>
           <div onClick={this.scroll}>Gallery</div>

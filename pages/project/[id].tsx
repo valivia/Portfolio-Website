@@ -2,7 +2,7 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 
 import React from "react";
-import NavBar from "@components/global/navbar.module";
+import NavigationBarComponent from "@components/global/navbar.module";
 
 import styles from "../../styles/project.module.scss";
 
@@ -44,7 +44,7 @@ export default function ProjectPage({ project }: Props): JSX.Element {
         <meta name="theme-color" content="#B5A691" />
         <meta name="description" content={project.description || ""}></meta>
       </Head>
-      <NavBar />
+      <NavigationBarComponent />
       {BannerElement}
       <article className={styles.content} id="main">
         <header>

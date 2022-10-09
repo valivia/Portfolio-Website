@@ -4,7 +4,7 @@ import styles from "./navbar.module.scss";
 
 const GIT = process.env.NEXT_PUBLIC_GITHUB;
 
-export default function NavBar(): JSX.Element {
+export default function NavigationBarComponent(): JSX.Element {
   const router = useRouter();
   const path = router.route;
   return (

@@ -1,4 +1,4 @@
-import NavBar from "@components/global/navbar.module";
+import NavigationBarComponent from "@components/global/navbar.module";
 import React, { ReactNode } from "react";
 import Head from "next/head";
 
@@ -13,7 +13,7 @@ export default function index(): ReactNode {
         <meta name="theme-color" content="#B5A691" />
         <meta name="description" content="Portfolio website" />
       </Head>
-      <NavBar />
+      <NavigationBarComponent />
 
       <SubHeaderComponent image={banner} />
     </>

@@ -1,4 +1,4 @@
-import NavBar from "@components/global/navbar.module";
+import NavigationBarComponent from "@components/global/navbar.module";
 import styles from "@styles/about.module.scss";
 import Head from "next/head";
 import React from "react";
@@ -36,7 +36,7 @@ export default function About({ experiences, projectCount, assetCount }: Props):
       </Head>
 
       <MailingList />
-      <NavBar />
+      <NavigationBarComponent />
 
       <main className={styles.main} id="main">
 

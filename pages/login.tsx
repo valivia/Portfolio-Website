@@ -1,4 +1,4 @@
-import NavBar from "@components/global/navbar.module";
+import NavigationBarComponent from "@components/global/navbar.module";
 import React, { useState } from "react";
 import styles from "@styles/contact.module.scss";
 import Head from "next/head";
@@ -52,7 +52,7 @@ export default function Login(): JSX.Element {
         <title>Login</title>
       </Head>
 
-      <NavBar />
+      <NavigationBarComponent />
 
       <main className={styles.main}>
         <h1>{error || "Login"}</h1>
