@@ -1,89 +1,84 @@
 import Image from "next/image";
 import styles from "./asset_gallery.module.scss";
-import { Component, ReactNode } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Asset from "@typeFiles/api/asset.type";
 
 
-export default class AssetGallery extends Component<Props, State> {
+const MEDIA = process.env.NEXT_PUBLIC_MEDIA_SERVER;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      current: undefined,
-    };
+
+export default function AssetGalleryComponent({ assets }: Props): JSX.Element {
+  const [current, setCurrent] = useState<undefined | number>(undefined);
+
+  function changeIndex(change: number): void {
+    if (current == undefined) return;
+    let newIndex = current + change;
+    newIndex = newIndex < 0 ? assets.length - 1 : (newIndex >= assets.length ? 0 : newIndex);
+    setCurrent(newIndex);
   }
 
-  public changeIndex(change: number): void {
-    if (this.state.current == undefined) return;
-    let newIndex = this.state.current + change;
-    newIndex = newIndex < 0 ? this.props.assets.length - 1 : (newIndex >= this.props.assets.length ? 0 : newIndex);
-    this.setState({ current: newIndex });
-  }
+  const currentAsset = current !== undefined ? assets[current] : undefined;
 
-  render(): ReactNode {
+  return (
+    <>
+      <section className={styles.main}>
+        {assets.map(asset => {
+          const size = Math.min(asset.width, asset.height);
 
-    const mediaServer = process.env.NEXT_PUBLIC_MEDIA_SERVER;
-    const current = this.state.current;
-    const assets = this.props.assets;
-    const currentAsset = current !== undefined ? this.props.assets[current] : undefined;
+          return (
+            <article
+              key={asset.id}
+              className={styles.image}
+              onClick={() => setCurrent(assets.indexOf(asset))}
+            >
 
-    return (
-      <>
-        <section className={styles.main}>
-          {this.props.assets.map(asset => {
-            const size = asset.width > asset.height ? asset.width : asset.height;
+              <Image
+                src={`${MEDIA}/content/${asset.id}_square.jpg`}
+                layout="responsive"
+                height={size}
+                width={size}
+                sizes={"(orientation: portrait) 50vw, 20vw"}
+                quality={95}
+                alt={asset.alt ?? ""}>
+              </Image>
 
-            return (
-              <article
-                key={asset.id}
-                className={styles.image}
-                onClick={() => this.setState({ current: this.props.assets.indexOf(asset) })}>
-                <Image
-                  src={`${mediaServer}/content/${asset.id}_square.jpg`}
-                  layout="responsive"
-                  height={size}
-                  width={size}
-                  sizes={"(orientation: portrait) 50vw, 20vw"}
-                  quality={95}
-                  alt={asset.alt ?? ""}>
-                </Image>
-              </article>
-            );
-          })
-          }
-        </section >
-
-        {currentAsset == undefined ? <></> :
-          <div
-            className={styles.fullscreenMain}
-          >
-            <motion.div
-              key={currentAsset.id}
-              initial={{ x: "600px", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              className={styles.content}
-              style={{ backgroundImage: `url("${mediaServer}/content/${currentAsset.id}.jpg")` }}
-            />
-
-            <div className={styles.buttons}>
-              {assets.length > 1 && <button onClick={() => this.changeIndex(-1)}>&lt;</button>}
-              <div onClick={() => this.setState({ current: undefined })}></div>
-              {assets.length > 1 && <button onClick={() => this.changeIndex(1)}>&gt;</button>}
-            </div>
-
-          </div>
+            </article>
+          );
+        })
         }
-      </>
-    );
-  }
+      </section >
+
+      {currentAsset &&
+        <div
+          className={styles.fullscreenMain}
+        >
+          <motion.div
+            key={currentAsset.id}
+            initial={{ x: "600px", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className={styles.content}
+            style={{ backgroundImage: `url("${MEDIA}/content/${currentAsset.id}.jpg")` }}
+          />
+
+          <div className={styles.buttons}>
+            {assets.length > 1 && <button onClick={() => changeIndex(-1)}>&lt;</button>}
+            <div
+              className={styles.assetDescription}
+              onClick={() => setCurrent(undefined)}
+            >
+              {currentAsset.description}
+            </div>
+            {assets.length > 1 && <button onClick={() => changeIndex(1)}>&gt;</button>}
+          </div>
+
+        </div>
+      }
+    </>
+  );
 }
 
 interface Props {
   assets: Asset[];
-}
-
-interface State {
-  current: number | undefined;
 }

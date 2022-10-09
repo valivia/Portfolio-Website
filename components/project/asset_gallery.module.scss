@@ -76,6 +76,14 @@
     }
 }
 
+.assetDescription {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 50px;
+    font-size: 1.3rem;
+}
+
 @media only screen and (orientation: portrait) {
     .main {
         grid-template-columns: repeat(2, 1fr);

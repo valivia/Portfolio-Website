@@ -1,15 +1,12 @@
 import Tag from "@typeFiles/api/tag.type";
-import { Component, ReactNode } from "react";
 import styles from "./tags.module.scss";
 
-export default class Tags extends Component<Props> {
-  render(): ReactNode {
-    return (
-      <article className={styles.main}>
-        {this.props.tags.map((data) => <p key={data.id}>{data.name}</p>)}
-      </article>
-    );
-  }
+export default function TagsComponent({ tags }: Props): JSX.Element {
+  return (
+    <article className={styles.main}>
+      {tags.map((data) => <p key={data.id}>{data.name}</p>)}
+    </article>
+  );
 }
 
 interface Props {
