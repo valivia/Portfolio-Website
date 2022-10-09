@@ -1,81 +1,90 @@
 @use "styles/vars" as *;
-@use "./markdown" as md;
 
 .main {
     width: 100%;
+    min-height: 100vh;
+    padding: 150px 0;
 
-    & > article {
-        min-height: 30vh;
-        background-color: $primary;
-        display: flex;
-        flex-direction: column;
+    background-image: url("/noise.jpg");
+    background-repeat: repeat;
+    background-attachment: fixed;
 
-        & > section {
-            text-transform: none;
-            letter-spacing: normal;
-            min-width: 70%;
-            padding: 0 30px;
-        }
-
-        & > figure {
-            display: none;
-        }
-
-        & > header {
-            background-color: $tetiary;
-            min-width: 100%;
-            text-align: center;
-            padding: 20px;
-        }
-    }
-}
-
-.markdown {
-    @include md.markdown;
-    padding: 10px 50px;
-}
-
-.skill > section {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
 
-    & > .skills {
-        padding: 10px 40px;
-        width: 30vw;
-    }
-}
+    gap: 40px;
 
-.subheader {
-    @include subheaderTemplate;
-
-    @media (max-width: 480px) {
-        background-image: url($media-server + "/server/crow_low.jpg");
+    & * {
+        @include ralewayFont;
+        max-width: 1200px;
     }
 
-    @media (min-width: 481px) and (max-width: 1024px) {
-        background-image: url($media-server + "/server/crow_high.jpg");
+    & > p {
+        text-align: center;
     }
 
-    @media (min-width: 1025px) {
-        background-image: url($media-server + "/server/crow_default.jpg");
+    & p,
+    li {
+        padding: 0 20px;
+        text-transform: none;
+        font-weight: normal;
+        letter-spacing: 2px;
     }
 
-    height: 80vh;
-}
-
-@media only screen and (orientation: portrait) {
-    .markdown {
-        @include md.markdown;
-        padding: 0;
+    & > section > h2 {
+        font-size: 2em;
     }
 
-    .skill > section {
+    & > h1 {
+        font-size: 4em;
+        margin: 0;
+    }
+
+    & > section {
         display: flex;
+        align-items: center;
         flex-direction: column;
+    }
+}
 
-        & > .skills {
-            padding: 10px 0px;
-            width: 100%;
-        }
+.introduction {
+    text-align: center;
+
+    & p {
+        margin: 4px;
+        font-size: 1.05em;
+    }
+
+    & ul {
+        margin: 0;
+        padding: 10px 0;
+    }
+
+    & li {
+        display: block;
+        font-size: 0.9em;
+        padding: 3px;
+    }
+}
+
+.logo {
+    max-width: 1200px;
+    width: 20%;
+}
+
+.breaker {
+    width: 30%;
+    border-top: 1px $text solid;
+}
+
+.countUp {
+    font-weight: 600;
+    color: $textHover;
+}
+
+@media (max-width: 640px) {
+    .logo {
+        width: 60%;
     }
 }

@@ -2,22 +2,27 @@ import NavBar from "@components/global/navbar.module";
 import styles from "@styles/about.module.scss";
 import Head from "next/head";
 import React from "react";
-import { NextRouter } from "next/router";
 import { GetStaticProps } from "next";
 import Footer from "@components/global/footer.module";
-import MailingList from "@components/global/mailing.module";
+import { Category, TagExperience } from "@typeFiles/api/tag.type";
+import ExperienceComponent, { Categories } from "@components/about/experiences/experiences.module";
+import Project from "@typeFiles/api/project.type";
+import CountUp from "react-countup";
+import Logo from "@components/about/logo.module";
 
 import { MDXProvider } from "@mdx-js/react";
-import SkillsetMarkdown from "@public/markdown/skillset.mdx";
-import ExperienceMenu from "@components/about_me/experience_menu.module";
-import Tag, { TagExperience } from "@typeFiles/api/tag.type";
+import AboutMeMarkdown from "@public/markdown/about_me.mdx";
+import AboutWebsiteMarkdown from "@public/markdown/about_website.mdx";
+
+import dynamic from "next/dynamic";
+const MailingList = dynamic(() => import("@components/global/mailing.module"), {
+  ssr: false,
+});
+
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 
-export default function About({ tags }: Props): JSX.Element {
-  const scroll = () => {
-    document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
-  };
+export default function About({ experiences, projectCount, assetCount }: Props): JSX.Element {
 
   return (
     <>
@@ -33,29 +38,39 @@ export default function About({ tags }: Props): JSX.Element {
       <MailingList />
       <NavBar />
 
-      <header className={styles.subheader}>
-        <div onClick={scroll}>About</div>
-        <div onClick={scroll}>﹀</div>
-      </header>
       <main className={styles.main} id="main">
-        <article className={styles.textbox}>
-          <header>About me</header>
-          <section className={styles.markdown}>
-            <MDXProvider>
-              <SkillsetMarkdown />
-            </MDXProvider>
-          </section>
-        </article>
 
-        {tags.length !== 0 &&
-          <article>
-            <header>Skillset</header>
-            <ExperienceMenu tags={tags} />
-          </article>
+        <h1>About</h1>
+        <p>This website currently contains <CountUp className={styles.countUp} end={projectCount} duration={1.5} /> projects with a total of <CountUp className={styles.countUp} end={assetCount} duration={2} /> assets</p>
+
+        <section className={styles.logo}>
+          <Logo />
+        </section>
+
+        <section className={styles.introduction}>
+          <h2>About me</h2>
+          <MDXProvider>
+            <AboutMeMarkdown />
+          </MDXProvider>
+        </section>
+
+        <section className={styles.introduction}>
+          <h2>Portfolio</h2>
+          <MDXProvider>
+            <AboutWebsiteMarkdown />
+          </MDXProvider>
+        </section>
+
+        {experiences.length !== 0 &&
+          <section>
+            <h2>Experiences</h2>
+            <ExperienceComponent categories={experiences} />
+          </section>
         }
 
-        <Footer />
       </main>
+
+      <Footer />
     </>
   );
 
@@ -67,22 +82,60 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 
   // Fetch projects from db.
-  let tags: Tag[] = await fetch(`${API}/tag`, headers)
+  const projects: Project[] = await fetch(`${API}/project`, headers)
     .then(async (data) => {
       if (!data.ok) return [];
       return (await data.json()).data;
     })
     .catch(() => []);
 
-  // Filter out non projects.
-  tags = tags?.filter(project => project.score !== undefined && project.icon_updated_at !== null);
+  const projectCount = projects.length;
+
+  // Count amount of assets the visitor would be able to view.
+  const assetCount = projects.reduce<number>((total, current) => {
+    if (!(current.assets.filter(asset => asset.is_displayed).length === 0 && !current.is_project)) total += current.assets.length;
+    return total;
+  }, 0);
+
+  // Fetch tags from db.
+  let tags: TagExperience[] = await fetch(`${API}/tag`, headers)
+    .then(async (data) => {
+      if (!data.ok) return [];
+      return (await data.json()).data;
+    })
+    .catch(() => []);
+
+  // Filter out non experience tags.
+  tags = tags?.filter(tag => tag.score !== undefined && tag.icon_updated_at !== null);
+
+  let experiences: Categories[] = [];
+
+  // Make a list of the available categories.
+  const categories = new Set();
+  tags.forEach((x) => categories.add(x.category));
+
+  // Loop through all the tags and group them by category.
+  for (const category of Array.from(categories) as Category[]) {
+    experiences.push({
+      category,
+      tags: tags
+        .filter((x) => x.category === category)
+        .sort((a, b) => b.score - a.score),
+    });
+  }
+
+  // Sort categories by amount of tags.
+  experiences = experiences.sort(
+    (a, b) => b.tags.length - a.tags.length
+  );
 
   return {
-    props: { tags },
+    props: { experiences, projectCount, assetCount },
   };
 };
 
 export interface Props {
-  router: NextRouter;
-  tags: TagExperience[];
+  experiences: Categories[];
+  projectCount: number;
+  assetCount: number;
 }
