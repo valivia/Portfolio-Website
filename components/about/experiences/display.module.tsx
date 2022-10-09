@@ -113,6 +113,15 @@ export default function ExperienceDisplayComponent(props: Props): JSX.Element {
             </a>
           </section>
         }
+
+        {current.description &&
+          <section className={styles.property + " " + styles.description}>
+            <label>Description</label>
+            <p>{current.description}</p>
+          </section>
+        }
+
+
       </motion.section>
 
     </article>
