@@ -29,14 +29,17 @@
 }
 
 .tag {
-    transform: scale(1);
     transition: transform 200ms ease-in-out;
+    filter: grayscale(.6);
+    transform: scale(1);
 
     &:hover {
         cursor: pointer;
+        transform: scale(0.9);
     }
 
     &[data-active="true"] {
+        filter: grayscale(0);
         transform: scale(1.2);
     }
 }
@@ -53,7 +56,6 @@
         justify-content: center;
         flex-direction: column;
         border: none;
-        border-bottom: 1px $text solid;
     }
 
     .category {
@@ -61,7 +63,7 @@
         text-align: center;
     }
 
-    .experience {
+    .tagWrapper {
         display: flex;
         justify-content: center;
     }
