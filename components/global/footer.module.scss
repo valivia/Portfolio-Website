@@ -3,13 +3,44 @@
 .main {
     background-color: black;
     border-top: 1px solid $text;
-    padding: 40px;
+    padding: 30px;
     text-align: center;
     display: flex;
     justify-content: space-evenly;
 
-    & > * {
-        text-decoration: none;
-        color: $text;
+    & > section {
+        display: flex;
+        flex-direction: column;
+        & > span {
+            font-size: 1.1rem;
+            text-decoration: underline;
+            text-align: start;
+            padding: 10px 0;
+        }
+
+        & > a {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            font-size: 1rem;
+            text-transform: capitalize;
+            color: $text;
+
+            & > svg {
+                margin-right: 7px;
+                height: 1.2rem;
+                width: 1.2rem;
+            }
+        }
+    }
+}
+
+@media (max-width: 640px) {
+    .main {
+        padding: 20px;
+
+        & > section > a {
+            font-size: 0.9rem;
+        }
     }
 }

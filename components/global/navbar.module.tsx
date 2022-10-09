@@ -2,14 +2,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "./navbar.module.scss";
 
-const git = process.env.NEXT_PUBLIC_GITHUB;
+const GIT = process.env.NEXT_PUBLIC_GITHUB;
 
 export default function NavBar(): JSX.Element {
   const router = useRouter();
   const path = router.route;
   return (
     <nav className={styles.navbar}>
-      <Link href={`https://github.com/${git}`}>
+      <Link href={GIT as string}>
         <a target="_blank" rel="noreferrer">
           Github
         </a>
