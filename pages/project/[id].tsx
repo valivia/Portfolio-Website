@@ -7,8 +7,8 @@ import NavBar from "@components/global/navbar.module";
 import styles from "../../styles/project.module.scss";
 
 import Footer from "@components/global/footer.module";
-import Tags from "@components/project/tags.module";
-import AssetGallery from "@components/project/asset_gallery.module";
+import TagsComponent from "@components/project/tags.module";
+import AssetGalleryComponent from "@components/project/asset_gallery.module";
 import MarkdownComponent from "@components/global/markdown.module";
 import Project from "@typeFiles/api/project.type";
 
@@ -51,24 +51,26 @@ export default function ProjectPage({ project }: Props): JSX.Element {
           <h1>{project.name}</h1>
         </header>
         <section className={styles.info}>
-          <Tags tags={tags} />
+          <TagsComponent tags={tags} />
           <table>
-            <tr>
-              <td>Name</td>
-              <td>{project.name}</td>
-            </tr>
-            <tr>
-              <td>Status</td>
-              <td>{project.status}</td>
-            </tr>
-            <tr>
-              <td>Last updated</td>
-              <td>{new Date(project.updated_at).toDateString()}</td>
-            </tr>
-            <tr>
-              <td>Created</td>
-              <td>{new Date(project.created_at).toDateString()}</td>
-            </tr>
+            <tbody>
+              <tr>
+                <td>Name</td>
+                <td>{project.name}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>{project.status}</td>
+              </tr>
+              <tr>
+                <td>Last updated</td>
+                <td>{project.updated_at}</td>
+              </tr>
+              <tr>
+                <td>Created</td>
+                <td>{project.created_at}</td>
+              </tr>
+            </tbody>
           </table>
         </section>
 
@@ -87,7 +89,7 @@ export default function ProjectPage({ project }: Props): JSX.Element {
             <header>
               <h2>Gallery</h2>
             </header>
-            <AssetGallery assets={assets} />
+            <AssetGalleryComponent assets={assets} />
           </section>
         )}
       </article>
@@ -132,6 +134,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       notFound: true,
     };
   }
+
+  project.created_at = new Date(project.created_at).toDateString();
+  project.updated_at = new Date(project.updated_at).toDateString();
 
   return {
     props: { project },

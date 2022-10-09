@@ -13,9 +13,9 @@ export default function AdminPageSearch({ search, path }: Props): JSX.Element {
   };
 
   return (
-    <section>
+    <section className={styles.main}>
       <input
-        className={`${styles.main} exclude`}
+        className={`${styles.input} exclude`}
         onInput={onChange}
         value={query}
         type="text"

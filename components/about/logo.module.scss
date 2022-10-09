@@ -1,0 +1,82 @@
+@use "@styles/vars" as *;
+
+$reachY: 20px;
+$reachX: 5px;
+
+.main {
+    fill: none;
+    stroke: $text;
+    stroke-width: .8px;
+
+    width: 100%;
+
+    & * {
+        transform-origin: center;
+
+        animation-duration: 9s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+    }
+}
+
+.top {
+    animation-name: top;
+}
+
+.left {
+    animation-name: left;
+    animation-delay: 700ms;
+}
+
+.right {
+    animation-name: right;
+    animation-delay: 700ms;
+}
+
+.rightSmall {
+    animation-name: right;
+    animation-delay: 700ms;
+}
+
+@keyframes top {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY($reachY);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes right {
+    0% {
+        transform: translate(0px, 0px);
+    }
+
+    50% {
+        transform: translate($reachX, $reachY);
+    }
+
+    100% {
+        transform: translate(0px, 0px);
+    }
+}
+
+@keyframes left {
+    0% {
+        transform: translate(0px, 0px);
+    }
+
+    50% {
+        transform: translate(-$reachX, $reachY);
+    }
+
+    100% {
+        transform: translate(0px, 0px);
+    }
+}

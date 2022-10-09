@@ -1,6 +1,12 @@
 @use "styles/vars" as *;
 
 .main {
+    & a {
+        color: $text;
+    }
+}
+
+.input {
     background-color: transparent;
     border: none;
     border-bottom: $text 2px solid;

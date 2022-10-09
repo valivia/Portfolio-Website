@@ -57,11 +57,11 @@
         border-collapse: collapse;
         margin: 20px 0;
 
-        & > tr {
+        & tr {
             border-bottom: 1px $text solid;
         }
 
-        & > * > td {
+        & td {
             padding: 6px 20px;
 
             & > a {

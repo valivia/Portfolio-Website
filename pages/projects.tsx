@@ -8,8 +8,13 @@ import PinnedProject from "@components/projects/pinned_project.module";
 import { GetStaticProps } from "next";
 import { motion } from "framer-motion";
 import ListProject from "@components/projects/list_project.module";
-import MailingList from "@components/global/mailing.module";
 import Project from "@typeFiles/api/project.type";
+
+import dynamic from "next/dynamic";
+const MailingList = dynamic(() => import("@components/global/mailing.module"), {
+  ssr: false,
+});
+
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 
@@ -63,7 +68,9 @@ class Projects extends React.Component<Props> {
                 animate="visible"
                 variants={animation_list}
               >
-                {this.props.list.map((x, y) => <ListProject key={y} index={y} project={x} delay={this.props.pinned.length * 0.2} />)}
+                <tbody>
+                  {this.props.list.map((x, y) => <ListProject key={y} index={y} project={x} delay={this.props.pinned.length * 0.2} />)}
+                </tbody>
               </motion.table>
             </section>
           </>

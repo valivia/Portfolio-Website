@@ -5,9 +5,13 @@ import Head from "next/head";
 import ImageItem from "@components/browse/imageItem";
 import React, { ReactNode } from "react";
 import Footer from "@components/global/footer.module";
-import MailingList from "@components/global/mailing.module";
 import Project from "@typeFiles/api/project.type";
 import { asset_to_gallery, GalleryAsset } from "@typeFiles/api/asset.type";
+
+import dynamic from "next/dynamic";
+const MailingList = dynamic(() => import("@components/global/mailing.module"), {
+  ssr: false,
+});
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 

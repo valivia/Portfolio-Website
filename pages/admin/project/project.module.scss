@@ -70,6 +70,7 @@
     & > textarea {
         background-color: transparent;
         outline: 2px $text solid;
+        text-transform: none;
         border: none;
         border-radius: 10px;
         width: 100%;

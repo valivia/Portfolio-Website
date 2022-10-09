@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
-import styles from "@styles/admin.module.scss";
+import styles from "./index.module.scss";
 import List, { Entry } from "@components/admin/index/list.module";
 import Search from "@components/admin/index/search.module";
 import Selector from "@components/admin/index/selector.module";
