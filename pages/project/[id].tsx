@@ -10,7 +10,7 @@ import Footer from "@components/global/footer.module";
 import TagsComponent from "@components/project/tags.module";
 import AssetGalleryComponent from "@components/project/asset_gallery.module";
 import MarkdownComponent from "@components/global/markdown.module";
-import Project from "@typeFiles/api/project.type";
+import Project, { StatusToString } from "@typeFiles/api/project.type";
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 const MEDIA = process.env.NEXT_PUBLIC_MEDIA_SERVER;
@@ -47,9 +47,11 @@ export default function ProjectPage({ project }: Props): JSX.Element {
       <NavigationBarComponent />
       {BannerElement}
       <article className={styles.content} id="main">
+
         <header>
           <h1>{project.name}</h1>
         </header>
+
         <section className={styles.info}>
           <TagsComponent tags={tags} />
           <table>
@@ -60,7 +62,7 @@ export default function ProjectPage({ project }: Props): JSX.Element {
               </tr>
               <tr>
                 <td>Status</td>
-                <td>{project.status}</td>
+                <td>{StatusToString(project.status)}</td>
               </tr>
               <tr>
                 <td>Last updated</td>

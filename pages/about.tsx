@@ -41,7 +41,7 @@ export default function About({ experiences, projectCount, assetCount }: Props):
       <main className={styles.main} id="main">
 
         <h1>About</h1>
-        <p>This website currently contains <CountUp className={styles.countUp} end={projectCount} duration={1.5} /> projects with a total of <CountUp className={styles.countUp} end={assetCount} duration={2} /> assets</p>
+        <p>This website currently contains <CountUp className={styles.countUp} end={projectCount} duration={1.5} /> projects with a total of <CountUp className={styles.countUp} end={assetCount} duration={2} /> assets.</p>
 
         <section className={styles.logo}>
           <Logo />

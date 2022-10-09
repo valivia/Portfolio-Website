@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "./box.module.scss";
 import { motion } from "framer-motion";
-import Project from "@typeFiles/api/project.type";
+import Project, { StatusToString } from "@typeFiles/api/project.type";
 
 export default function BoxItemComponent({ project, index }: Props): JSX.Element {
   const item = {
@@ -22,9 +22,15 @@ export default function BoxItemComponent({ project, index }: Props): JSX.Element
 
         <section>
           <label>Status:</label>
-          <p>{project.status}</p>
+          <p>{StatusToString(project.status)}</p>
+        </section>
+
+        <section>
           <label>Created:</label>
           <p>{new Date(project.created_at).toDateString()}</p>
+        </section>
+
+        <section>
           <label>Description:</label>
           <p>{project.description}</p>
         </section>

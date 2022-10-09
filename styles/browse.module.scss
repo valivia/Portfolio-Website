@@ -59,6 +59,12 @@
     flex-direction: column;
 }
 
+@media (max-height: 480px) and (orientation: landscape), (min-width: 641px) {
+    .squares {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media only screen and (orientation: portrait) {
     .squares {
         grid-template-columns: repeat(2, 1fr);

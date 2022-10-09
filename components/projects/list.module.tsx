@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "./list.module.scss";
 import { motion } from "framer-motion";
-import Project from "@typeFiles/api/project.type";
+import Project, { StatusToString } from "@typeFiles/api/project.type";
 
 export default function ListItemcomponent({ project, index, delay }: Props): JSX.Element {
   const item = {
@@ -19,7 +19,7 @@ export default function ListItemcomponent({ project, index, delay }: Props): JSX
         <td>{new Date(project.created_at).toDateString()}</td>
         <td id="name">{project.name}</td>
         <td id="description">{project.description?.substring(0, 127)}</td>
-        <td data-status={project.status}>{project.status}</td>
+        <td data-status={project.status}>{StatusToString(project.status)}</td>
       </motion.tr>
     </Link>
   );

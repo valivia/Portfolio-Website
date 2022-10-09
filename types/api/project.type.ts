@@ -11,6 +11,18 @@ export enum Status {
   OnHold,
 }
 
+export function StatusToString(input: Status): string {
+
+  switch (input.toString()) {
+    case "InProgress":
+      return "In Progress"
+    case "OnHold":
+      return "On hold"
+    default:
+      return input.toString();
+  }
+}
+
 export default interface Project {
   id: string;
 

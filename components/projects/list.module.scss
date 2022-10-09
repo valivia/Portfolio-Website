@@ -10,10 +10,14 @@
         padding: 10px;
         font-family: "tbhc";
         font-size: 1.1rem;
-        line-height: 1.3;
+        line-height: 1.5;
 
-        &[data-status="finished"] {
+        &[data-status="Finished"] {
             text-decoration: underline;
+        }
+
+        &[id="description"] {
+            letter-spacing: 2px;
         }
     }
 }

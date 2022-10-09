@@ -7,12 +7,15 @@
     padding: 0.3vw 0;
 
     & > * {
-        text-decoration: none;
-        color: $text;
-        padding: 0.5vw;
+        padding: 7px;
         margin: 0;
-        background-color: $tetiary;
-        text-transform: uppercase;
+
+        color: $text;
+        text-decoration: none;
+        text-transform: capitalize;
+
+        border: 1px $text solid;
+        border-radius: 7px;
     }
 
     & > a :hover {
@@ -21,7 +24,8 @@
 }
 
 @media only screen and (orientation: portrait) {
-    .main > a {
-        padding: 3%;
+    .main > * {
+        font-size: 0.8rem;
+        padding: 5px;
     }
 }

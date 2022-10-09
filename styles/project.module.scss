@@ -52,6 +52,7 @@
     background-color: $secondary;
     padding: 1.2vw 2vw;
     padding-top: 10px;
+    border-bottom: 1px $text solid;
 
     & > table {
         border-collapse: collapse;
