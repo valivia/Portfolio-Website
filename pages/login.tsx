@@ -42,7 +42,7 @@ export default function Login(): JSX.Element {
       setError(errorMessage);
       setCode("");
     } else {
-      router.push("/admin");
+      router.replace("/admin");
     }
   };
 
