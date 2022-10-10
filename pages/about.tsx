@@ -15,6 +15,7 @@ import AboutMeMarkdown from "@public/markdown/about_me.mdx";
 import AboutWebsiteMarkdown from "@public/markdown/about_website.mdx";
 
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 const MailingList = dynamic(() => import("@components/global/mailing.module"), {
   ssr: false,
 });
@@ -23,6 +24,20 @@ const MailingList = dynamic(() => import("@components/global/mailing.module"), {
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 
 export default function About({ experiences, projectCount, assetCount }: Props): JSX.Element {
+
+  const animation_list = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const animation_list_logo = {
+    hidden: { opacity: 0, y: 100 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const delay = 0.15;
+  const stiffness = 260;
+  const damping = 15;
 
   return (
     <>
@@ -40,32 +55,78 @@ export default function About({ experiences, projectCount, assetCount }: Props):
 
       <main className={styles.main} id="main">
 
-        <h1>About</h1>
-        <p>This website currently contains <CountUp className={styles.countUp} end={projectCount} duration={1.5} /> projects with a total of <CountUp className={styles.countUp} end={assetCount} duration={2} /> assets.</p>
+        <motion.h1
+          // Animations
+          initial="hidden"
+          animate="visible"
+          transition={{ type: "spring", stiffness, damping, delay: delay * 1 }}
+          variants={animation_list}
+        >
+          About
+        </motion.h1>
 
-        <section className={styles.logo}>
+        <motion.p
+          // Animations
+          initial="hidden"
+          animate="visible"
+          transition={{ type: "spring", stiffness, damping, delay: delay * 2 }}
+          variants={animation_list}>
+          This website currently contains <CountUp className={styles.countUp} end={projectCount} duration={1.5} /> projects with a total of <CountUp className={styles.countUp} end={assetCount} duration={2} /> assets.
+        </motion.p>
+
+        <motion.section
+          className={styles.logo}
+
+          // Animations
+          initial="hidden"
+          animate="visible"
+          transition={{ type: "spring", stiffness, damping, delay: delay * 2.5 }}
+          variants={animation_list_logo}
+        >
           <Logo />
-        </section>
+        </motion.section>
 
-        <section className={styles.introduction}>
+        <motion.section
+          className={styles.introduction}
+
+          // Animations
+          initial="hidden"
+          animate="visible"
+          transition={{ type: "spring", stiffness, damping, delay: delay * 4 }}
+          variants={animation_list}
+        >
           <h2>About me</h2>
           <MDXProvider>
             <AboutMeMarkdown />
           </MDXProvider>
-        </section>
+        </motion.section>
 
-        <section className={styles.introduction}>
+        <motion.section
+          className={styles.introduction}
+
+          // Animations
+          initial="hidden"
+          animate="visible"
+          transition={{ type: "spring", stiffness, damping, delay: delay * 5 }}
+          variants={animation_list}
+        >
           <h2>Portfolio</h2>
           <MDXProvider>
             <AboutWebsiteMarkdown />
           </MDXProvider>
-        </section>
+        </motion.section>
 
         {experiences.length !== 0 &&
-          <section>
+          <motion.section
+            // Animations
+            initial="hidden"
+            animate="visible"
+            transition={{ type: "spring", stiffness, damping, delay: delay * 6 }}
+            variants={animation_list}
+          >
             <h2>Experiences</h2>
             <ExperienceComponent categories={experiences} />
-          </section>
+          </motion.section>
         }
 
       </main>
