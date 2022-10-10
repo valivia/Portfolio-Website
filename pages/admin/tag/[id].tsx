@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import TextInput from "@components/input/text_input.module";
 import Head from "next/head";
 import styles from "./tag.module.scss";
@@ -42,6 +42,8 @@ function AdminTag(props: Props): JSX.Element {
   const [tag, setTag] = useState(props.tag);
 
   const [sending, setSending] = useState(false);
+
+  const fileUpload = useRef<HTMLInputElement>(null);
 
   const isNew = tag.id === undefined;
   const hasChanged = JSON.stringify(tag) !== JSON.stringify(props.tag);
@@ -185,7 +187,7 @@ function AdminTag(props: Props): JSX.Element {
             className={styles.icon}
             src={iconSrc}
             alt="+"
-            onClick={() => document.getElementsByName("icon")[0]?.click()}
+            onClick={() => fileUpload.current?.click()}
           />
         }
 
@@ -197,6 +199,7 @@ function AdminTag(props: Props): JSX.Element {
             type="file"
             name="icon"
             accept="image/svg+xml"
+            ref={fileUpload}
             onChange={selectIcon}
             style={{ display: "none" }}
             required

@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 
-import React from "react";
+import React, { useRef } from "react";
 import NavigationBarComponent from "@components/global/navbar.module";
 
 import styles from "../../styles/project.module.scss";
@@ -17,8 +17,10 @@ const MEDIA = process.env.NEXT_PUBLIC_MEDIA_SERVER;
 
 export default function ProjectPage({ project }: Props): JSX.Element {
   const scroll = () => {
-    document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
+    mainElement.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const mainElement = useRef<HTMLElement>(null);
 
   const { assets, tags, markdown } = project;
   const banner = assets.find((asset) => asset.id === project.banner_id);
@@ -46,7 +48,7 @@ export default function ProjectPage({ project }: Props): JSX.Element {
       </Head>
       <NavigationBarComponent />
       {BannerElement}
-      <article className={styles.content} id="main">
+      <article className={styles.content} ref={mainElement}>
 
         <header>
           <h1>{project.name}</h1>

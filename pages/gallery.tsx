@@ -3,7 +3,7 @@ import NavigationBarComponent from "@components/global/navbar.module";
 import styles from "@styles/browse.module.scss";
 import Head from "next/head";
 import ImageItem from "@components/browse/imageItem";
-import React, { ReactNode } from "react";
+import React, { useRef } from "react";
 import Footer from "@components/global/footer.module";
 import Project from "@typeFiles/api/project.type";
 import { asset_to_gallery, GalleryAsset } from "@typeFiles/api/asset.type";
@@ -15,46 +15,44 @@ const MailingList = dynamic(() => import("@components/global/mailing.module"), {
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 
-class GalleryPage extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
+export default function GalleryPage({ assets }: Props): JSX.Element {
 
-  private scroll = () =>
-    document.getElementById("main")?.scrollIntoView({ behavior: "smooth" });
 
-  render(): ReactNode {
-    return (
-      <>
-        <Head>
-          <title>Gallery</title>
-          <meta name="theme-color" content="#B5A691" />
-          <meta name="description" content="Art gallery." />
-        </Head>
+  const mainElement = useRef<HTMLElement>(null);
 
-        <MailingList />
-        <NavigationBarComponent />
+  const scroll = () =>
+    mainElement.current?.scrollIntoView({ behavior: "smooth" });
 
-        <header className={styles.subheader}>
-          <div onClick={this.scroll}>Gallery</div>
-          <div onClick={this.scroll}>﹀</div>
-        </header>
+  return (
+    <>
+      <Head>
+        <title>Gallery</title>
+        <meta name="theme-color" content="#B5A691" />
+        <meta name="description" content="Art gallery." />
+      </Head>
 
-        <main className={styles.content} id="main">
-          <div className={styles.squares} id="art">
-            {this.props.assets.map((data) => (
-              <ImageItem key={data.asset_id} {...data} />
-            ))}
-          </div>
-        </main>
+      <MailingList />
+      <NavigationBarComponent />
 
-        <Footer />
-      </>
-    );
-  }
+      <header className={styles.subheader}>
+        <div onClick={scroll}>Gallery</div>
+        <div onClick={scroll}>﹀</div>
+      </header>
+
+      <main className={styles.content} ref={mainElement}>
+        <div className={styles.squares} id="art">
+          {assets.map((data) => (
+            <ImageItem key={data.asset_id} {...data} />
+          ))}
+        </div>
+      </main>
+
+      <Footer />
+    </>
+  );
+
 }
 
-export default GalleryPage;
 
 export interface Props {
   assets: GalleryAsset[];

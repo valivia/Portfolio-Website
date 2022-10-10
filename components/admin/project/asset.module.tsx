@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./asset.module.scss";
 import onChangeParser from "../../onchange";
 import { submitFormData, submitJson, submitUrl } from "../../submit";
@@ -22,6 +22,8 @@ export default function AdminPageAssetComponent(props: Props): JSX.Element {
   const [image, setImage] = useState<string>();
 
   const [sending, setSending] = useState(false);
+
+  const fileUpload = useRef<HTMLInputElement>(null);
 
   const isNew = asset.id === undefined;
   const hasChanged = JSON.stringify(asset) !== JSON.stringify(props.asset);
@@ -159,6 +161,7 @@ export default function AdminPageAssetComponent(props: Props): JSX.Element {
           <input
             type="file"
             name="file"
+            ref={fileUpload}
             onChange={onFileSelect}
             style={{ display: "none" }}
             required
@@ -208,7 +211,7 @@ export default function AdminPageAssetComponent(props: Props): JSX.Element {
         style={{ backgroundImage: iconSrc }}
         onClick={
           isNew
-            ? () => document.getElementsByName("file")[0]?.click()
+            ? () => fileUpload.current?.click()
             : () => null
         }
       >
