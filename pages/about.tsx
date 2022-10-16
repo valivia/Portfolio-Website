@@ -172,8 +172,7 @@ export const getStaticProps: GetStaticProps = async () => {
   let experiences: Categories[] = [];
 
   // Make a list of the available categories.
-  const categories = new Set();
-  tags.forEach((x) => categories.add(x.category));
+  const categories = new Set(tags.map(tag => tag.category));
 
   // Loop through all the tags and group them by category.
   for (const category of Array.from(categories) as Category[]) {

@@ -70,13 +70,12 @@ export const getStaticProps: GetStaticProps = async () => {
     })
     .catch(() => []);
 
-  let assets: GalleryAsset[] = [];
-  for (const project of projects) {
-    for (const asset of project.assets) {
-      if (!asset.is_displayed) continue;
-      assets.push(asset_to_gallery(asset, project));
-    }
-  }
+  let assets: GalleryAsset[] = projects
+    .map(project => project.assets
+      .filter(ass => !!ass.is_displayed)
+      .map(ass => asset_to_gallery(ass, project))
+    )
+    .flatMap(asset => asset);
 
   const pinned = assets.filter((project) => project.is_pinned);
   const normal = assets.filter((project) => !project.is_pinned);

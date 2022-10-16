@@ -39,21 +39,6 @@ export default function ExperienceDisplayComponent(props: Props): JSX.Element {
     visible: { opacity: 1, rotate: 0 },
   };
 
-  const img =
-    <motion.img
-      src={`${MEDIA}/tag/${current.id}.svg?last_updated=${lastUpdated}`}
-      key={current.id}
-      width={64}
-      height={64}
-      alt={current.name}
-
-      // Animation
-      initial="hidden"
-      animate="visible"
-      variants={animation_icon}
-      transition={{ type: "spring", stiffness: 260, damping: 15 }}
-    />;
-
   return (
     <article
       className={styles.wrapper}
@@ -62,7 +47,19 @@ export default function ExperienceDisplayComponent(props: Props): JSX.Element {
       <section className={styles.header}>
         {tagCount > 1 && <button className={styles.button} onClick={() => changeIndex(-1)}>&lt;</button>}
 
-        {img}
+        <motion.img
+          src={`${MEDIA}/tag/${current.id}.svg?last_updated=${lastUpdated}`}
+          key={current.id}
+          width={64}
+          height={64}
+          alt={current.name}
+
+          // Animation
+          initial="hidden"
+          animate="visible"
+          variants={animation_icon}
+          transition={{ type: "spring", stiffness: 260, damping: 15 }}
+        />
 
         {tagCount > 1 && <button className={styles.button} onClick={() => changeIndex(1)}>&gt;</button>}
       </section>

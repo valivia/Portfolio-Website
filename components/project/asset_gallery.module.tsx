@@ -13,12 +13,11 @@ export default function AssetGalleryComponent({ assets }: Props): JSX.Element {
 
   function changeIndex(change: number): void {
     if (current == undefined) return;
-    let newIndex = current + change;
-    newIndex = newIndex < 0 ? assets.length - 1 : (newIndex >= assets.length ? 0 : newIndex);
+    const newIndex = (current + assets.length + change) % assets.length;
     setCurrent(newIndex);
   }
 
-  const currentAsset = current !== undefined ? assets[current] : undefined;
+  const currentAsset = current !== undefined && assets[current];
 
   return (
     <>

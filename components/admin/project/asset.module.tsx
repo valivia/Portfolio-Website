@@ -209,15 +209,11 @@ export default function AdminPageAssetComponent(props: Props): JSX.Element {
       <figure
         className={styles.image}
         style={{ backgroundImage: iconSrc }}
-        onClick={
-          isNew
-            ? () => fileUpload.current?.click()
-            : () => null
-        }
+        onClick={() => isNew && fileUpload.current?.click()}
       >
         {isNew && asset.file === undefined && "+"}
       </figure>
-    </article>
+    </article >
   );
 
 }

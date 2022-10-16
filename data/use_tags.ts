@@ -12,7 +12,7 @@ export default function useTags() {
   return {
     loading,
     loggedOut,
-    tags: data !== undefined ? data.data as Tag[] : ([] as Tag[]),
+    tags: ((data?.data || []) as Tag[]),
     mutate,
   };
 }
