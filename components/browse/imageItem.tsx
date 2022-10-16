@@ -1,25 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./imageItem.module.scss";
-import { GalleryImage } from "@typeFiles/gallery_image.type";
+import { GalleryAsset } from "@typeFiles/api/asset.type";
 
+const MEDIA = process.env.NEXT_PUBLIC_MEDIA_SERVER;
 
-export default function ImageItem(data: GalleryImage): JSX.Element {
-
-  const mediaServer = process.env.NEXT_PUBLIC_MEDIA_SERVER;
-
-  if (data.type !== "image") return (<></>);
-
-
+export default function ImageItem(data: GalleryAsset): JSX.Element {
   return (
-    <Link href={`/project/${data.project_uuid}`}>
+    <Link href={`/project/${data.project_id}`}>
       <a className={styles.main}>
         <div className={styles.info}>
-          <h3>{data.name}</h3>
+          <h3>{data.project_name}</h3>
         </div>
         <div className={styles.image}>
           <Image
-            src={`${mediaServer}/content/${data.uuid}_square.jpg`}
+            src={`${MEDIA}/content/${data.asset_id}_square.jpg`}
             layout="responsive"
             height={data.size}
             width={data.size}

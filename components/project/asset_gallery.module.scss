@@ -1,0 +1,92 @@
+@use "@styles/vars" as *;
+
+.main {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 10px;
+
+    padding: 20px;
+}
+
+.image {
+    & img {
+        transform: scale(1);
+        transition: transform 0.4s ease-in-out;
+
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+    }
+}
+
+.fullscreenMain {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+
+    background-color: rgba(0, 0, 0, 0.923);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > .buttons {
+        z-index: 12;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        & > div {
+            flex-grow: 3;
+        }
+
+        & > button {
+            background-color: transparent;
+            border: none;
+            color: $text;
+
+            padding: 40px;
+            font-size: 1.5rem;
+            &:hover {
+                cursor: pointer;
+                color: rgb(245, 200, 116);
+            }
+        }
+    }
+
+    .content {
+        width: 70%;
+        height: 70%;
+        z-index: 11;
+
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+}
+
+.assetDescription {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 50px;
+    font-size: 1.3rem;
+}
+
+@media only screen and (orientation: portrait) {
+    .main {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 1fr;
+    }
+}

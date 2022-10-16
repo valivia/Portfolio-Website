@@ -1,72 +1,70 @@
-import React, { ReactNode } from "react";
+import React, { useState } from "react";
 import styles from "./mailing.module.scss";
 import { submitJson } from "@components/submit";
 
-export default class MailingList extends React.Component<
-  Record<string, never>,
-  State
-> {
-  state = { email: "" };
+export default function MailingList(): JSX.Element | null {
+  const [email, setEmail] = useState("");
+  const [isClosed, setClosed] = useState(false);
 
-  onsubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  // Send email to server.
+  const onsubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    const response = await submitJson(this.state, "mailing", "POST");
+    const response = await submitJson({ email }, "mailing/signup", "POST");
 
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 409) {
       window.localStorage.setItem("emailList", "true");
-      this.setState({ email: "" });
-      alert("Email with instructions successfully sent!");
-    } else if (response.status === 409) {
-      window.localStorage.setItem("emailList", "true");
-      this.setState({ email: "" });
-      alert("You are already subscribed to the mailing list!");
+      setEmail("");
+      setClosed(true);
+      response.status === 200 ?
+        alert("Email with instructions successfully sent!") :
+        alert("You are already subscribed to the mailing list!");
     } else {
       alert("An error occurred");
     }
   };
 
-  onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ email: e.target.value });
-  };
-
-  dismiss = (): void => {
+  // Close component and save preference.
+  const dismiss = (): void => {
     window.localStorage.setItem("emailList", "true");
-    this.setState({ email: "" });
+    setEmail("");
+    setClosed(true);
   };
 
-  render(): ReactNode {
-    if (typeof window === "undefined") return <></>;
-    const emailList = window.localStorage.getItem("emailList");
 
-    if (emailList) {
-      return null;
-    }
+  if (typeof window !== "undefined" && window.localStorage.getItem("emailList") !== null) return null;
+  if (isClosed) return null;
 
-    return (
-      <section className={styles.main} onSubmit={this.onsubmit}>
-        <form className={styles.form}>
-          <label>
-            Sign up to the
-            <br />
-            mailing list
-          </label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            onChange={this.onChange}
-            value={this.state.email}
-          />
-          <input type="submit" value="subscribe" />
-        </form>
-        <button className={styles.dismiss + " exclude"} onClick={this.dismiss}>
-          &#x2716;
-        </button>
-      </section>
-    );
-  }
-}
+  // return JSX.
+  return (
+    <div className={styles.main}>
 
-interface State {
-  email: string;
+      <form className={styles.form} onSubmit={onsubmit}>
+        <label>
+          Sign up to the
+          <br />
+          mailing list
+        </label>
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Enter your email"
+          onChange={e => setEmail(e.target.value)}
+          value={email}
+        />
+
+        <input type="submit" value="subscribe" />
+
+      </form>
+
+      <button
+        className={styles.dismiss}
+        type="button"
+        onClick={dismiss}
+      >
+        &#x2716;
+      </button>
+
+    </div>
+  );
 }

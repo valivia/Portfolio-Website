@@ -1,9 +1,20 @@
 const apiServer = process.env.NEXT_PUBLIC_API_SERVER;
 
+interface Revalidated {
+  success: string[];
+  failed: string[];
+}
+
 interface Response {
-  status: number;
-  message?: string;
   data: any;
+  status: number;
+  message: string;
+  revalidated?: Revalidated;
+}
+
+interface ResponseJson {
+  data: Record<string, unknown>;
+  revalidated: Revalidated;
 }
 /**
  * Makes a request with the given data to the API server.
@@ -29,12 +40,7 @@ export async function submitJson(
 
   const response = await fetch(`${apiServer}/${url}`, options);
 
-  const json = await response.json().catch(() => null);
-  return {
-    data: json,
-    message: json?.message,
-    status: response.status,
-  };
+  return await handleResponse(response);
 }
 
 export async function submitFormData(
@@ -57,10 +63,46 @@ export async function submitFormData(
 
   const response = await fetch(`${apiServer}/${url}`, options);
 
-  const json = await response.json().catch(() => null);
+  return await handleResponse(response);
+}
+
+export async function submitUrl(
+  url: string,
+  method: "POST" | "PATCH" | "DELETE",
+  body?: unknown,
+): Promise<Response> {
+  const options = {
+    method: method,
+    credentials: "include",
+    body,
+  } as RequestInit;
+
+  const response = await fetch(`${apiServer}/${url}`, options);
+
+  return await handleResponse(response);
+}
+
+async function handleResponse(response: globalThis.Response): Promise<Response> {
+  const json: ResponseJson | null = await response.json().catch(() => null);
+
+  let message = json?.data?.reason as undefined | string;
+
+  if (message === undefined) {
+    switch (response.status) {
+      case 401: message = "Unauthorised"; break;
+      case 404: message = "Not found"; break;
+      case 413: message = "This file is too large"; break;
+      case 500: message = "A server error occurred"; break;
+      default:
+        message = "An unknown error occurred";
+        break;
+    }
+  }
+
   return {
-    data: json,
-    message: json?.message,
+    data: json?.data,
+    message,
     status: response.status,
+    revalidated: json?.revalidated,
   };
 }

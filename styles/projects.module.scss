@@ -41,8 +41,9 @@
     width: 100%;
     display: grid;
 
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    grid-template-rows: repeat(auto-fit, 20rem);
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
 }
 

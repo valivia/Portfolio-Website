@@ -15,6 +15,10 @@ export default function onChangeParser(target: EventTarget & (HTMLSelectElement 
     value = target.files[0];
   } else if ("checked" in target && target.type == "checkbox") {
     value = target.checked;
+  } else if (target.type == "range") {
+    value = Number(target.value);
+  } else if (target.type == "date") {
+    value = new Date(target.value);
   } else {
     value = target.value;
   }

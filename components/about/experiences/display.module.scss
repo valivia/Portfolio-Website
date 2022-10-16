@@ -1,0 +1,115 @@
+@use "styles/vars" as *;
+
+.wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    display: flex;
+}
+
+.button {
+    width: 64px;
+    height: 64px;
+    padding: 0 20px;
+
+    background-color: transparent;
+    border: none;
+    color: $text;
+
+    font-size: 2em;
+    font-weight: 200;
+
+    transform: scale(1);
+    transition: transform 100ms ease-in-out;
+
+    &:hover {
+        transform: scale(1.1);
+        color: $textHover;
+    }
+
+    &:active {
+        transform: scale(0.9);
+    }
+}
+
+.info {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 15px;
+
+    & > h1 {
+        font-size: 1.5em;
+        margin: 5px;
+    }
+
+    & .confidence {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+
+        & > meter {
+            width: 50%;
+            padding-bottom: 7px;
+        }
+        & > label {
+            font-weight: 400;
+            text-decoration: underline;
+        }
+    }
+}
+
+.property {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    & label {
+        font-weight: 600;
+    }
+
+    & a,
+    p {
+        text-transform: none;
+        margin: 2px;
+        font-weight: 300;
+    }
+
+    & a {
+        color: $link;
+    }
+}
+
+.description {
+    text-align: center;
+
+    & > p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-height: 480px) and (orientation: landscape), (min-width: 641px) {
+    .wrapper {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 640px) {
+    .wrapper {
+        padding: 30px;
+        height: min-content;
+    }
+
+    .main {
+        border: 1px $text solid;
+        border-radius: 10px;
+    }
+}

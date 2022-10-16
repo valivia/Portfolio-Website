@@ -1,5 +1,6 @@
 $text: #b5a691;
 $textHover: #d5caba;
+$link: rgb(150, 150, 240);
 
 $disabled: rgb(170, 0, 0);
 $disabledHover: rgb(80, 20, 20);
@@ -18,6 +19,7 @@ $quaternary: black;
 $media-server: "https://xayania.com/media";
 
 $font: "abel", Helvetica, sans-serif;
+$fontRaleway: "raleway", "abel", Helvetica, sans-serif;
 
 @mixin noselect {
     -webkit-touch-callout: none;
@@ -35,6 +37,11 @@ $font: "abel", Helvetica, sans-serif;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+@mixin ralewayFont {
+    font-family: $fontRaleway;
+    font-weight: 200;
 }
 
 @mixin subheaderTemplate {

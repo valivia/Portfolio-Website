@@ -1,5 +1,6 @@
 @use "styles/vars" as *;
 @use "styles/markdown" as md;
+@use "styles/button" as buttonModule;
 
 .container {
     background-color: $primary;
@@ -41,6 +42,7 @@
     flex-direction: column;
 
     & > .buttons {
+        @include buttonModule.button;
         display: flex;
         gap: 20px;
 
@@ -68,6 +70,7 @@
     & > textarea {
         background-color: transparent;
         outline: 2px $text solid;
+        text-transform: none;
         border: none;
         border-radius: 10px;
         width: 100%;

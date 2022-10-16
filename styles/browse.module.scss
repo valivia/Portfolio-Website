@@ -30,7 +30,6 @@
 
 .squares {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
     grid-auto-rows: 1fr;
 
     &::before {
@@ -59,7 +58,8 @@
     flex-direction: column;
 }
 
-@media only screen and (orientation: portrait) {
+// Phone
+@media (max-width: 640px) {
     .squares {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -68,5 +68,26 @@
         padding: 20% 0;
         height: 30%;
         width: 100%;
+    }
+}
+
+// Tablet
+@media only screen and (min-width: 600px) {
+    .squares {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+// Tablet
+@media only screen and (min-width: 800px) {
+    .squares {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+// pc
+@media only screen and (min-width: 992px) {
+    .squares {
+        grid-template-columns: repeat(5, 1fr);
     }
 }

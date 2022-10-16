@@ -1,0 +1,29 @@
+@use "@styles/vars" as *;
+
+.main {
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.527);
+        cursor: pointer;
+    }
+
+    & > td {
+        padding: 10px;
+        font-family: "tbhc";
+        font-size: 1.1rem;
+        line-height: 1.5;
+
+        &[data-status="Finished"] {
+            text-decoration: underline;
+        }
+
+        &[id="description"] {
+            letter-spacing: 2px;
+        }
+    }
+}
+
+@media only screen and (orientation: portrait) {
+    .main > td[id="description"] {
+        display: none;
+    }
+}
