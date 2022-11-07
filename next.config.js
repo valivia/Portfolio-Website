@@ -1,10 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const securityHeaders = [
-  //  { key: "Content-Security-Policy", value: "default -src 'self'" },
-  { key: "X-Frame-Options", value: "SAMEORIGIN" },
-];
-
 const withMDX = require("@next/mdx")({
   extension: /\.mdx?$/,
   options: {
@@ -24,13 +19,5 @@ module.exports = withMDX({
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
-  },
-  async headers() {
-    return [
-      {
-        source: "/browse",
-        headers: securityHeaders,
-      },
-    ];
   },
 });

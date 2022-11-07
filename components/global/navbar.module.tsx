@@ -9,7 +9,7 @@ export default function NavigationBarComponent(): JSX.Element {
   const path = router.route;
   return (
     <nav className={styles.navbar}>
-      <Link href={GIT as string}>
+      <Link href={GIT as string ?? "https://github.com/"}>
         <a target="_blank" rel="noreferrer">
           Github
         </a>
