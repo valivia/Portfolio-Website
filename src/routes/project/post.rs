@@ -37,16 +37,11 @@ pub async fn post(
     })?;
 
     // Revalidate paths on next.js.
-    let mut revalidated = Revalidator::new().add_project(oid);
+    let mut revalidated = Revalidator::new().add_project(oid).add_about();
 
     // Check if projects page should be re-rendered.
     if data.is_project {
         revalidated = revalidated.add_projects();
-    }
-
-    // Check if about page should be re-rendered.
-    if data.tags.iter().any(|tag| tag.is_experience()) {
-        revalidated = revalidated.add_about();
     }
 
     let revalidated = Some(revalidated.send().await);

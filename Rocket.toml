@@ -1,10 +1,10 @@
 [global]
 limits = {file = "50 Mib", data-form = "50 Mib"}
-port = 9302
 
 [debug]
 log_level = "normal"
+port = 9101
 
 [release]
 log_level = "critical"
-port = 9301
+port = 9101

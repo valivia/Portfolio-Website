@@ -25,7 +25,7 @@ pub async fn delete(db: &State<Database>, _user_info: UserInfo, id: String) -> R
             _ => CustomError::build(500, None),
         })?;
 
-    let mut revalidated = Revalidator::new().add_project(oid);
+    let mut revalidated = Revalidator::new().add_project(oid).add_about();
 
     // Check projects page should be re-rendered.
     if data.is_project {
@@ -35,11 +35,6 @@ pub async fn delete(db: &State<Database>, _user_info: UserInfo, id: String) -> R
     // Check gallery should be re-rendered.
     if data.assets.iter().any(|asset| asset.is_displayed) {
         revalidated = revalidated.add_gallery();
-    }
-
-    // Check if about page should be re-rendered.
-    if data.tags.iter().any(|tag| tag.is_experience()) {
-        revalidated = revalidated.add_about();
     }
 
     let revalidated = Some(revalidated.send().await);

@@ -125,7 +125,7 @@ pub async fn post(
 
     // Check if gallery page should be re-rendered.
     if data.is_displayed {
-        revalidated = revalidated.add_gallery();
+        revalidated = revalidated.add_gallery().add_about();
     }
 
     let revalidated = Some(revalidated.send().await);
