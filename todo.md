@@ -11,7 +11,7 @@
 - [x] enums?
 - [x] auth testing
 - [x] FILE PERMS
-- [ ] RATELIMIT
+- [x] ratelimit
 - [ ] github webhook
 - [ ] proper input error info l
 - [ ] mailing sending

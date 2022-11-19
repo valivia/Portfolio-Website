@@ -1,12 +1,9 @@
-use std::env;
-
 use crate::{
     db::mailing::{self, find},
     errors::{database::DatabaseError, response::CustomError},
-    lib::mailing::make_email,
-    HTTPErr,
+    lib::{env::Config, mailing::make_email},
+    HTTPErr, request_guards::ratelimit::RatelimitGuard,
 };
-use bson::oid::ObjectId;
 use lettre::SmtpTransport;
 use mongodb::Database;
 use rocket::serde::json::Json;
@@ -26,7 +23,9 @@ pub struct SignupInput {
 #[post("/mailing/signup", data = "<input>")]
 pub async fn signup(
     db: &State<Database>,
+    config: &State<Config>,
     mailer: &State<SmtpTransport>,
+    _ratelimit: RatelimitGuard,
     input: Validated<Json<SignupInput>>,
 ) -> Result<(), CustomError> {
     let address = input.0.email.to_owned();
@@ -40,20 +39,23 @@ pub async fn signup(
             _ => CustomError::build(500, Some("Unexpected server error.")),
         })?;
 
-    send_email(mailer, oid, address)?;
+    let body = format!(
+        "Please click the following link to verify your subscription: \n\n {}/server/mailing/verify/{}",
+        config.app_url, oid
+    );
+
+    send_email(mailer, body, address)?;
 
     Ok(())
 }
 
-fn send_email(mailer: &SmtpTransport, oid: ObjectId, address: String) -> Result<(), CustomError> {
-    let body = format!(
-        "Please click the following link to verify your subscription: \n\n {}/mailing/verify/{}",
-        env::var("API_URL").unwrap(),
-        oid
-    );
-
+fn send_email(mailer: &SmtpTransport, body: String, address: String) -> Result<(), CustomError> {
     let message = make_email()
-        .to(HTTPErr!(address.parse(), 400, Some("Failed to parse this email")))
+        .to(HTTPErr!(
+            address.parse(),
+            400,
+            Some("Failed to parse this email")
+        ))
         .subject("🦉 Verify your subscription.")
         .body(body)
         .map_err(|err| {

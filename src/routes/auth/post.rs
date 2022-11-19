@@ -1,6 +1,7 @@
 use crate::errors::response::CustomError;
 use crate::lib::env::Config;
 use crate::models::auth::{LastLogin, UserInfo};
+use crate::request_guards::ratelimit::RatelimitGuard;
 
 use google_authenticator::GoogleAuthenticator;
 use jwt_simple::prelude::*;
@@ -23,6 +24,7 @@ pub async fn login(
     config: &State<Config>,
     key: &State<HS512Key>,
     last_login: &State<LastLogin>,
+    _ratelimit: RatelimitGuard,
     input: Validated<Json<LoginInput>>,
 ) -> Result<(), CustomError> {
     let data = input.0;
