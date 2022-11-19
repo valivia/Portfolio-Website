@@ -9,7 +9,7 @@ import MultiselectorInput from "@components/admin/project/multiselector.module";
 import TextInput from "@components/input/text_input.module";
 import TextArea from "@components/input/textarea.module";
 import Checkbox from "@components/input/checkbox.module";
-import MarkdownComponent from "@components/global/markdown.module";
+import MarkdownComponent, { Markdown } from "@components/global/markdown.module";
 import AdminPageAssetComponent from "@components/admin/project/asset.module";
 import DateInput from "@components/input/date.module";
 import Select from "@components/input/select.module";
@@ -23,6 +23,8 @@ import { ReactNotifications, Store } from "react-notifications-component";
 import NotificationType from "@typeFiles/notification";
 import NotificationComponent from "@components/global/notification.module";
 import "react-notifications-component/dist/theme.css";
+import { serialize } from "next-mdx-remote/serialize";
+import remarkGfm from "remark-gfm";
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 const EMPTYPROJECT: ProjectInput = {
@@ -41,6 +43,7 @@ export default function AdminProject(props: Props): JSX.Element {
   const router = useRouter();
   const [project, setProject] = useState(props.project);
   const [sending, setSending] = useState(false);
+  const [markdown, setMarkdown] = useState<Markdown | undefined>(props.SSRmarkdown);
 
   const isEqualState = (): boolean => {
     const propProject = props.project;
@@ -61,7 +64,7 @@ export default function AdminProject(props: Props): JSX.Element {
     return true;
   };
 
-  const onChange = (
+  const onChange = async (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
@@ -69,6 +72,11 @@ export default function AdminProject(props: Props): JSX.Element {
     const target = e.target;
     const value = onChangeParser(target);
     setProject({ ...project, [target.name]: value });
+
+    if (target.name === "markdown" && target.value !== undefined) {
+      const serialised = await serialize(target.value, { mdxOptions: { remarkPlugins: [remarkGfm] } }).catch(() => null);
+      serialised && setMarkdown(serialised);
+    }
   };
 
   const multiselectorChange = (selected: { id: string; name: string }[]) => {
@@ -279,7 +287,7 @@ export default function AdminProject(props: Props): JSX.Element {
 
         <section className={styles.markdown}>
           <h2>Rendered Markdown</h2>
-          <MarkdownComponent markdownString={project.markdown} />
+          <MarkdownComponent markdown={markdown} />
         </section>
       </main>
     </div>
@@ -332,8 +340,10 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   if (!project.id && params?.id !== "new") return { notFound: true };
 
+  const SSRmarkdown = project.markdown ? await serialize(project.markdown) : undefined;
+
   return {
-    props: { tags, project, status },
+    props: { tags, project, status, SSRmarkdown },
   };
 };
 
@@ -342,4 +352,5 @@ interface Props {
   tags: Tag[];
   status: string[];
   project: ProjectInput;
+  SSRmarkdown?: Markdown
 }

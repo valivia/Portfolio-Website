@@ -85,9 +85,3 @@ export const getStaticProps: GetStaticProps = async () => {
     props: { assets },
   };
 };
-
-export interface repo {
-  html_url: string;
-  id: number;
-  name: string;
-}

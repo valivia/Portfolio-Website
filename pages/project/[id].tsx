@@ -1,4 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
+import { serialize } from "next-mdx-remote/serialize";
 import Head from "next/head";
 
 import React, { useRef } from "react";
@@ -15,14 +17,14 @@ import Project, { StatusToString } from "@typeFiles/api/project.type";
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 const MEDIA = process.env.NEXT_PUBLIC_MEDIA_SERVER;
 
-export default function ProjectPage({ project }: Props): JSX.Element {
+export default function ProjectPage({ project, markdown }: Props): JSX.Element {
   const scroll = () => {
     mainElement.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const mainElement = useRef<HTMLElement>(null);
 
-  const { assets, tags, markdown } = project;
+  const { assets, tags } = project;
   const banner = assets.find((asset) => asset.id === project.banner_id);
 
   let BannerElement = <header className={styles.spacer}></header>;
@@ -81,7 +83,7 @@ export default function ProjectPage({ project }: Props): JSX.Element {
         {(markdown || project.description) && (
           <section className={styles.markdown}>
             {markdown ? (
-              <MarkdownComponent markdownString={markdown} />
+              <MarkdownComponent markdown={markdown} />
             ) : (
               project.description
             )}
@@ -105,6 +107,7 @@ export default function ProjectPage({ project }: Props): JSX.Element {
 
 interface Props {
   project: Project
+  markdown: MDXRemoteSerializeResult<Record<string, unknown>, Record<string, string>> | null;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -141,8 +144,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   project.created_at = new Date(project.created_at).toDateString();
   project.updated_at = new Date(project.updated_at).toDateString();
+  const markdown = project.markdown ? await serialize(project.markdown) : null;
 
   return {
-    props: { project },
+    props: { project, markdown },
   };
 };
