@@ -41,12 +41,13 @@ const EMPTYPROJECT: ProjectInput = {
 
 export default function AdminProject(props: Props): JSX.Element {
   const router = useRouter();
+  const [currentProjectState, setCurrentProjectState] = useState(props.project);
   const [project, setProject] = useState(props.project);
   const [sending, setSending] = useState(false);
   const [markdown, setMarkdown] = useState<Markdown | undefined>(props.SSRmarkdown);
 
   const isEqualState = (): boolean => {
-    const propProject = props.project;
+    const propProject = currentProjectState;
     const stateProject = project;
 
     if (propProject.created_at !== stateProject.created_at) return false;
@@ -124,6 +125,7 @@ export default function AdminProject(props: Props): JSX.Element {
       notify("Project updated", "success");
     }
     setProject(response.data);
+    setCurrentProjectState(response.data);
     setSending(false);
   };
 
