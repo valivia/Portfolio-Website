@@ -1,8 +1,7 @@
-import { NextRouter, withRouter } from "next/router";
 import NavigationBarComponent from "@components/global/navbar.module";
 import styles from "@styles/projects.module.scss";
 import Head from "next/head";
-import React from "react";
+import React, { ReactNode } from "react";
 import Footer from "@components/global/footer.module";
 import BoxItemComponent from "@components/projects/box.module";
 import { GetStaticProps } from "next";
@@ -18,81 +17,73 @@ const MailingList = dynamic(() => import("@components/global/mailing.module"), {
 
 const API = process.env.NEXT_PUBLIC_API_SERVER;
 
-class Projects extends React.Component<Props> {
+export default function Projects({ pinned, list }: Props): ReactNode {
+  const animation_list = {
+    visible: { opacity: 1 },
+    hidden: { opacity: 0 },
+  };
 
-  render() {
-    const animation_list = {
-      visible: { opacity: 1 },
-      hidden: { opacity: 0 },
-    };
+  return (
+    <>
+      <Head>
+        <title>Projects</title>
+        <meta name="theme-color" content="#B5A691" />
+      </Head>
 
-    const { pinned, list } = this.props;
+      <MailingList />
+      <NavigationBarComponent />
 
-    return (
-      <>
-        <Head>
-          <title>Projects</title>
-          <meta name="theme-color" content="#B5A691" />
-        </Head>
+      <main className={styles.main}>
+        <header>
+          <h2>Projects</h2>
+          {list.length == 0 && pinned.length == 0
+            ? <p>There is nothing here yet, Please come back later...</p>
+            : <p>this is the place for my more technical projects</p>
+          }
+        </header>
 
-        <MailingList />
-        <NavigationBarComponent />
+        {pinned.length !== 0 && <>
+          <h2>Pinned Projects</h2>
+          <motion.section
+            className={styles.pinned}
+            initial="hidden"
+            animate="visible"
+            variants={animation_list}
+          >
+            {pinned.map((x, y) => <BoxItemComponent key={y} index={y} project={x} />)}
+          </motion.section>
+        </>
+        }
 
-        <main className={styles.main}>
-          <header>
-            <h2>Projects</h2>
-            {list.length == 0 && pinned.length == 0
-              ? <p>There is nothing here yet, Please come back later...</p>
-              : <p>this is the place for my more technical projects</p>
-            }
-          </header>
-
-          {pinned.length !== 0 && <>
-            <h2>Pinned Projects</h2>
-            <motion.section
-              className={styles.pinned}
+        {list.length !== 0 && <>
+          <h2>All projects</h2>
+          <section className={styles.list}>
+            <motion.table
               initial="hidden"
               animate="visible"
               variants={animation_list}
             >
-              {this.props.pinned.map((x, y) => <BoxItemComponent key={y} index={y} project={x} />)}
-            </motion.section>
-          </>
-          }
+              <tbody>
+                {list.map((x, y) => <ListItemcomponent key={y} index={y} project={x} delay={pinned.length * 0.2} />)}
+              </tbody>
+            </motion.table>
+          </section>
+        </>
+        }
 
-          {list.length !== 0 && <>
-            <h2>All projects</h2>
-            <section className={styles.list}>
-              <motion.table
-                initial="hidden"
-                animate="visible"
-                variants={animation_list}
-              >
-                <tbody>
-                  {this.props.list.map((x, y) => <ListItemcomponent key={y} index={y} project={x} delay={this.props.pinned.length * 0.2} />)}
-                </tbody>
-              </motion.table>
-            </section>
-          </>
-          }
+      </main>
 
-        </main>
-
-        <Footer />
-      </>
-    );
-  }
+      <Footer />
+    </>
+  );
 
 }
 
 interface Props {
   pinned: Project[];
   list: Project[];
-  router: NextRouter;
 }
 
-
-export default withRouter(Projects);
 
 export const getStaticProps: GetStaticProps = async () => {
   const headers = {
