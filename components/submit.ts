@@ -92,6 +92,7 @@ async function handleResponse(response: globalThis.Response): Promise<Response> 
       case 401: message = "Unauthorised"; break;
       case 404: message = "Not found"; break;
       case 413: message = "This file is too large"; break;
+      case 429: message = "Too many requests"; break;
       case 500: message = "A server error occurred"; break;
       default:
         message = "An unknown error occurred";
