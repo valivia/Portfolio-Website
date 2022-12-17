@@ -1,6 +1,7 @@
 use crate::errors::database::DatabaseError;
 use crate::errors::response::CustomError;
 use crate::lib::revalidate::Revalidator;
+use crate::models::auth::UserInfo;
 use crate::models::project::Project;
 use crate::models::response::{Response, ResponseBody};
 use crate::HTTPErr;
@@ -14,7 +15,12 @@ use rocket::State;
 use crate::db::project::update_banner;
 
 #[post("/banner/<project_id>/<asset_id>")]
-pub async fn post(db: &State<Database>, project_id: String, asset_id: String) -> Response<Project> {
+pub async fn post(
+    db: &State<Database>,
+    _user_info: UserInfo,
+    project_id: String,
+    asset_id: String,
+) -> Response<Project> {
     let asset_id = HTTPErr!(
         ObjectId::parse_str(asset_id),
         400,
