@@ -8,7 +8,7 @@ use mongodb::Database;
 use rocket::State;
 
 #[get("/mailing/delete/<id>")]
-pub async fn delete(db: &State<Database>, id: String) -> Result<(), CustomError> {
+pub async fn delete(db: &State<Database>, id: String) -> Result<&str, CustomError> {
     let oid = HTTPErr!(ObjectId::parse_str(id), 400, Some("Invalid id format."));
 
     mailing::delete(db, oid).await.map_err(|err| match err {
@@ -16,11 +16,11 @@ pub async fn delete(db: &State<Database>, id: String) -> Result<(), CustomError>
         _ => CustomError::build(500, None),
     })?;
 
-    Ok(())
+    Ok("Successfully deleted email address.")
 }
 
 #[get("/mailing/verify/<id>")]
-pub async fn verify(db: &State<Database>, id: String) -> Result<(), CustomError> {
+pub async fn verify(db: &State<Database>, id: String) -> Result<&str, CustomError> {
     let oid = HTTPErr!(ObjectId::parse_str(id), 400, Some("Invalid id format."));
 
     mailing::verify(db, oid).await.map_err(|err| match err {
@@ -30,5 +30,5 @@ pub async fn verify(db: &State<Database>, id: String) -> Result<(), CustomError>
         _ => CustomError::build(500, None),
     })?;
 
-    Ok(())
+    Ok("Successfully verified email address.")
 }
