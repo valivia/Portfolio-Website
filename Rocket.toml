@@ -3,8 +3,10 @@ limits = {file = "50 Mib", data-form = "50 Mib"}
 
 [debug]
 log_level = "normal"
-port = 9101
+port = 3000
 
 [release]
 log_level = "critical"
-port = 9101
+address = "0.0.0.0"
+temp_dir = "/media/tmp"
+port = 3000

@@ -5,6 +5,8 @@
 .git/
 .gitignore
 
+target/
+
 # docker
 Dockerfile
 docker-compose.yml

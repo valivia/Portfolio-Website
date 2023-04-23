@@ -10,6 +10,9 @@ lto = "thin"
 strip = true
 
 [dependencies]
+openssl = { version = "0.10", features = ["vendored"] }
+
+
 anyhow = "1.0.64"
 bson = {version = "2.3.0", features = ["chrono-0_4"]}
 chrono = {version = "0.4", features = ["serde"]}

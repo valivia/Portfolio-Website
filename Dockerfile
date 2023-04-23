@@ -5,10 +5,11 @@ RUN cargo install --path .
 
 FROM debian:buster-slim as runner
 
-COPY --from=builder /usr/local/cargo/bin/rust-rocket-sample /usr/local/bin/rust-rocket-sample
+COPY --from=builder /usr/local/cargo/bin/portfolio-server /usr/local/bin/portfolio-server
 COPY --from=builder /app/.env .env
 COPY --from=builder /app/Rocket.toml Rocket.toml
+RUN echo "$PWD"
 
 EXPOSE 8080
 
-CMD ["rust-rocket-sample"]
+CMD ["portfolio-server"]
