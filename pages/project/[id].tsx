@@ -111,10 +111,12 @@ interface Props {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${API}/project`, {
+  const data = await fetch(`${API}/project`, {
     headers: { authorization: process.env.CLIENT_SECRET as string },
+  }).then(async (x) => {
+    if (x.ok) return (await x.json()).data as Project[];
+    else throw new Error(`Failed to fetch projects ${x.status}`);
   });
-  const data = (await res.json()).data as Project[];
 
   const paths = data.map((project) => {
     return { params: { id: project.id } };
