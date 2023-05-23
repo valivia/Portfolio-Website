@@ -90,7 +90,12 @@ pub async fn post_icon(
 }
 
 async fn save_icon(mut file: TempFile<'_>, tag_id: ObjectId) -> Result<(), ()> {
-    let icon_path = format!("media/tag/{}.svg", tag_id);
+    let icon_path = std::env::current_dir().map_err(|_| ())?;
+    let icon_path = icon_path
+        .join("media")
+        .join("tag")
+        .join(format!("{}.svg", tag_id));
+
     // Save file.
     file.persist_to(&icon_path).await.map_err(|err| {
         eprintln!("{err}");
