@@ -1,0 +1,11 @@
+Cargo.lock
+
+**/*.rs.bk
+
+/target
+/media
+
+# env & config
+.env
+config.toml
+Rocket.toml

@@ -1,0 +1,12 @@
+[global]
+limits = {file = "50 Mib", data-form = "50 Mib"}
+
+[debug]
+log_level = "normal"
+port = 3000
+
+[release]
+log_level = "critical"
+address = "0.0.0.0"
+temp_dir = "/media/tmp"
+port = 3000
