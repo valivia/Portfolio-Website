@@ -1,0 +1,49 @@
+services:
+
+  # Database
+  db:
+    image: mongo
+    command: --setParameter processUmask=007
+    restart: always
+    ports:
+      - "9031:27017"
+    volumes:
+      - ./db:/data/db
+    networks:
+      - bridge
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: app
+      MONGO_INITDB_ROOT_PASSWORD: guN7hJqVBJqDLuXmRAfHnDfj
+
+  # Server
+  server:
+    container_name: portfolio_server
+    build: server
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - ./media:/media
+    networks:
+      - bridge
+      - nginx
+    environment:
+      MONGO_URL: mongodb://app:guN7hJqVBJqDLuXmRAfHnDfj@db:27017/?authSource=admin&readPreference=primary&ssl=false
+      MONGO_DB_NAME: portfolio
+
+  # Client
+  client:
+    container_name: portfolio_client
+    build: client
+    restart: always
+    user: "root"
+    depends_on:
+      - server
+    networks:
+      - nginx
+
+networks:
+  bridge:
+  nginx:
+    external: true
+    name: nginx
